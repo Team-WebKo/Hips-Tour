@@ -4,3 +4,8 @@
  * This is a general purpose Gradle build.
  * To learn more about Gradle by exploring our Samples at https://docs.gradle.org/8.4/samples
  */
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
