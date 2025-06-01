@@ -1,14 +1,15 @@
 # Ignore Gradle project-specific cache directory
 .gradle
-
+common/*.log
+common/out
 # Ignore Gradle build output directory
 build
 ds
 # Java & Gradle
-/build/
-/.gradle/
-/out/
-/bin/
+**/build/
+**/.gradle/
+**/out/**
+**/bin/
 /!gradle/wrapper/gradle-wrapper.jar
 
 # IntelliJ IDEA
