@@ -8,6 +8,7 @@ ds
 # Java & Gradle
 **/build/
 **/.gradle/
+**/out
 **/out/**
 **/bin/
 /!gradle/wrapper/gradle-wrapper.jar
