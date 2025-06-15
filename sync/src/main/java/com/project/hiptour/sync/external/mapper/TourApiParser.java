@@ -2,6 +2,7 @@ package com.project.hiptour.sync.external.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.hiptour.sync.dto.TourApiDto;
+import com.project.hiptour.sync.dto.TourApiItem;
 import com.project.hiptour.sync.dto.TourApiResponseDto;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,7 @@ public class TourApiParser {
         }
     }
 
-    public List<TourApiDto> convertToDtoList(List<TourApiResponseDto.Item> items) {
+    public List<TourApiDto> convertToDtoList(List<TourApiItem> items) {
         return items.stream()
                 .map(item -> new TourApiDto(
                         item.getTitle(),
