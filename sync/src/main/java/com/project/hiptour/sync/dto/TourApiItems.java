@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 @Setter
-public class TourApiResponseDto {
-    private TourApiResponse response;
+public class TourApiItems {
+    private List<TourApiItem> item;
 }
