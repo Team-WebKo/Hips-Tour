@@ -6,6 +6,7 @@ import com.project.hiptour.sync.dto.TourApiItem;
 import com.project.hiptour.sync.dto.TourApiResponseDto;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,14 +23,19 @@ public class TourApiParser {
     }
 
     public List<TourApiDto> convertToDtoList(List<TourApiItem> items) {
-        return items.stream()
-                .map(item -> new TourApiDto(
-                        item.getTitle(),
-                        item.getAddr1(),
-                        item.getAddr2(),
-                        item.getMapx(),
-                        item.getMapy()
-                ))
-                .collect(Collectors.toList());
+        List<TourApiDto> result = new ArrayList<>();
+        for (TourApiItem item : items) {
+            TourApiDto dto = new TourApiDto(
+                    item.getTitle(),
+                    item.getAddr1(),
+                    item.getAddr2(),
+                    item.getMapx(),
+                    item.getMapy()
+            );
+
+            result.add(dto);
+        }
+
+        return result;
     }
 }
