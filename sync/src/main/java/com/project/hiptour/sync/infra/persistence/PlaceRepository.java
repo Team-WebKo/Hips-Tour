@@ -1,4 +1,4 @@
-package com.project.hiptour.common.place;
+package com.project.hiptour.sync.infra.persistence;
 
 import org.springframework.stereotype.Repository;
 
