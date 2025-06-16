@@ -18,6 +18,8 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     implementation(project(":common"))
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation ("com.h2database:h2")
 }
 
 tasks.named("bootJar") {
