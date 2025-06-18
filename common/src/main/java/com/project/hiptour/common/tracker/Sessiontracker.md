@@ -11,5 +11,5 @@
 
 1. 기본적으로, Spring Interceptor를 이용하며, 이를 통해, 사용자의 접근 URL 및 세션 지속 시간 등을 추적한다.
 ```
-  USER --> WAS --> Interceptor --> Handler  
+  USER --> WAS --> Interceptor --> Handler  --> Interceptor  --> was --> User
 ```
