@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -16,9 +15,6 @@ import java.time.LocalDateTime;
  * **/
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class SyncLog {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,6 +22,10 @@ public class SyncLog {
     private String status;
     private int count;
     private LocalDateTime createdAt;
+
+    protected SyncLog() {
+
+    }
 
     public SyncLog(String status, int count, LocalDateTime createdAt) {
         this.status = status;
