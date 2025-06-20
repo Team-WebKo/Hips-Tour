@@ -1,5 +1,6 @@
 package com.project.hiptour.sync.infra.mapper;
 
+import com.project.hiptour.common.place.GeoPoint;
 import com.project.hiptour.common.place.Place;
 import com.project.hiptour.sync.dto.TourApiDto;
 import org.springframework.stereotype.Component;
@@ -15,8 +16,7 @@ public class TourApiDtoMapper {
                 dto.getPlaceName(),
                 dto.getAddress1(),
                 dto.getAddress2(),
-                dto.getLongitude(),
-                dto.getLatitude()
+                new GeoPoint(dto.getLatitude(), dto.getLongitude())
         );
     }
 
