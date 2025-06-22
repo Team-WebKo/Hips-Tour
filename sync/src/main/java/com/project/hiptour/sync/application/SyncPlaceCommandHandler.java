@@ -10,11 +10,14 @@ import com.project.hiptour.sync.external.mapper.TourApiParser;
 import com.project.hiptour.sync.infra.mapper.TourApiDtoMapper;
 import com.project.hiptour.sync.infra.persistence.PlaceCommandRepository;
 import com.project.hiptour.sync.infra.persistence.SyncLogRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 public class SyncPlaceCommandHandler {
     private final TourDataApiCaller tourDataApiCaller;
@@ -22,19 +25,23 @@ public class SyncPlaceCommandHandler {
     private final TourApiDtoMapper mapper;
     private final PlaceCommandRepository placeCommandRepository;
     private final SyncLogRepository logRepository;
+    private final LogService logService;
 
     public SyncPlaceCommandHandler(TourDataApiCaller tourDataApiCaller,
                                    TourApiParser parser,
                                    TourApiDtoMapper mapper,
                                    PlaceCommandRepository placeCommandRepository,
-                                   SyncLogRepository logRepository) {
+                                   SyncLogRepository logRepository,
+                                   LogService logService) {
         this.tourDataApiCaller = tourDataApiCaller;
         this.parser = parser;
         this.mapper = mapper;
         this.placeCommandRepository = placeCommandRepository;
         this.logRepository = logRepository;
+        this.logService = logService;
     }
 
+    @Transactional
     public void sync() {
         try {
             String rawData = tourDataApiCaller.fetchPlaceData(1);
@@ -51,7 +58,7 @@ public class SyncPlaceCommandHandler {
             logRepository.save(new SyncLog("로그 저장 성공", places.size(), LocalDateTime.now()));
 
         } catch (Exception e) {
-            logRepository.save(new SyncLog("저장 실패", 0, LocalDateTime.now()));
+            logService.saveFailLog("저장 실패", e);
             throw new RuntimeException("동기화 실패 : " + e.getMessage(), e);
         }
     }
