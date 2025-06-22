@@ -1,0 +1,8 @@
+tourapi:
+  host: https://apis.data.go.kr/B551011/KorService1/areaBasedList1
+  service-key: #${서비스 키}
+  mobiles-od: ETC
+  mobile-app: hipstour
+  default-rows: 100
+  default-page: 1
+  type: json
