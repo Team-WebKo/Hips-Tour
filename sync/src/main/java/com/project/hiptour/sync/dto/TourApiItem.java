@@ -11,4 +11,8 @@ public class TourApiItem {
     private String addr2;
     private double mapx;
     private double mapy;
+
+    public TourApiDto toDto() {
+        return new TourApiDto(title, addr1, addr2, mapx, mapy);
+    }
 }

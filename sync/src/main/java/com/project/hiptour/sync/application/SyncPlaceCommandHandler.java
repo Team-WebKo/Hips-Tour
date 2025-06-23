@@ -1,12 +1,12 @@
 package com.project.hiptour.sync.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.hiptour.common.place.Place;
 import com.project.hiptour.sync.dto.TourApiDto;
 import com.project.hiptour.sync.dto.TourApiItem;
 import com.project.hiptour.sync.dto.TourApiResponseDto;
 import com.project.hiptour.sync.entity.SyncLog;
 import com.project.hiptour.sync.external.api.TourDataApiCaller;
-import com.project.hiptour.sync.external.mapper.TourApiParser;
 import com.project.hiptour.sync.infra.mapper.TourApiDtoMapper;
 import com.project.hiptour.sync.infra.persistence.PlaceRepository;
 import com.project.hiptour.sync.infra.persistence.SyncLogRepository;
@@ -21,33 +21,37 @@ import java.util.List;
 @Service
 public class SyncPlaceCommandHandler {
     private final TourDataApiCaller tourDataApiCaller;
-    private final TourApiParser parser;
     private final TourApiDtoMapper mapper;
     private final PlaceRepository placeRepository;
     private final SyncLogRepository logRepository;
     private final LogService logService;
+    private final ObjectMapper objectMapper;
 
     public SyncPlaceCommandHandler(TourDataApiCaller tourDataApiCaller,
-                                   TourApiParser parser,
                                    TourApiDtoMapper mapper,
                                    PlaceRepository placeRepository,
                                    SyncLogRepository logRepository,
-                                   LogService logService) {
+                                   LogService logService,
+                                   ObjectMapper objectMapper) {
         this.tourDataApiCaller = tourDataApiCaller;
-        this.parser = parser;
         this.mapper = mapper;
         this.placeRepository = placeRepository;
         this.logRepository = logRepository;
         this.logService = logService;
+        this.objectMapper = objectMapper;
     }
 
     @Transactional
     public void sync() {
         try {
             String rawData = tourDataApiCaller.fetchPlaceData(1);
-            TourApiResponseDto responseDto = parser.parse(rawData);
+            TourApiResponseDto responseDto = objectMapper.readValue(rawData, TourApiResponseDto.class);
             List<TourApiItem> items = responseDto.getResponse().getBody().getItems().getItem();
-            List<TourApiDto> dtos = parser.convertToDtoList(items);
+
+            List<TourApiDto> dtos = items.stream()
+                    .map(TourApiItem::toDto)
+                    .toList();
+
             List<Place> places = mapper.toEntity(dtos);
 
             placeRepository.saveAll(places);
