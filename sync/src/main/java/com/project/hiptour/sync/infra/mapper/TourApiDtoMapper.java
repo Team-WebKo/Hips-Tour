@@ -3,6 +3,7 @@ package com.project.hiptour.sync.infra.mapper;
 import com.project.hiptour.common.place.GeoPoint;
 import com.project.hiptour.common.place.Place;
 import com.project.hiptour.sync.dto.TourApiDto;
+import com.project.hiptour.sync.dto.TourApiItem;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -28,5 +29,9 @@ public class TourApiDtoMapper {
         }
 
         return places;
+    }
+
+    public List<TourApiItem> toItemList(String jsonResponse) {
+        ...
     }
 }
