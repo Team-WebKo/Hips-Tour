@@ -1,6 +1,7 @@
 package com.project.hiptour.sync.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.hiptour.common.place.Place;
+import com.project.hiptour.sync.dto.TourApiDto;
 import com.project.hiptour.sync.dto.TourApiItem;
 import com.project.hiptour.sync.external.api.TourDataApiCaller;
 import com.project.hiptour.sync.infra.mapper.TourApiDtoMapper;
@@ -18,7 +19,7 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class SyncPlaceCommandHandlerTest {
+class SyncPlaceCommandHandlerTest {
     @Mock
     private TourDataApiCaller apiCaller;
 
@@ -34,8 +35,6 @@ public class SyncPlaceCommandHandlerTest {
     @Mock
     private LogService logService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     @InjectMocks
     private SyncPlaceCommandHandler commandHandler;
 
@@ -46,8 +45,7 @@ public class SyncPlaceCommandHandlerTest {
                 mapper,
                 placeRepository,
                 syncLogRepository,
-                logService,
-                objectMapper
+                logService
         );
     }
 
@@ -60,11 +58,17 @@ public class SyncPlaceCommandHandlerTest {
         TourApiItem item2 = mock(TourApiItem.class);
         when(mapper.toItemList(jsonResponse)).thenReturn(List.of(item1, item2));
 
+        when(item1.toDto()).thenReturn(mock(TourApiDto.class));
+        when(item2.toDto()).thenReturn(mock(TourApiDto.class));
+
+        when(mapper.toEntity(anyList())).thenReturn(List.of(mock(Place.class)));
+
         commandHandler.sync();
 
         verify(apiCaller).fetchPlaceData(1);
         verify(mapper).toItemList(jsonResponse);
-        verify(placeRepository, atLeastOnce()).existsByPlaceNameAndAddress1(anyString(), anyString());
+        verify(mapper).toEntity(anyList());
         verify(syncLogRepository).save(any());
+        System.out.println("흐름 테스트 통과");
     }
 }

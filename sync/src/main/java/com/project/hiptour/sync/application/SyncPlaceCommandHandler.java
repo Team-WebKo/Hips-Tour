@@ -25,33 +25,27 @@ public class SyncPlaceCommandHandler {
     private final PlaceRepository placeRepository;
     private final SyncLogRepository logRepository;
     private final LogService logService;
-    private final ObjectMapper objectMapper;
 
     public SyncPlaceCommandHandler(TourDataApiCaller tourDataApiCaller,
                                    TourApiDtoMapper mapper,
                                    PlaceRepository placeRepository,
                                    SyncLogRepository logRepository,
-                                   LogService logService,
-                                   ObjectMapper objectMapper) {
+                                   LogService logService) {
         this.tourDataApiCaller = tourDataApiCaller;
         this.mapper = mapper;
         this.placeRepository = placeRepository;
         this.logRepository = logRepository;
         this.logService = logService;
-        this.objectMapper = objectMapper;
     }
 
     @Transactional
     public void sync() {
         try {
             String rawData = tourDataApiCaller.fetchPlaceData(1);
-            TourApiResponseDto responseDto = objectMapper.readValue(rawData, TourApiResponseDto.class);
-            List<TourApiItem> items = responseDto.getResponse().getBody().getItems().getItem();
-
+            List<TourApiItem> items = mapper.toItemList(rawData);
             List<TourApiDto> dtos = items.stream()
                     .map(TourApiItem::toDto)
                     .toList();
-
             List<Place> places = mapper.toEntity(dtos);
 
             placeRepository.saveAll(places);
