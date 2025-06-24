@@ -20,6 +20,10 @@ dependencies {
     implementation(project(":common"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation ("com.h2database:h2")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine") // JUnit4 제거
+    }
 }
 
 tasks.named("bootJar") {
@@ -28,4 +32,8 @@ tasks.named("bootJar") {
 
 tasks.getByName<Jar>("jar") {
     enabled = true
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
