@@ -71,4 +71,26 @@ class SyncPlaceCommandHandlerTest {
         verify(syncLogRepository).save(any());
         System.out.println("흐름 테스트 통과");
     }
+
+    @Test
+    void syncPlaceData_whenPlaceSaveFail_thenFailLogIsSave() {
+        String rawJson = "testSample";
+        when(apiCaller.fetchPlaceData(1)).thenReturn(rawJson);
+
+        TourApiItem itemSample = mock(TourApiItem.class);
+        when(itemSample.toDto()).thenReturn(mock(TourApiDto.class));
+        when(mapper.toItemList(rawJson)).thenReturn(List.of(itemSample));
+        when(mapper.toEntity(anyList())).thenReturn(List.of(mock(Place.class)));
+
+        when(placeRepository.saveAll(anyList())).thenThrow(new RuntimeException("저장 실패"));
+
+        try {
+            commandHandler.sync();
+        } catch (RuntimeException e) {
+
+        }
+
+        verify(logService).saveFailLog(contains("저장 실패"), any(Exception.class));
+        System.out.println("실패 로그 테스트 통과");
+    }
 }
