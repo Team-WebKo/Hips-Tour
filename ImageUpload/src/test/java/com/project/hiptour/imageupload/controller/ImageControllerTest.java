@@ -1,6 +1,5 @@
-package com.project.hiptour.imageupload.test;
+package com.project.hiptour.imageupload.controller;
 
-import com.project.hiptour.imageupload.controller.ImageController;
 import com.project.hiptour.imageupload.entity.ImageEntity;
 import com.project.hiptour.imageupload.service.ImageService;
 import org.junit.jupiter.api.Test;

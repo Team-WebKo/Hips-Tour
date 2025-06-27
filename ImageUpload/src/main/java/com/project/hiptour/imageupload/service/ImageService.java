@@ -3,8 +3,7 @@ package com.project.hiptour.imageupload.service;
 import com.project.hiptour.imageupload.entity.ImageEntity;
 import com.project.hiptour.imageupload.respository.ImageRepository;
 import com.project.hiptour.imageupload.storage.ImageStorage;
-import com.project.hiptour.imageupload.service.ImageValidator;
-import com.project.hiptour.imageupload.storage.LocalImageStorage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class ImageService {
     private final ImageRepository imageRepository;
@@ -47,13 +47,16 @@ public class ImageService {
             entity.setCreatedAt(LocalDateTime.now());
 
             return imageRepository.save(entity);
-
         } catch (IOException e) {
-            //파일 생성 후 db저장에 실패한 경우
+            log.error("이미지 저장 중 오류 발생: {}", e.getMessage(), e);
+
+            //파일 생성 후 db저장에 실패
             if (path != null) {
                 try {
                     imageStorage.delete(path);
+                    log.warn("저장 실패한 파일 삭제 : {}", path);
                 } catch (IOException ignored) {
+                    log.error("파일 삭제 실패 - {}", e.getMessage(), e);
                 }
             }
         }
@@ -80,10 +83,9 @@ public class ImageService {
             try {
                 imageStorage.delete(image.getPath());
                 imageRepository.delete(image);
-                //logger변환
-                System.out.println("완전 삭제 완료: " + image.getStoredName());
+                log.info("파일 삭제 완료: {}", image.getPath());
             } catch (IOException e) {
-                System.out.println("파일 삭제 실패: " + image.getStoredName());
+                log.error("파일 삭제 실패: {}", e.getMessage(), e);
             }
         }
     }

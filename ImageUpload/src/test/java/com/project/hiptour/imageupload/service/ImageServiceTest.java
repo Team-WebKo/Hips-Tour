@@ -1,8 +1,7 @@
-package com.project.hiptour.imageupload.test;
+package com.project.hiptour.imageupload.service;
 
 import com.project.hiptour.imageupload.entity.ImageEntity;
 import com.project.hiptour.imageupload.respository.ImageRepository;
-import com.project.hiptour.imageupload.service.ImageService;
 import com.project.hiptour.imageupload.storage.DataBasedDirectoryPartitioning;
 import com.project.hiptour.imageupload.storage.ImageStorage;
 import com.project.hiptour.imageupload.storage.LocalImageStorage;
