@@ -3,6 +3,7 @@ package com.project.hiptour.imageupload.service;
 import com.project.hiptour.imageupload.entity.ImageEntity;
 import com.project.hiptour.imageupload.respository.ImageRepository;
 import com.project.hiptour.imageupload.storage.ImageStorage;
+import com.project.hiptour.imageupload.service.ImageValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,7 @@ public class ImageService {
 
     @Transactional(rollbackFor = Exception.class)
     public ImageEntity save(MultipartFile file) {
+        ImageValidator.validate(file);
         String uuid = UUID.randomUUID().toString();
         String storedName = uuid + "_" + file.getOriginalFilename();
         String path = null;
@@ -57,8 +59,9 @@ public class ImageService {
         throw new RuntimeException("파일 업로드에 실패했습니다.");
     }
 
+    //이미지 다운로드할때 사용
     public ImageEntity getById(Long id) {
-        return imageRepository.findById(id).orElseThrow();
+        return imageRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 이미지를 찾을 수 없습니다."));
     }
 
     public void delete(Long id) {

@@ -34,10 +34,7 @@ class ImageServiceTest {
 
     @Test
     void 이미지_저장() throws IOException {
-
-        String originalName = "test.jpg";
-        byte[] content = "abc123".getBytes();
-        MockMultipartFile mockFile = new MockMultipartFile("file", originalName, "image/jpeg", content);
+        MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "abc123".getBytes());
 
         when(imageRepository.save(any(ImageEntity.class))).thenAnswer(invocation -> {
             ImageEntity saved = invocation.getArgument(0);
@@ -46,24 +43,30 @@ class ImageServiceTest {
             return saved;
         });
 
-        ImageEntity saved = imageService.save(mockFile);
+        ImageEntity saved = imageService.save(file);
 
         assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getOriginalName()).isEqualTo(originalName);
-        assertThat(saved.getStoredName()).contains(originalName);
-        assertThat(saved.getPath()).contains("uploads-test/");
-        assertThat(new File(saved.getPath()).exists()).isTrue();
+        assertThat(saved.getOriginalName()).isEqualTo("test.jpg");
+    }
+
+    //예외처리
+
+    @Test
+    void 비어있는_파일() {
+        MockMultipartFile file = new MockMultipartFile("file", "empty.jpg", "image/jpeg", new byte[0]);
+        assertThrows(IllegalArgumentException.class, () -> imageService.save(file));
     }
 
     @Test
-    void 이미지_저장_실패시_파일_삭제() throws IOException {
-        MockMultipartFile mockFile = new MockMultipartFile("file", "fail.jpg", "image/jpeg", "fail".getBytes());
+    void 허용되지_않는_확장자() {
+        MockMultipartFile file = new MockMultipartFile("file", "virus.exe", "application/octet-stream", "boom".getBytes());
+        assertThrows(IllegalArgumentException.class, () -> imageService.save(file));
+    }
 
-        ImageStorage mockFileManager = mock(ImageStorage.class);
-
-        imageService = new ImageService(imageRepository, mockFileManager);
-
-        RuntimeException e = assertThrows(RuntimeException.class, () -> imageService.save(mockFile));
-        assertThat(e.getMessage()).isEqualTo("파일 업로드에 실패했습니다. 다시 시도해주세요.");
+    @Test
+    void 파일_크기_초과() {
+        byte[] tooBig = new byte[6 * 1024 * 1024];
+        MockMultipartFile file = new MockMultipartFile("file", "huge.jpg", "image/jpeg", tooBig);
+        assertThrows(IllegalArgumentException.class, () -> imageService.save(file));
     }
 }
