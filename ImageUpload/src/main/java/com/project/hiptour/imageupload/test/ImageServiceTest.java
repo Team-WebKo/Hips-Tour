@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -27,7 +26,7 @@ class ImageServiceTest {
     @BeforeEach
     void setUp() {
         imageRepository = mock(ImageRepository.class);
-        imageStorage = new LocalImageStorage("uploads-test/", new DataBasedDirectoryPartitioning());
+        imageStorage = new LocalImageStorage( new DataBasedDirectoryPartitioning());
         imageService = new ImageService(imageRepository, imageStorage);
     }
 
@@ -49,6 +48,41 @@ class ImageServiceTest {
         assertThat(saved.getOriginalName()).isEqualTo("test.jpg");
     }
 
+    @Test
+    void PNG_업로드_시_JPG로_변환되어_저장() throws IOException {
+        // PNG 포맷으로 업로드된 이미지 (확장자 무관하게 jpg로 변환)
+        byte[] pngData = "fake-png-content".getBytes(); // thumbnailator 테스트용
+
+        MockMultipartFile pngFile = new MockMultipartFile("file", "sample.png", "image/png", pngData);
+
+        when(imageRepository.save(any(ImageEntity.class))).thenAnswer(invocation -> {
+            ImageEntity saved = invocation.getArgument(0);
+            saved.setId(123L);
+            saved.setCreatedAt(LocalDateTime.now());
+            return saved;
+        });
+
+        ImageEntity result = imageService.save(pngFile);
+
+        assertThat(result.getStoredName()).endsWith(".jpg"); // jpg 변환확인
+    }
+
+    @Test
+    void 이미지_삭제시_deletedAt() {
+        MockMultipartFile file = new MockMultipartFile("file", "delete.jpg", "image/jpeg", "data".getBytes());
+
+        when(imageRepository.save(any(ImageEntity.class))).thenAnswer(invocation -> {
+            ImageEntity saved = invocation.getArgument(0);
+            saved.setId(1L);
+            saved.setCreatedAt(LocalDateTime.now());
+            return saved;
+        });
+
+        ImageEntity saved = imageService.save(file);
+        imageService.delete(saved.getId());
+
+        assertThat(saved.getDeletedAt()).isNotNull();
+    }
     //예외처리
 
     @Test
@@ -69,4 +103,6 @@ class ImageServiceTest {
         MockMultipartFile file = new MockMultipartFile("file", "huge.jpg", "image/jpeg", tooBig);
         assertThrows(IllegalArgumentException.class, () -> imageService.save(file));
     }
+
+
 }

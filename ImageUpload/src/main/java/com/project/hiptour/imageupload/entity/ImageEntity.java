@@ -19,4 +19,6 @@ public class ImageEntity {
     private String storedName;     //  서버에 저장된 파일명 (UUID 설정)
     private String path;           //  파일 시스템 상 위치
     private LocalDateTime createdAt; // 업로드된 시간
+    private LocalDateTime deletedAt;
+
 }

@@ -7,31 +7,41 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 
 @Component
-@RequiredArgsConstructor
 public class LocalImageStorage implements ImageStorage {
 
     @Value("${file.upload-dir}")
-    private final String basePath;
+    private String basePath;
+
     private final DirectoryPartitioning directoryPartitioning;
 
+    public  LocalImageStorage(DirectoryPartitioning directoryPartitioning){
+        this.directoryPartitioning = directoryPartitioning;
+    }
+
     @Override
-    public String save(MultipartFile file, String storedName) throws IOException {
+    public String save(MultipartFile file, String storedName) throws IOException{
+        return save(file.getBytes(), storedName);
+    }
+    @Override
+    public String save(byte[] bytes, String storedName) throws IOException {
         String subDir = directoryPartitioning.resolveDirectory(storedName);
-        File fullDir = new File(basePath + subDir);
-        if (!fullDir.exists()) fullDir.mkdirs();
+        File dir = new File(basePath + subDir);
+        if (!dir.exists()) dir.mkdirs();
 
         String fullPath = basePath + subDir + storedName;
-        file.transferTo(new File(fullPath));
+        Files.write(Paths.get(fullPath), bytes);
         return fullPath;
     }
     @Override
     public void delete(String fullPath) throws IOException {
-        File file = new File(fullPath);
-        if (file.exists()) file.delete();
+        new File(fullPath).delete();
     }
+
 
     @Override
     public boolean exists(String fullPath) {

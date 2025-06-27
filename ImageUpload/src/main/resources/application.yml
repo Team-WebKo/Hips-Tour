@@ -7,8 +7,20 @@ spring:
     driver-class-name: org.h2.Driver
     username: abc123
     password:
-
+    hikari:
+      maximum-pool-size: 5
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console  # 브라우저에서 접속 가능
+
+  spring:
+    task:
+      scheduling:
+        pool:
+          size: 2

@@ -18,9 +18,7 @@ import java.io.IOException;
 @RequestMapping("/images")
 @Tag(name = "Image", description = "이미지 업로드 API")
 public class ImageController {
-
     private final ImageService imageService;
-
     public ImageController(ImageService imageService) {
         this.imageService = imageService;
     }
@@ -50,4 +48,5 @@ public class ImageController {
         imageService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 }
