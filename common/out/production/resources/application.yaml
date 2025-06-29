@@ -7,14 +7,14 @@ spring:
       client:
         registration:
           kakao:
-            client-id: 7f518aac49d2a9e7eadcfabcabcb1803
-            redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
+            client-id: 59136a0497ad9e53666ed8a5fd7caf11
+            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
             authorization-grant-type: authorization_code
             client-name: Kakao
             provider: kakao
-            #scope:
-            #  - profile_nickname
-            #  - account_email
+            scope:
+              - profile_nickname
+
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
@@ -43,11 +43,7 @@ spring:
       use_sql_comment: true
       hightlight_sql: true
 
-
-
-
 ---
-
 spring:
   config:
     activate:
@@ -65,7 +61,6 @@ spring:
       ddl-auto: create-drop
 
 ---
-
 spring:
   config:
     activate:
