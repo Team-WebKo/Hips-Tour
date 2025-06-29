@@ -21,7 +21,7 @@ public class SyncChangedPlaceScheduler {
 
     private static final String SYNC_TYPE = "PLACE";
 
-    @Scheduled(cron = "0 0 1 * * *")
+    @Scheduled(cron = "${sync.schedule.place-cron}")
     public void syncChangedPlaces() {
         LocalDateTime now = LocalDateTime.now();
 
@@ -32,14 +32,14 @@ public class SyncChangedPlaceScheduler {
 
         try {
             List<PlaceDto> updatedPlaces = tourApiCaller.fetchChangedSince(lastSuccessTime);
-
             syncPlaceCommandHandler.handle(updatedPlaces);
 
             SyncLog log = SyncLog.success(SYNC_TYPE, updatedPlaces.size(), now);
             syncLogRepository.save(log);
 
         } catch (Exception e) {
-            SyncLog failLog = SyncLog.fail(SYNC_TYPE, e.getMessage(), now);
+            String message = e.getMessage() != null ? e.getMessage() : e.toString();
+            SyncLog failLog = SyncLog.fail(SYNC_TYPE, message, now);
             syncLogRepository.save(failLog);
         }
     }

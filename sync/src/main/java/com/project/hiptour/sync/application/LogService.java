@@ -17,7 +17,9 @@ public class LogService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void saveFailLog(String message, Exception e) {
-        logRepository.save(new SyncLog(message, 0, LocalDateTime.now()));
+    public void saveFailLog(String syncType, Exception e) {
+        String message = e.getMessage() != null ? e.getMessage() : e.toString();
+        SyncLog failLog = new SyncLog(syncType, "FAIL", 0, LocalDateTime.now(), null, message);
+        logRepository.save(failLog);
     }
 }

@@ -21,6 +21,7 @@ public class SyncLog {
     private String status;
     private int count;
     private LocalDateTime createdAt;
+    private String message;
 
     private LocalDateTime lastSuccessSyncAt;
 
@@ -28,19 +29,20 @@ public class SyncLog {
 
     }
 
-    public SyncLog(String syncType, String status, int count, LocalDateTime createdAt, LocalDateTime lastSuccessSyncAt) {
+    public SyncLog(String syncType, String status, int count, LocalDateTime createdAt, LocalDateTime lastSuccessSyncAt, String message) {
         this.syncType = syncType;
         this.status = status;
         this.count = count;
         this.createdAt = createdAt;
         this.lastSuccessSyncAt = lastSuccessSyncAt;
+        this.message = message;
     }
 
     public static SyncLog success(String syncType, int count, LocalDateTime now) {
-        return new SyncLog(syncType, "SUCCESS", count, now, now);
+        return new SyncLog(syncType, "SUCCESS", count, now, now, null);
     }
 
-    public static SyncLog fail(String syncType,  LocalDateTime now) {
-        return new SyncLog(syncType, "FAIL", 0, now, null);
+    public static SyncLog fail(String syncType, String message, LocalDateTime now) {
+        return new SyncLog(syncType, "FAIL", 0, now, null, message);
     }
 }

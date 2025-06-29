@@ -28,6 +28,24 @@ public class TourApiDtoMapper {
         );
     }
 
+    public TourApiDto toDto(TourApiItem item) {
+        return new TourApiDto(
+                item.getTitle(),
+                item.getAddr1(),
+                item.getAddr2(),
+                item.getMapx(),
+                item.getMapy()
+        );
+    }
+
+    public List<TourApiDto> toDtoList(List<TourApiItem> items) {
+        List<TourApiDto> dtoList = new ArrayList<>();
+        for (TourApiItem item : items) {
+            dtoList.add(toDto(item));
+        }
+        return dtoList;
+    }
+
     public List<Place> toEntity(List<TourApiDto> dtoList) {
         List<Place> places = new ArrayList<>();
         for(TourApiDto dto : dtoList) {

@@ -4,6 +4,7 @@ import com.project.hiptour.common.place.Place;
 import com.project.hiptour.sync.dto.TourApiDto;
 import com.project.hiptour.sync.dto.TourApiItem;
 import com.project.hiptour.sync.external.api.TourDataApiCaller;
+import com.project.hiptour.sync.infra.mapper.PlaceMapper;
 import com.project.hiptour.sync.infra.mapper.TourApiDtoMapper;
 import com.project.hiptour.sync.infra.persistence.PlaceRepository;
 import com.project.hiptour.sync.infra.persistence.SyncLogRepository;
@@ -38,6 +39,8 @@ class SyncPlaceCommandHandlerTest {
     @InjectMocks
     private SyncPlaceCommandHandler commandHandler;
 
+    private PlaceMapper placeMapper = new PlaceMapper();
+
     @BeforeEach
     void setUp() {
         commandHandler = new SyncPlaceCommandHandler(
@@ -45,7 +48,8 @@ class SyncPlaceCommandHandlerTest {
                 mapper,
                 placeRepository,
                 syncLogRepository,
-                logService
+                logService,
+                placeMapper
         );
     }
 
@@ -78,19 +82,18 @@ class SyncPlaceCommandHandlerTest {
         when(apiCaller.fetchPlaceData(1)).thenReturn(rawJson);
 
         TourApiItem itemSample = mock(TourApiItem.class);
-        when(itemSample.toDto()).thenReturn(mock(TourApiDto.class));
         when(mapper.toItemList(rawJson)).thenReturn(List.of(itemSample));
+        when(mapper.toDtoList(anyList())).thenReturn(List.of(mock(TourApiDto.class)));
         when(mapper.toEntity(anyList())).thenReturn(List.of(mock(Place.class)));
 
-        when(placeRepository.saveAll(anyList())).thenThrow(new RuntimeException("저장 실패"));
+        when(placeRepository.saveAll(anyList()))
+                .thenThrow(new RuntimeException("저장 실패"));
 
         try {
             commandHandler.sync();
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ignored) {}
 
-        }
-
-        verify(logService).saveFailLog(contains("저장 실패"), any(Exception.class));
-        System.out.println("실패 로그 테스트 통과");
+        verify(logService).saveFailLog(eq("PLACE"), any(Exception.class));
+        System.out.println("저장 실패 테스트 통과");
     }
 }
