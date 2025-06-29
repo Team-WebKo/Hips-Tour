@@ -52,7 +52,7 @@ class SyncPlaceCommandHandlerTest {
     @Test
     public void syncPlaceData_success_flow() {
         String jsonResponse = "testSample";
-        when(apiCaller.fetchPlaceData( 1)).thenReturn(jsonResponse);
+        when(apiCaller.fetchPlaceData(1)).thenReturn(jsonResponse);
 
         TourApiItem item1 = mock(TourApiItem.class);
         TourApiItem item2 = mock(TourApiItem.class);

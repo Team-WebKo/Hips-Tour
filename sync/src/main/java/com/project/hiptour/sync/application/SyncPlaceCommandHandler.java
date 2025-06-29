@@ -2,6 +2,7 @@ package com.project.hiptour.sync.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.hiptour.common.place.Place;
+import com.project.hiptour.sync.dto.PlaceDto;
 import com.project.hiptour.sync.dto.TourApiDto;
 import com.project.hiptour.sync.dto.TourApiItem;
 import com.project.hiptour.sync.dto.TourApiResponseDto;
@@ -56,5 +57,10 @@ public class SyncPlaceCommandHandler {
             logService.saveFailLog("저장 실패", e);
             throw new RuntimeException("동기화 실패 : " + e.getMessage(), e);
         }
+    }
+
+    public void handle(List<PlaceDto> placeDtoList) {
+        List<Place> places = mapper.toEntity(placeDtoList);
+        placeRepository.saveAll(places); // 또는 update 방식
     }
 }
