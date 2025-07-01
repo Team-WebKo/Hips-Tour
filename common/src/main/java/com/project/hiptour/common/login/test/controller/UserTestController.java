@@ -2,38 +2,42 @@ package com.project.hiptour.common.login.test.controller;
 
 import com.project.hiptour.common.domain.UserTest;
 import com.project.hiptour.common.repository.UserTestRepository;
+import com.project.hiptour.common.login.test.service.UserTestService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.Map;
 
 @RestController
-public class UserController {
+public class UserTestController {
 
     private final UserTestRepository userTestRepository;
 
-    public UserController(UserTestRepository userTestRepository){
+    public UserTestController(UserTestRepository userTestRepository){
         this.userTestRepository = userTestRepository;
     }
 
     @GetMapping("/user")
     public OAuth2User user(OAuth2AuthenticationToken token){
+
         OAuth2User oauth2User = token.getPrincipal();
         Map<String, Object> tokenAttributes = oauth2User.getAttributes();
 
         Long oauthName = Long.valueOf(tokenAttributes.get("id").toString());
         String nickname = ((Map<String, Object>)tokenAttributes.get("properties")).get("nickname").toString();
 
-        System.out.println("토큰으로부터 추출한 카카오 id : " + oauthName);
-        System.out.println("토큰으로부터 추출한 카카오 닉네임 : " + nickname);
+        if(userTestRepository.existsByOauthName(oauthName) == true){
+            System.out.println("로그인 한 적이 있는 카카오 사용자입니다.");
+        } else {
+            System.out.println("처음 접속한 사용자입니다. DB에 정보를 저장합니다.");
+            UserTest usertest = new UserTest(oauthName, nickname);
+            userTestRepository.save(usertest);
+        }
 
-        UserTest usertest = new UserTest(oauthName, nickname);
-        userTestRepository.save(usertest);
-
+        //System.out.println("토큰으로부터 추출한 카카오 id : " + oauthName);
+        //System.out.println("토큰으로부터 추출한 카카오 닉네임 : " + nickname);
         System.out.println("Attributes : " + oauth2User.getAttributes());
         return oauth2User;
     }
@@ -63,7 +67,5 @@ public class UserController {
         return "현재 토큰 정보 확인 중";
         } else return "현재 발행된 토큰이 없습니다. 로그인을 먼저 진행해 주세요.";
     }
-
-
 
 }
