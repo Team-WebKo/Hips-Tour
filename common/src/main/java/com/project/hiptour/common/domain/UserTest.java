@@ -18,7 +18,7 @@ public class UserTest {
     private Long id;
 
     @Column(name = "oauth_name", nullable = false)
-    private short oauthName;
+    private Long oauthName;
 
     @Column(name = "nickname", nullable = false)
     private String nickname;
@@ -31,5 +31,10 @@ public class UserTest {
 
     @Column(name = "updated_at", nullable = true)
     private LocalDateTime updatedAt;
+
+    public UserTest(Long oauthName, String nickname){
+        this.oauthName =oauthName;
+        this.nickname = nickname;
+    }
 
 }

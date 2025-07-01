@@ -22,6 +22,12 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
+#  datasource:
+#    url: jdbc:h2:file:~/testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#    driver-class-name: org.h2.Driver
+#    username: sa
+#    password:
+
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
@@ -35,7 +41,7 @@ spring:
       format_sql: true
       ddl-auto: create-drop
       use_sql_comment: true
-      hightlight_sql: true
+      highlight_sql: true
 
 
 ---

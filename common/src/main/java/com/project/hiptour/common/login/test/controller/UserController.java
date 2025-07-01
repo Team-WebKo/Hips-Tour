@@ -1,5 +1,7 @@
 package com.project.hiptour.common.login.test.controller;
 
+import com.project.hiptour.common.domain.UserTest;
+import com.project.hiptour.common.repository.UserTestRepository;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,13 +9,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.Map;
 
 @RestController
 public class UserController {
 
+    private final UserTestRepository userTestRepository;
+
+    public UserController(UserTestRepository userTestRepository){
+        this.userTestRepository = userTestRepository;
+    }
+
     @GetMapping("/user")
     public OAuth2User user(OAuth2AuthenticationToken token){
         OAuth2User oauth2User = token.getPrincipal();
+        Map<String, Object> tokenAttributes = oauth2User.getAttributes();
+
+        Long oauthName = Long.valueOf(tokenAttributes.get("id").toString());
+        String nickname = ((Map<String, Object>)tokenAttributes.get("properties")).get("nickname").toString();
+
+        System.out.println("토큰으로부터 추출한 카카오 id : " + oauthName);
+        System.out.println("토큰으로부터 추출한 카카오 닉네임 : " + nickname);
+
+        UserTest usertest = new UserTest(oauthName, nickname);
+        userTestRepository.save(usertest);
+
         System.out.println("Attributes : " + oauth2User.getAttributes());
         return oauth2User;
     }
