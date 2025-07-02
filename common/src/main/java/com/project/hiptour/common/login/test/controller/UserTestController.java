@@ -1,6 +1,8 @@
 package com.project.hiptour.common.login.test.controller;
 
 import com.project.hiptour.common.domain.UserTest;
+import com.project.hiptour.common.oauth.JwtTokenProvider;
+import com.project.hiptour.common.oauth.dto.TokenPairDTO;
 import com.project.hiptour.common.repository.UserTestRepository;
 import com.project.hiptour.common.login.test.service.UserTestService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -14,6 +16,7 @@ import java.util.Map;
 public class UserTestController {
 
     private final UserTestRepository userTestRepository;
+    private final JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
 
     public UserTestController(UserTestRepository userTestRepository){
         this.userTestRepository = userTestRepository;
@@ -35,6 +38,10 @@ public class UserTestController {
             UserTest usertest = new UserTest(oauthName, nickname);
             userTestRepository.save(usertest);
         }
+
+        TokenPairDTO tokenPairDTO = jwtTokenProvider.generateTokens(oauthName);
+
+        tokenPairDTO.printTokens();
 
         //System.out.println("토큰으로부터 추출한 카카오 id : " + oauthName);
         //System.out.println("토큰으로부터 추출한 카카오 닉네임 : " + nickname);
