@@ -33,8 +33,8 @@ public class TourApiDtoMapper {
                 item.getTitle(),
                 item.getAddr1(),
                 item.getAddr2(),
-                item.getMapx(),
-                item.getMapy()
+                Double.parseDouble(item.getMapx()),
+                Double.parseDouble(item.getMapy())
         );
     }
 

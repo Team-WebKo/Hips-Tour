@@ -1,5 +1,5 @@
 tourapi:
-  host: https://apis.data.go.kr/B551011/KorService1/areaBasedList1
+  host: https://apis.data.go.kr/B551011/KorService1/areaBasedList2
   service-key: #${서비스 키}
   mobiles-os: ETC
   mobile-app: hipstour

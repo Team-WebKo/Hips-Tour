@@ -1,10 +1,11 @@
 package com.project.hiptour.sync.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.hiptour.common.place.Place;
 import com.project.hiptour.sync.dto.TourApiDto;
 import com.project.hiptour.sync.dto.TourApiItem;
+import com.project.hiptour.sync.dto.TourApiResponseDto;
 import com.project.hiptour.sync.external.api.TourDataApiCaller;
-import com.project.hiptour.sync.infra.api.TourApiCaller;
 import com.project.hiptour.sync.infra.mapper.PlaceMapper;
 import com.project.hiptour.sync.infra.mapper.TourApiDtoMapper;
 import com.project.hiptour.sync.infra.persistence.PlaceRepository;
@@ -20,6 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 class SyncPlaceCommandHandlerTest {
@@ -124,5 +127,71 @@ class SyncPlaceCommandHandlerTest {
         //테스트의 중요한 부분 - commandHandler.sync()가 실패했을 시 실패 로그를 남기기위한 로직이 수행되는가?
         verify(logService).saveFailLog(eq("PLACE"), any(Exception.class));
         System.out.println("저장 실패 테스트 통과");
+    }
+
+    @DisplayName("실제 TourAPI 응답 JSON이 DTO에 정상 매핑되는지 확인하는 테스트입니다.")
+    @Test
+    void test_TourApiResponseDto_parsing_with_payload() throws Exception {
+        String sampleJson = """
+                {
+                            "response": {
+                                "header": {
+                                    "resultCode": "0000",
+                                    "resultMsg": "OK"
+                                },
+                                "body": {
+                                    "items": {
+                                        "item": [
+                                            {
+                                                "addr1": "서울특별시 중구 명동8길 8-10 (명동2가)",
+                                                "addr2": "",
+                                                "zipcode": "04536",
+                                                "areacode": "1",
+                                                "cat1": "A05",
+                                                "cat2": "A0502",
+                                                "cat3": "A05020100",
+                                                "contentid": "133858",
+                                                "contenttypeid": "39",
+                                                "createdtime": "20030529090000",
+                                                "dist": "32.788938679922325",
+                                                "firstimage": "http://tong.visitkorea.or.kr/cms/resource/85/3108585_image2_1.JPG",
+                                                "firstimage2": "http://tong.visitkorea.or.kr/cms/resource/85/3108585_image3_1.JPG",
+                                                "cpyrhtDivCd": "Type3",
+                                                "mapx": "126.9841178194",
+                                                "mapy": "37.5634241535",
+                                                "mlevel": "6",
+                                                "modifiedtime": "20250409105941",
+                                                "sigungucode": "24",
+                                                "tel": "02-776-3267",
+                                                "title": "백제삼계탕",
+                                                "lDongRegnCd": "11",
+                                                "lDongSignguCd": "140",
+                                                "lclsSystm1": "FD",
+                                                "lclsSystm2": "FD01",
+                                                "lclsSystm3": "FD010100"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                """;
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        TourApiResponseDto dto = objectMapper.readValue(sampleJson, TourApiResponseDto.class);
+
+        assertNotNull(dto.getResponse(), "response 객체 != null");
+
+        assertNotNull(dto.getResponse().getBody(), "body 객체 != null");
+
+        List<TourApiItem> items = dto.getResponse().getBody().getItems().getItem();
+        assertNotNull(items, "item 리스트 != null");
+        assertFalse(items.isEmpty(), "item 리스트 != empty");
+
+        TourApiItem item = items.get(0);
+        assertEquals("백제삼계탕", item.getTitle());
+        assertEquals("서울특별시 중구 명동8길 8-10 (명동2가)", item.getAddr1());
+        assertEquals("126.9841178194", item.getMapx());
+        assertEquals("37.5634241535", item.getMapy());
     }
 }

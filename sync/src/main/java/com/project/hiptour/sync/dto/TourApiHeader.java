@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TourApiResponse {
-    private TourApiHeader header;
-    private TourApiBody body;
+public class TourApiHeader {
+    private String resultCode;
+    private String resultMsg;
 }
