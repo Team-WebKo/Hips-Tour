@@ -66,4 +66,5 @@ public class ImageValidator {
                 (char) bytes[1] == 'I' &&
                 (char) bytes[2] == 'F';
     }
+
 }
