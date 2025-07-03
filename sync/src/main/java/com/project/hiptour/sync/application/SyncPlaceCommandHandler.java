@@ -43,6 +43,7 @@ public class SyncPlaceCommandHandler {
 
     @Transactional
     public void sync() {
+
         try {
             String rawData = tourDataApiCaller.fetchPlaceData(1);
             List<TourApiItem> items = mapper.toItemList(rawData);

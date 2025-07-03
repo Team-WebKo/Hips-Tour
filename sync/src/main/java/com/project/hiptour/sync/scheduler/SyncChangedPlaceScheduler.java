@@ -39,7 +39,8 @@ public class SyncChangedPlaceScheduler {
 
         } catch (Exception e) {
             String message = e.getMessage() != null ? e.getMessage() : e.toString();
-            SyncLog failLog = SyncLog.fail(SYNC_TYPE, message, now);
+
+            SyncLog failLog = new SyncLog(SYNC_TYPE, "FAIL", 0, now, lastSuccessTime, message);
             syncLogRepository.save(failLog);
         }
     }
