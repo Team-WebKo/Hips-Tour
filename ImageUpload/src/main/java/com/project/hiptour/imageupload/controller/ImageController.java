@@ -31,15 +31,10 @@ public class ImageController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "이미지 조회 (다운로드)")
-    public ResponseEntity<Resource> download(@PathVariable Long id) throws IOException {
-        ImageEntity image = imageService.getById(id);
-        File file = new File(image.getPath());
-        Resource resource = new UrlResource(file.toURI());
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getOriginalName() + "\"")
-                .body(resource);
+    @Operation(summary = "이미지 URL 반환")
+    public ResponseEntity<String> getImageUrl(@PathVariable Long id) {
+        // 실제 경로는 nginx 기준에 맞게 조정
+        return ResponseEntity.ok("http://localhost:8080/images/raw/" + id);
     }
 
     @DeleteMapping("/{id}")
