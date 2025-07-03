@@ -1,5 +1,7 @@
-package com.project.hiptour.sync.application;
+package com.project.hiptour.sync.application.sync;
 
+import com.project.hiptour.sync.application.AlarmService;
+import com.project.hiptour.sync.application.LogService;
 import com.project.hiptour.sync.entity.SyncLog;
 import com.project.hiptour.sync.infra.persistence.SyncLogRepository;
 import org.junit.jupiter.api.BeforeEach;
