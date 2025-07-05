@@ -1,10 +1,9 @@
 package com.project.hiptour.common.login.test.controller;
 
 import com.project.hiptour.common.domain.UserTest;
-import com.project.hiptour.common.oauth.JwtTokenProvider;
+import com.project.hiptour.common.oauth.jwt.JwtTokenProvider;
 import com.project.hiptour.common.oauth.dto.TokenPairDTO;
 import com.project.hiptour.common.repository.UserTestRepository;
-import com.project.hiptour.common.login.test.service.UserTestService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;

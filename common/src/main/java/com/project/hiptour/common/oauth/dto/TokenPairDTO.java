@@ -14,8 +14,8 @@ public class TokenPairDTO {
     }
 
     public void printTokens(){
-        System.out.println(accessToken);
-        System.out.println(refreshToken);
+        System.out.println("Access Token : " + accessToken);
+        System.out.println("Refresh Token : " + refreshToken);
     }
 
 }

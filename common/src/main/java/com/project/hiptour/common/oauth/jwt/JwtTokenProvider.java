@@ -1,4 +1,4 @@
-package com.project.hiptour.common.oauth;
+package com.project.hiptour.common.oauth.jwt;
 
 import com.project.hiptour.common.oauth.dto.TokenPairDTO;
 import io.jsonwebtoken.*;
@@ -11,7 +11,7 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private final String secretKey = "secret-key-for-test";
+    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long accessTokenValidity = 1000 * 60 * 30; //밀리초 단위. 총 30분
     private final long refreshTokenValidity = 1000 * 60 * 60 * 24 * 7; // 밀리초 단위. 총 7일
 
@@ -21,7 +21,7 @@ public class JwtTokenProvider {
                 .setSubject("access")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
-                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
+                .signWith(secretKey)
                 .compact();
     }
 
@@ -31,14 +31,25 @@ public class JwtTokenProvider {
                 .setSubject("refresh")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidity))
-                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
+                .signWith(secretKey)
                 .compact();
-
     }
 
     public TokenPairDTO generateTokens(Long kakaoId){
         TokenPairDTO tokenPairDTO = new TokenPairDTO(generateAccessToken(kakaoId), generateRefreshToken(kakaoId));
         return tokenPairDTO;
+    }
+
+    public boolean validateToken(String token){
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException e){
+            return false;
+        }
     }
 
 
