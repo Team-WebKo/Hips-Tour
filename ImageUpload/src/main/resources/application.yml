@@ -1,6 +1,8 @@
 file:
   upload-dir: uploads/
 
+image:
+  base-url: https://your-nginx-image-server.com/image-upload
 spring:
   datasource:
     url: jdbc:h2:mem:testdb

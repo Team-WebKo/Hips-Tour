@@ -30,20 +30,20 @@ public class ImageService {
 
         String uuid = UUID.randomUUID().toString();
         String storedName = uuid + ".jpg";
-        String path = null;
+        String relativePath = null;
 
         try {
             //전처리
             byte[] processed = ImageProcessor.processToJpg(file);
 
             //전처리 후의 파일저장
-            path = imageStorage.save(processed , storedName);
+            relativePath = imageStorage.save(processed , storedName);
 
             //db저장
             ImageEntity entity = new ImageEntity();
             entity.setOriginalName(file.getOriginalFilename());
             entity.setStoredName(storedName);
-            entity.setPath(path);
+            entity.setPath(relativePath);
             entity.setCreatedAt(LocalDateTime.now());
 
             return imageRepository.save(entity);
@@ -51,10 +51,10 @@ public class ImageService {
             log.error("이미지 저장 중 오류 발생: {}", e.getMessage(), e);
 
             //파일 생성 후 db저장에 실패
-            if (path != null) {
+            if (relativePath != null) {
                 try {
-                    imageStorage.delete(path);
-                    log.warn("저장 실패한 파일 삭제 : {}", path);
+                    imageStorage.delete(relativePath);
+                    log.warn("저장 실패한 파일 삭제 : {}", relativePath);
                 } catch (IOException ignored) {
                     log.error("파일 삭제 실패 - {}", e.getMessage(), e);
                 }
