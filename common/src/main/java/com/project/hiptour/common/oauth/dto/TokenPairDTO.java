@@ -18,4 +18,12 @@ public class TokenPairDTO {
         System.out.println("Refresh Token : " + refreshToken);
     }
 
+    public String getAccessToken(){
+        return accessToken;
+    }
+
+    public String getRefreshToken(){
+        return refreshToken;
+    }
+
 }

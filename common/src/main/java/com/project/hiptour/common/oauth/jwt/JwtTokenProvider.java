@@ -52,5 +52,26 @@ public class JwtTokenProvider {
         }
     }
 
+    private Claims parseClaimsFromToken(String token){
+
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+    }
+
+    public Long getKakaoIdFromToken(String token){
+
+        Claims claims = parseClaimsFromToken(token);
+
+        if(claims != null){
+            System.out.println("getKakaoId : 토큰으로부터 Claim 추출 완료");
+        }
+
+        return claims.get("kakaoId", Long.class);
+    }
+
 
 }
