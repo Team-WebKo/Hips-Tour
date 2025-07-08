@@ -1,23 +1,9 @@
 plugins {
 	java
-	id("org.springframework.boot") version "3.5.0"
-	id("io.spring.dependency-management") version "1.1.7"
+	id("org.springframework.boot")
+	id("io.spring.dependency-management")
 }
 
-group = "com.project.hiptour"
-version = "0.0.1-SNAPSHOT"
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
-}
-
-configurations {
-	compileOnly {
-		extendsFrom(configurations.annotationProcessor.get())
-	}
-}
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -33,8 +19,4 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
 }

@@ -4,8 +4,33 @@
  * This is a general purpose Gradle build.
  * To learn more about Gradle by exploring our Samples at https://docs.gradle.org/8.4/samples
  */
+plugins {
+    // 루트에서는 플러그인만 등록, 각 모듈 필요한 곳에서 apply
+    id("org.springframework.boot") version "3.5.0" apply false
+    id("io.spring.dependency-management") version "1.1.7" apply false
+}
+
 allprojects {
     repositories {
         mavenCentral()
+    }
+}
+
+subprojects {
+    group = "com.project.hiptour"
+    version = "0.0.1-SNAPSHOT"
+
+    apply(plugin = "java") // 모든 모듈에 java 적용
+
+    extensions.configure<JavaPluginExtension> {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    }
+
+    tasks.withType<JavaCompile> {
+        options.encoding = "UTF-8"
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
 }
