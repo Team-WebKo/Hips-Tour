@@ -43,7 +43,7 @@ public class LocalImageStorage implements ImageStorage {
         String fullPath = basePath + subDir + storedName;
         Files.write(Paths.get(fullPath), bytes);
         log.info("로컬 저장: {}", fullPath);
-        return fullPath;
+        return subDir + storedName;
     }
     @Override
     public void delete(String fullPath) throws IOException {
