@@ -1,12 +1,12 @@
 package com.project.hiptour.common.reviews.entity;
 
+import com.project.hiptour.common.reviews.global.entity.BaseEntity;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-public class Review {
+public class Review extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
 
@@ -19,9 +19,6 @@ public class Review {
 
     @ElementCollection
     private List<String> imageUrls;
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     private Long userId;
     private String nickname;

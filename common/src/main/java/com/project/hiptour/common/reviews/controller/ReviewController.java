@@ -1,6 +1,6 @@
 package com.project.hiptour.common.reviews.controller;
 
-import com.project.hiptour.common.reviews.service.ReviewService;
+import com.project.hiptour.common.reviews.service.CreateReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class ReviewController {
-    private final ReviewService reviewService;
+    private final CreateReviewService createReviewService;
 
 }
