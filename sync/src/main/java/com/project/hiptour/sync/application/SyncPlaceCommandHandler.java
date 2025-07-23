@@ -8,7 +8,7 @@ import com.project.hiptour.sync.entity.SyncLog;
 import com.project.hiptour.sync.external.api.TourDataApiCaller;
 import com.project.hiptour.sync.infra.mapper.PlaceMapper;
 import com.project.hiptour.sync.infra.mapper.TourApiDtoMapper;
-import com.project.hiptour.sync.infra.persistence.PlaceRepository;
+import com.project.hiptour.common.reviews.repository.PlaceRepository;
 import com.project.hiptour.sync.infra.persistence.SyncLogRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
