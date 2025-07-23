@@ -1,4 +1,7 @@
 package com.project.hiptour.common.reviews.repository;
 
-public class ReviewRepository {
+import com.project.hiptour.common.reviews.entity.Review;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ReviewRepository extends JpaRepository<Review, Long> {
 }
