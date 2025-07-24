@@ -18,6 +18,6 @@ public class CreateReviewService {
      * 더 나은 방법 모색이 필요합니다.
      * **/
 
-    public ReviewResponseDto createReview(ReviewRequestDto requestDto) {
-    }
+//    public ReviewResponseDto createReview(ReviewRequestDto requestDto) {
+//    }
 }
