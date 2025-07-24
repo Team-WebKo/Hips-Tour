@@ -1,21 +1,24 @@
 package com.project.hiptour.common.reviews.controller;
 
 import com.project.hiptour.common.reviews.dto.CreateReviewRequestDto;
+import com.project.hiptour.common.reviews.entity.Review;
 import com.project.hiptour.common.reviews.repository.PlaceRepository;
 import com.project.hiptour.common.reviews.service.CreateReviewService;
+import com.project.hiptour.common.reviews.service.ReviewQueryService;
 import com.project.hiptour.common.users.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class ReviewController {
     private final CreateReviewService createReviewService;
-    private final PlaceRepository placeRepository;
+    private final ReviewQueryService reviewQueryService;
 
     @PostMapping("/places/{placeId}/reviews")
     public ResponseEntity<?> createReview(
@@ -31,5 +34,19 @@ public class ReviewController {
  *
  *
  * **/
+    }
+
+    @GetMapping("/places/{placeId}/my_review")
+    public ResponseEntity<?> getMyReview(
+            @PathVariable Long placeId
+    ) {
+        User user = new User();
+        Optional<Review> review = reviewQueryService.findByUserAndPlace(user, placeId);
+
+        return review.map(target -> ResponseEntity.ok(Map.of(
+                "reviewId", target.getReviewId(),
+                "content", target.getContent(),
+                "imageUrls", target.getImageUrls()
+        ))).orElse(ResponseEntity.noContent().build());
     }
 }
