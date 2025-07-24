@@ -5,6 +5,7 @@ import com.project.hiptour.common.reviews.dto.UpdateReviewRequestDto;
 import com.project.hiptour.common.reviews.entity.Review;
 import com.project.hiptour.common.reviews.repository.PlaceRepository;
 import com.project.hiptour.common.reviews.service.CreateReviewService;
+import com.project.hiptour.common.reviews.service.DeleteReviewService;
 import com.project.hiptour.common.reviews.service.ReviewQueryService;
 import com.project.hiptour.common.reviews.service.UpdateReviewService;
 import com.project.hiptour.common.users.entity.User;
@@ -22,6 +23,7 @@ public class ReviewController {
     private final CreateReviewService createReviewService;
     private final ReviewQueryService reviewQueryService;
     private final UpdateReviewService updateReviewService;
+    private final DeleteReviewService deleteReviewService;
 
     @PostMapping("/places/{placeId}/reviews")
     public ResponseEntity<?> createReview(
@@ -80,5 +82,15 @@ public class ReviewController {
         User user = new User();//임시 객체
         updateReviewService.update(reviewId, requestDto, user);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<?> deleteReview(
+            @PathVariable Long reviewId
+            // 유저 인증 처리 필요
+    ) {
+        User user = new User();//임시 인증 객체
+        deleteReviewService.delete(reviewId, user);
+        return ResponseEntity.noContent().build();
     }
 }
