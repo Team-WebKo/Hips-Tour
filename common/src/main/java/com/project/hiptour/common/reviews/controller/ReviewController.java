@@ -46,7 +46,7 @@ public class ReviewController {
         return review.map(target -> ResponseEntity.ok(Map.of(
                 "reviewId", target.getReviewId(),
                 "content", target.getContent(),
-                "imageUrls", target.getImageUrls()
+                "imageUrls", target.getImageUrls()//이미지에 대한 내용 논의 필요
         ))).orElse(ResponseEntity.noContent().build());
     }
 }
