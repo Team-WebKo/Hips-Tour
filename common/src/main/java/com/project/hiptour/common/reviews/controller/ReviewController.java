@@ -25,9 +25,12 @@ public class ReviewController {
 
     @PostMapping("/places/{placeId}/reviews")
     public ResponseEntity<?> createReview(
+            @PathVariable Long placeId,
             @RequestBody CreateReviewRequestDto reviewRequestDto
             // 유저 인증 정보 필요
             ) {
+        reviewRequestDto.setPlaceId(placeId);
+
         User user = new User(); /**유저 정보 및 인증 에 대한 추가 이후 방향 결정 필요**/
         Long reviewId = createReviewService.create(reviewRequestDto, user);
         return ResponseEntity.ok(Map.of("reviewId", reviewId));
@@ -37,6 +40,18 @@ public class ReviewController {
  *
  *
  * **/
+    }
+
+    /**
+     * 여행지 상세 페이제에서가 아닌 리뷰 작성 접근 후 여행지 선택에 대한 기능입니다.
+     * **/
+    @PostMapping("/reviews")
+    public ResponseEntity<?> createReviewWithoutPlace(
+            @RequestBody CreateReviewRequestDto dto
+    ) {
+        User user = new User(); //인증 대체
+        Long reviewId = createReviewService.create(dto, user);
+        return ResponseEntity.ok(Map.of("reviewId", reviewId));
     }
 
     /**

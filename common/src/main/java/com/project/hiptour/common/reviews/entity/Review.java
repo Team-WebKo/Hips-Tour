@@ -4,6 +4,7 @@ import com.project.hiptour.common.place.Place;
 import com.project.hiptour.common.reviews.global.entity.BaseEntity;
 import com.project.hiptour.common.users.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class Review extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id", nullable = false)
+    @NotNull(message = "여행지를 선택해 주세요.")
     private Place place;
 
     @Column(nullable = false)
