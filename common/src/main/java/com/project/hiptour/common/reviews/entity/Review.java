@@ -2,6 +2,7 @@ package com.project.hiptour.common.reviews.entity;
 
 import com.project.hiptour.common.place.Place;
 import com.project.hiptour.common.reviews.global.entity.BaseEntity;
+import com.project.hiptour.common.users.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,7 @@ public class Review extends BaseEntity {
     @ElementCollection
     private List<String> imageUrls;
 
-    private Long userId;
-    private String nickname;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

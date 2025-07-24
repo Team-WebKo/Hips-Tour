@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewRequestDto {
+public class CreateReviewRequestDto {
     @NotNull(message = "장소 ID는 필수항목입니다.")
     private Long placeId;
 

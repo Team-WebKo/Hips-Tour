@@ -8,7 +8,7 @@ import java.util.List;
 
 @Setter
 @Getter
-public class ReviewResponseDto {
+public class CreateReviewResponseDto {
     private Long reviewId;
     private Long placeId;
     private String content;

@@ -1,7 +1,7 @@
 package com.project.hiptour.common.reviews.service;
 
 import com.project.hiptour.common.place.Place;
-import com.project.hiptour.common.reviews.dto.ReviewRequestDto;
+import com.project.hiptour.common.reviews.dto.CreateReviewRequestDto;
 import com.project.hiptour.common.reviews.entity.Review;
 import com.project.hiptour.common.reviews.repository.PlaceRepository;
 import com.project.hiptour.common.reviews.repository.ReviewRepository;
@@ -14,7 +14,7 @@ public class CreateReviewService {
     private final ReviewRepository reviewRepository;
     private final PlaceRepository placeRepository;
 
-    public Long create(ReviewRequestDto requestDto, Long userId, String nickname) {
+    public Long create(CreateReviewRequestDto requestDto, Long userId, String nickname) {
         Place place = placeRepository.findById(requestDto.getPlaceId()).orElseThrow(() -> new IllegalArgumentException("해당 장소는 존재하지 않습니다."));
 
         Review review = Review.builder()
