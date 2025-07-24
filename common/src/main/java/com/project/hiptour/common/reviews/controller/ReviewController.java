@@ -1,10 +1,12 @@
 package com.project.hiptour.common.reviews.controller;
 
 import com.project.hiptour.common.reviews.dto.CreateReviewRequestDto;
+import com.project.hiptour.common.reviews.dto.UpdateReviewRequestDto;
 import com.project.hiptour.common.reviews.entity.Review;
 import com.project.hiptour.common.reviews.repository.PlaceRepository;
 import com.project.hiptour.common.reviews.service.CreateReviewService;
 import com.project.hiptour.common.reviews.service.ReviewQueryService;
+import com.project.hiptour.common.reviews.service.UpdateReviewService;
 import com.project.hiptour.common.users.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class ReviewController {
     private final CreateReviewService createReviewService;
     private final ReviewQueryService reviewQueryService;
+    private final UpdateReviewService updateReviewService;
 
     @PostMapping("/places/{placeId}/reviews")
     public ResponseEntity<?> createReview(
@@ -36,6 +39,9 @@ public class ReviewController {
  * **/
     }
 
+    /**
+     * 자신이 작성한 리뷰에 대한 기능
+     * **/
     @GetMapping("/places/{placeId}/my_review")
     public ResponseEntity<?> getMyReview(
             @PathVariable Long placeId
@@ -48,5 +54,16 @@ public class ReviewController {
                 "content", target.getContent(),
                 "imageUrls", target.getImageUrls()//이미지에 대한 내용 논의 필요
         ))).orElse(ResponseEntity.noContent().build());
+    }
+
+    @PatchMapping("/reviews/{reviewId}")
+    public ResponseEntity<?> updateReview(
+            @PathVariable Long reviewId,
+            @RequestBody UpdateReviewRequestDto requestDto
+            //사용자 인증 정보 필요
+            ) {
+        User user = new User();//임시 객체
+        updateReviewService.update(reviewId, requestDto, user);
+        return ResponseEntity.ok().build();
     }
 }

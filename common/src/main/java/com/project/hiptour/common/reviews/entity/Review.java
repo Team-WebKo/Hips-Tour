@@ -32,4 +32,10 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public void update(String content, Boolean isLove, List<String> imageUrls) {
+        if (content != null) this.content = content;
+        if (isLove != null) this.isLove = isLove;
+        if (imageUrls != null) this.imageUrls = imageUrls;
+    }
 }
