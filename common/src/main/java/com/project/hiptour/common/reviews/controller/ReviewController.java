@@ -1,22 +1,16 @@
 package com.project.hiptour.common.reviews.controller;
 
 import com.project.hiptour.common.reviews.dto.CreateReviewRequestDto;
+import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
 import com.project.hiptour.common.reviews.dto.UpdateReviewRequestDto;
 import com.project.hiptour.common.reviews.entity.Review;
-import com.project.hiptour.common.reviews.repository.PlaceRepository;
-import com.project.hiptour.common.reviews.service.CreateReviewService;
-import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
-import com.project.hiptour.common.reviews.service.ReviewService;
+import com.project.hiptour.common.reviews.service.*;
+import com.project.hiptour.common.users.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import com.project.hiptour.common.reviews.service.DeleteReviewService;
-import com.project.hiptour.common.reviews.service.ReviewQueryService;
-import com.project.hiptour.common.reviews.service.UpdateReviewService;
-import com.project.hiptour.common.users.entity.User;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +36,7 @@ public class ReviewController {
             @Parameter(description = "가져올 개수") @RequestParam int limit
     ) {
         return reviewService.getReviewsByPlaceId(placeId, offset, limit);
+    }
 
     @PostMapping("/places/{placeId}/reviews")
     public ResponseEntity<?> createReview(
