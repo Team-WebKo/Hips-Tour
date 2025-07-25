@@ -5,14 +5,20 @@ import com.project.hiptour.common.reviews.dto.UpdateReviewRequestDto;
 import com.project.hiptour.common.reviews.entity.Review;
 import com.project.hiptour.common.reviews.repository.PlaceRepository;
 import com.project.hiptour.common.reviews.service.CreateReviewService;
+import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
+import com.project.hiptour.common.reviews.service.ReviewService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import com.project.hiptour.common.reviews.service.DeleteReviewService;
 import com.project.hiptour.common.reviews.service.ReviewQueryService;
 import com.project.hiptour.common.reviews.service.UpdateReviewService;
 import com.project.hiptour.common.users.entity.User;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,10 +26,22 @@ import java.util.Optional;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class ReviewController {
+
     private final CreateReviewService createReviewService;
+    private final ReviewService reviewService;
     private final ReviewQueryService reviewQueryService;
     private final UpdateReviewService updateReviewService;
     private final DeleteReviewService deleteReviewService;
+
+
+    @Operation(summary = "리뷰 목록 조회", description = "장소 ID(placeId)에 해당하는 리뷰 offset, limit 나눠 조회")
+    @GetMapping("/place/{placeId}")
+    public List<ReviewListResponseDto> getReviewsByPlaceId(
+            @Parameter(description = "장소 ID") @PathVariable Long placeId,
+            @Parameter(description = "처음 가져올 개수") @RequestParam int offset,
+            @Parameter(description = "가져올 개수") @RequestParam int limit
+    ) {
+        return reviewService.getReviewsByPlaceId(placeId, offset, limit);
 
     @PostMapping("/places/{placeId}/reviews")
     public ResponseEntity<?> createReview(

@@ -4,8 +4,11 @@ import com.project.hiptour.common.place.Place;
 import com.project.hiptour.common.reviews.global.entity.BaseEntity;
 import com.project.hiptour.common.users.entity.User;
 import jakarta.persistence.*;
+
+import lombok.Getter;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
 
 import java.util.List;
 
