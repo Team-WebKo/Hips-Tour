@@ -1,9 +1,14 @@
 package com.project.hiptour.common.reviews.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class ReviewResponseDto {
+@Setter
+@Getter
+public class CreateReviewResponseDto {
     private Long reviewId;
     private Long placeId;
     private String content;

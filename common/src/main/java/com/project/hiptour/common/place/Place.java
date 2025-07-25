@@ -1,11 +1,14 @@
 package com.project.hiptour.common.place;
 
+import com.project.hiptour.common.reviews.entity.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,6 +18,9 @@ public class Place {
     private Long id;
 
     private String placeName;
+
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 
     @Embedded
     private GeoPoint geoPoint;

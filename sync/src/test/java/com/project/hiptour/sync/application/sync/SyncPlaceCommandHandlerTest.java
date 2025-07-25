@@ -11,7 +11,7 @@ import com.project.hiptour.sync.dto.TourApiResponseDto;
 import com.project.hiptour.sync.external.api.TourDataApiCaller;
 import com.project.hiptour.sync.infra.mapper.PlaceMapper;
 import com.project.hiptour.sync.infra.mapper.TourApiDtoMapper;
-import com.project.hiptour.sync.infra.persistence.PlaceRepository;
+import com.project.hiptour.common.reviews.repository.PlaceRepository;
 import com.project.hiptour.sync.infra.persistence.SyncLogRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,6 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static com.project.hiptour.sync.application.util.TourApiTestJsonFactory.createJsonFromItems;
 
 @ExtendWith(MockitoExtension.class)
 class SyncPlaceCommandHandlerTest {
