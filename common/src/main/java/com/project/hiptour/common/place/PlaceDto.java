@@ -1,4 +1,4 @@
-package com.project.hiptour.sync.dto;
+package com.project.hiptour.common.place;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

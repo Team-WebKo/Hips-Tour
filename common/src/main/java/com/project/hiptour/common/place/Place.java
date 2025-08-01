@@ -33,10 +33,10 @@ public class Place {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Place(String placeName, String address1, String address2, GeoPoint geoPoint) {
+    public Place(String placeName, String address1, String address2/**, GeoPoint geoPoint**/) {
         this.placeName = placeName;
         this.address1 = address1;
         this.address2 = address2;
-        this.geoPoint = geoPoint;
+//        this.geoPoint = geoPoint;
     }
 }

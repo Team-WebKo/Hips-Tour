@@ -1,7 +1,7 @@
 package com.project.hiptour.sync.infra.api;
 
 import com.project.hiptour.sync.config.TourApiProperties;
-import com.project.hiptour.sync.dto.PlaceDto;
+import com.project.hiptour.common.place.PlaceDto;
 import com.project.hiptour.sync.dto.TourApiDto;
 import com.project.hiptour.sync.dto.TourApiItem;
 import com.project.hiptour.sync.external.api.TourDataApiCaller;
