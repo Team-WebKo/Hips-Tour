@@ -9,6 +9,6 @@ public class PlaceDto {
     private String name;
     private String address1;
     private String address2;
-    private double latitude;
-    private double longitude;
+//    private double latitude;
+//    private double longitude;
 }
