@@ -2,8 +2,10 @@ package com.project.hiptour.common.application.reviews.service;
 
 import com.project.hiptour.common.place.Place;
 import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
+import com.project.hiptour.common.reviews.dto.ReviewPinRequestDto;
 import com.project.hiptour.common.reviews.entity.Review;
-import com.project.hiptour.common.reviews.service.ReviewServiceImpl;
+import com.project.hiptour.common.reviews.global.exception.ReviewNotFoundException;
+import com.project.hiptour.common.reviews.serviceImpl.ReviewServiceImpl;
 import com.project.hiptour.common.users.entity.User;
 import com.project.hiptour.common.reviews.global.exception.PlaceNotFoundException;
 import com.project.hiptour.common.reviews.repository.PlaceRepository;
@@ -13,21 +15,23 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.util.Arrays;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Optional;
 import java.lang.reflect.Field;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.mockito.BDDMockito.given;
-
-
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceImplTest {
@@ -41,13 +45,12 @@ class ReviewServiceImplTest {
     @InjectMocks
     private ReviewServiceImpl reviewService;
 
-    private Place place;  // 실제 엔티티 사용 (리플렉션으로 id 주입)
-    private User user;    // 실제 엔티티 사용 (리플렉션으로 userId/nickname 주입)
+    private Place place;
+    private User user;
 
     @BeforeEach
     void setUp() throws Exception {
         place = new Place("테스트장소", "서울시 어딘가", "상세주소", null);
-        // 테스트id
         setPrivateField(place, "id", 1L);
 
         user = User.class.getDeclaredConstructor().newInstance();
@@ -56,7 +59,7 @@ class ReviewServiceImplTest {
     }
 
     @Test
-    @DisplayName("offset=0, limit=2 → 첫 2개 리뷰를 반환한다")
+    @DisplayName("ex) offset=0, limit=2 → 첫 2개 리뷰를 반환")
     void getReviews_firstPage() {
         // given
         Long placeId = 1L;
@@ -81,8 +84,10 @@ class ReviewServiceImplTest {
                 .imageUrls(List.of("b.jpg", "c.jpg"))
                 .build();
 
+        Pageable pageable = PageRequest.of(offset, limit);
+
         given(placeRepository.findById(placeId)).willReturn(Optional.of(place));
-        given(reviewRepository.findByPlaceIdWithOffsetLimit(placeId, offset, limit))
+        given(reviewRepository.findByPlaceIdOrderedWithOffsetLimit(placeId, pageable))
                 .willReturn(List.of(r1, r2));
 
         // when
@@ -102,12 +107,12 @@ class ReviewServiceImplTest {
         assertThat(result.get(1).getImageUrls()).containsExactly("b.jpg", "c.jpg");
 
         verify(placeRepository, times(1)).findById(placeId);
-        verify(reviewRepository, times(1)).findByPlaceIdWithOffsetLimit(placeId, offset, limit);
+        verify(reviewRepository, times(1)).findByPlaceIdOrderedWithOffsetLimit(placeId, pageable);
         verifyNoMoreInteractions(placeRepository, reviewRepository);
     }
 
     @Test
-    @DisplayName("offset=2, limit=2 → 다음 페이지(추가 2개)를 반환한다")
+    @DisplayName("ex) offset=2, limit=2 → 다음 페이지(추가 2개)를 반환")
     void getReviews_nextPage() {
         // given
         Long placeId = 1L;
@@ -123,8 +128,10 @@ class ReviewServiceImplTest {
                 .imageUrls(List.of())
                 .build();
 
+        Pageable pageable = PageRequest.of(offset, limit);
+
         given(placeRepository.findById(placeId)).willReturn(Optional.of(place));
-        given(reviewRepository.findByPlaceIdWithOffsetLimit(placeId, offset, limit))
+        given(reviewRepository.findByPlaceIdOrderedWithOffsetLimit(placeId, pageable))
                 .willReturn(List.of(r3));
 
         // when
@@ -136,18 +143,16 @@ class ReviewServiceImplTest {
         assertThat(result.get(0).getContent()).isEqualTo("리뷰3");
 
         verify(placeRepository, times(1)).findById(placeId);
-        verify(reviewRepository, times(1)).findByPlaceIdWithOffsetLimit(placeId, offset, limit);
+        verify(reviewRepository, times(1)).findByPlaceIdOrderedWithOffsetLimit(placeId, pageable);
         verifyNoMoreInteractions(placeRepository, reviewRepository);
     }
 
     @Test
     @DisplayName("존재하지 않는 placeId 로 요청 시 PlaceNotFoundException 발생")
     void getReviews_placeNotFound() {
-        // given
         Long invalidPlaceId = 999L;
         given(placeRepository.findById(invalidPlaceId)).willReturn(Optional.empty());
 
-        // when & then
         assertThatThrownBy(() -> reviewService.getReviewsByPlaceId(invalidPlaceId, 0, 5))
                 .isInstanceOf(PlaceNotFoundException.class);
 
@@ -155,19 +160,90 @@ class ReviewServiceImplTest {
         verifyNoInteractions(reviewRepository);
     }
 
-    /**
-     * 테스트에서만 사용하는 리플렉션 유틸
-     * - 엔티티의 private 필드(id, userId 등)를 강제로 주입
-     */
     private static void setPrivateField(Object target, String fieldName, Object value) {
         try {
             Field f = target.getClass().getDeclaredField(fieldName);
             f.setAccessible(true);
             f.set(target, value);
-        } catch (NoSuchFieldException e) {
-            throw new IllegalStateException("필드를 찾을 수 없습니다. 대상=" + target.getClass() + ", 필드명=" + fieldName, e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException("필드 접근에 실패했습니다. 대상=" + target.getClass() + ", 필드명=" + fieldName, e);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new IllegalStateException("필드 주입 실패: " + fieldName, e);
         }
+    }
+
+    @Test
+    @DisplayName("리뷰가 존재하지 않으면 ReviewNotFoundException 발생")
+    void pinReview_reviewNotFound() {
+        // given
+        Long nonExistentReviewId = 999L;
+        ReviewPinRequestDto requestDto = new ReviewPinRequestDto();
+        requestDto.setPinned(true);
+
+        given(reviewRepository.findById(nonExistentReviewId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> reviewService.pinReview(nonExistentReviewId, requestDto))
+                .isInstanceOf(ReviewNotFoundException.class);
+
+        verify(reviewRepository, times(1)).findById(nonExistentReviewId);
+        verifyNoMoreInteractions(reviewRepository);
+    }
+
+    @Test
+    void 리뷰_핀_지정_성공() {
+        // given
+        Long reviewId = 1L;
+        ReviewPinRequestDto requestDto = new ReviewPinRequestDto(true);
+        Review review = Mockito.spy(Review.builder()
+                .reviewId(reviewId)
+                .place(place)
+                .user(user)
+                .content("내용")
+                .isLove(true)
+                .imageUrls(List.of())
+                .build());
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        // when
+        reviewService.pinReview(reviewId, requestDto);
+
+        // then
+        verify(review, times(1)).pin();
+        verify(review, never()).unpin();
+    }
+
+    @Test
+    void 리뷰_핀_해제_성공() {
+        // given
+        Long reviewId = 1L;
+        ReviewPinRequestDto requestDto = new ReviewPinRequestDto(false);
+        Review review = Mockito.spy(Review.builder()
+                .reviewId(reviewId)
+                .place(place)
+                .user(user)
+                .content("내용")
+                .isLove(true)
+                .imageUrls(List.of())
+                .build());
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+
+        // when
+        reviewService.pinReview(reviewId, requestDto);
+
+        // then
+        verify(review, times(1)).unpin();
+        verify(review, never()).pin();
+    }
+
+    @Test
+    void 존재하지_않는_리뷰에_핀_설정_시도시_예외_발생() {
+        // given
+        Long reviewId = 999L;
+        ReviewPinRequestDto requestDto = new ReviewPinRequestDto(true);
+
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(ReviewNotFoundException.class, () ->
+                reviewService.pinReview(reviewId, requestDto));
     }
 }

@@ -2,6 +2,7 @@ package com.project.hiptour.common.reviews.controller;
 
 import com.project.hiptour.common.reviews.dto.CreateReviewRequestDto;
 import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
+import com.project.hiptour.common.reviews.dto.ReviewPinRequestDto;
 import com.project.hiptour.common.reviews.dto.UpdateReviewRequestDto;
 import com.project.hiptour.common.reviews.entity.Review;
 import com.project.hiptour.common.reviews.service.*;
@@ -36,6 +37,15 @@ public class ReviewController {
             @Parameter(description = "가져올 개수") @RequestParam int limit
     ) {
         return reviewService.getReviewsByPlaceId(placeId, offset, limit);
+    }
+    @Operation(summary = "리뷰 핀 고정/해제", description = "특정 리뷰의 핀 상태를 수정한다.")
+    @PatchMapping("/{reviewId}/pin")
+    public ResponseEntity<Void> updateReviewPinStatus(
+            @PathVariable Long reviewId,
+            @RequestBody ReviewPinRequestDto requestDto
+    ) {
+        reviewService.pinReview(reviewId, requestDto);
+        return ResponseEntity.noContent().build(); // 204 No Content
     }
 
     @PostMapping("/places/{placeId}/reviews")

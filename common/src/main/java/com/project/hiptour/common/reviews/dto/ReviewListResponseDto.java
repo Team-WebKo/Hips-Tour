@@ -15,4 +15,6 @@ public class ReviewListResponseDto {
     private List<String> imageUrls;
     private Long userId;
     private String nickname;
+    private Boolean pinned;
+
 }
