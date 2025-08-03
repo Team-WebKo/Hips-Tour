@@ -14,7 +14,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Builder
 public class Place {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,6 +32,7 @@ public class Place {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    @Builder
     public Place(String placeName, String address1, String address2/**, GeoPoint geoPoint**/) {
         this.placeName = placeName;
         this.address1 = address1;

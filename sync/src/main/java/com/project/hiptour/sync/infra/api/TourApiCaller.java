@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 @Component
@@ -41,7 +42,9 @@ public class TourApiCaller implements TourDataApiCaller {
                 "_type", properties.getType()
         );
 
-        String url = ParamsBuilder.toUrl(properties.getHost(), paramMap);
+        TourApiRequestParam requestParam = new TourApiRequestParam(properties);
+
+        String url = ParamsBuilder.toUrl(properties.getHost(), requestParam.toMap());
         return restTemplate.getForObject(url, String.class);
     }
 
@@ -69,9 +72,25 @@ public class TourApiCaller implements TourDataApiCaller {
                 .map(dto -> new PlaceDto(
                         dto.getPlaceName(),
                         dto.getAddress1(),
-                        dto.getAddress2(),
-                        dto.getLatitude(),
-                        dto.getLongitude()))
+                        dto.getAddress2()
+//                        dto.getLatitude(),
+//                        dto.getLongitude()
+                ))
                 .collect(Collectors.toList());
     }
+
+    class TourApiRequestParam{
+        private int numOfRows;
+
+        private TourApiRequestParam(TourApiProperties properties){
+            this.numOfRows = (int)properties.getDefaultRows();
+
+        }
+        
+        Map<String, Object> toMap(){
+            return Map.of("numOfRows", this.numOfRows);
+        }
+
+    }
+
 }

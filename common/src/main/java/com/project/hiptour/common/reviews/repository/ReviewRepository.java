@@ -17,7 +17,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
   Optional<Review> findByUserAndPlace(User user, Place place);
 
     //무한스크롤이라 한번에 다받으면 과부화 올까봐  JPA Pageable로 처리
-    @Query("SELECT r FROM Review r WHERE r.placeId = :placeId ORDER BY r.createdAt DESC")
+    @Query("SELECT r FROM Review r WHERE r.place.id = :placeId ORDER BY r.createdAt DESC")
     List<Review> findByPlaceIdWithOffsetLimit(
             @Param("placeId") Long placeId,
             Pageable pageable

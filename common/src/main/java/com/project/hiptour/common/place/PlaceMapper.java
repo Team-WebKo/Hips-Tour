@@ -10,8 +10,8 @@ public class PlaceMapper {
         return new Place(
                 dto.getName(),
                 dto.getAddress1(),
-                dto.getAddress2(),
-                new GeoPoint(dto.getLatitude(), dto.getLongitude())
+                dto.getAddress2()
+//                new GeoPoint(dto.getLatitude(), dto.getLongitude())
         );
     }
 
