@@ -1,7 +1,7 @@
 package com.project.hiptour.sync.infra.api;
 
 import com.project.hiptour.sync.config.TourApiProperties;
-import com.project.hiptour.common.place.PlaceDto;
+import com.project.hiptour.sync.dto.PlaceDto;
 import com.project.hiptour.sync.dto.TourApiDto;
 import com.project.hiptour.sync.dto.TourApiItem;
 import com.project.hiptour.sync.external.api.TourDataApiCaller;
@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 @Component
@@ -42,9 +41,7 @@ public class TourApiCaller implements TourDataApiCaller {
                 "_type", properties.getType()
         );
 
-        TourApiRequestParam requestParam = new TourApiRequestParam(properties);
-
-        String url = ParamsBuilder.toUrl(properties.getHost(), requestParam.toMap());
+        String url = ParamsBuilder.toUrl(properties.getHost(), paramMap);
         return restTemplate.getForObject(url, String.class);
     }
 
@@ -72,25 +69,9 @@ public class TourApiCaller implements TourDataApiCaller {
                 .map(dto -> new PlaceDto(
                         dto.getPlaceName(),
                         dto.getAddress1(),
-                        dto.getAddress2()
-//                        dto.getLatitude(),
-//                        dto.getLongitude()
-                ))
+                        dto.getAddress2(),
+                        dto.getLatitude(),
+                        dto.getLongitude()))
                 .collect(Collectors.toList());
     }
-
-    class TourApiRequestParam{
-        private int numOfRows;
-
-        private TourApiRequestParam(TourApiProperties properties){
-            this.numOfRows = (int)properties.getDefaultRows();
-
-        }
-        
-        Map<String, Object> toMap(){
-            return Map.of("numOfRows", this.numOfRows);
-        }
-
-    }
-
 }
