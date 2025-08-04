@@ -50,7 +50,7 @@ class ReviewServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        place = new Place("테스트장소", "서울시 어딘가", "상세주소", null);
+        place = new Place("테스트장소", "서울시 어딘가", "상세주소");
         setPrivateField(place, "id", 1L);
 
         user = User.class.getDeclaredConstructor().newInstance();
