@@ -23,8 +23,8 @@ public class TourApiDtoMapper {
         return new Place(
                 dto.getPlaceName(),
                 dto.getAddress1(),
-                dto.getAddress2(),
-                new GeoPoint(dto.getLatitude(), dto.getLongitude())
+                dto.getAddress2()
+//                new GeoPoint(dto.getLatitude(), dto.getLongitude())
         );
     }
 

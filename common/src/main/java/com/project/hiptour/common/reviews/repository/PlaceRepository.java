@@ -9,5 +9,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PlaceRepository extends JpaRepository<Place, Long> {
     boolean existsByPlaceNameAndAddress1(String placeName, String address1);
-
 }

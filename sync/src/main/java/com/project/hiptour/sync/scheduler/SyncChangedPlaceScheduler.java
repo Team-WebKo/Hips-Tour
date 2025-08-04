@@ -1,7 +1,7 @@
 package com.project.hiptour.sync.scheduler;
 
 import com.project.hiptour.sync.application.SyncPlaceCommandHandler;
-import com.project.hiptour.sync.dto.PlaceDto;
+import com.project.hiptour.common.place.PlaceDto;
 import com.project.hiptour.sync.entity.SyncLog;
 import com.project.hiptour.sync.infra.api.TourApiCaller;
 import com.project.hiptour.sync.infra.persistence.SyncLogRepository;

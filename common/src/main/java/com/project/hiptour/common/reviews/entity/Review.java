@@ -16,6 +16,7 @@ import java.util.List;
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Review extends BaseEntity {
@@ -23,7 +24,7 @@ public class Review extends BaseEntity {
     private Long reviewId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id", nullable = false)
+    @JoinColumn(name = "placeId", nullable = false)
     @NotNull(message = "여행지를 선택해 주세요.")
     private Place place;
 

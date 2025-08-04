@@ -1,6 +1,6 @@
 package com.project.hiptour.sync.external.api;
 
-import com.project.hiptour.sync.dto.PlaceDto;
+import com.project.hiptour.common.place.PlaceDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
