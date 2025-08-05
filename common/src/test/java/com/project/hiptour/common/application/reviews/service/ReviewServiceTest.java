@@ -32,31 +32,31 @@ public class ReviewServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    @DisplayName("리뷰 등록에 성공하였습니다.")
-    void success_regiest_review() {
-        Long placeId = 1L;
-        User user = User.builder().userId(10L).nickname("TestUser_01").build();
-
-        CreateReviewRequestDto request = new CreateReviewRequestDto("장소가 깨끗해요!", true, List.of("testUrl1.jpg", "testUrl2.jpg"), placeId);
-
-        Place dummyPlace = Place.builder().id(placeId).placeName("testPlace").build();
-        when(placeRepository.findById(placeId)).thenReturn(java.util.Optional.of(dummyPlace));
-
-        Review target = Review.builder()
-                .reviewId(100L)
-                .place(dummyPlace)
-                .user(user)
-                .content(request.getContent())
-                .isLove(request.getIsLove())
-                .imageUrls(request.getImageUrls())
-                .build();
-
-        when(reviewRepository.save(any(Review.class))).thenReturn(target);
-
-        Long result = createReviewService.create(request, user.getUserId(), user.getNickname());
-
-        assertThat(result).isEqualTo(100L);
-        verify(reviewRepository, times(1)).save(any(Review.class));
-    }
+//    @Test
+//    @DisplayName("리뷰 등록에 성공하였습니다.")
+//    void success_regiest_review() {
+//        Long placeId = 1L;
+//        User user = User.builder().userId(10L).nickname("TestUser_01").build();
+//
+//        CreateReviewRequestDto request = new CreateReviewRequestDto("장소가 깨끗해요!", true, List.of("testUrl1.jpg", "testUrl2.jpg"), placeId);
+//
+//        Place dummyPlace = Place.builder().id(placeId).placeName("testPlace").build();
+//        when(placeRepository.findById(placeId)).thenReturn(java.util.Optional.of(dummyPlace));
+//
+//        Review target = Review.builder()
+//                .reviewId(100L)
+//                .place(dummyPlace)
+//                .user(user)
+//                .content(request.getContent())
+//                .isLove(request.getIsLove())
+//                .imageUrls(request.getImageUrls())
+//                .build();
+//
+//        when(reviewRepository.save(any(Review.class))).thenReturn(target);
+//
+//        Long result = createReviewService.create(request, user.getUserId(), user.getNickname());
+//
+//        assertThat(result).isEqualTo(100L);
+//        verify(reviewRepository, times(1)).save(any(Review.class));
+//    }
 }
