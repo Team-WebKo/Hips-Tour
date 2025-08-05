@@ -2,6 +2,7 @@ package com.project.hiptour.common.place;
 
 import com.project.hiptour.common.reviews.entity.Review;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

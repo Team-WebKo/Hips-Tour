@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -38,9 +39,24 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    private Boolean pinned = false;
+
+    private LocalDateTime pinnedAt;
+
+    public void pin() {
+        this.pinned = true;
+        this.pinnedAt = LocalDateTime.now(); // 가장 최근에 고정된 리뷰가 위로 오도록
+    }
+
+    public void unpin() {
+        this.pinned = false;
+        this.pinnedAt = null; // 다시 일반 리뷰처럼 정렬됨
+    }
     public void update(String content, Boolean isLove, List<String> imageUrls) {
         if (content != null) this.content = content;
         if (isLove != null) this.isLove = isLove;
         if (imageUrls != null) this.imageUrls = imageUrls;
     }
+
+
 }
