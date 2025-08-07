@@ -9,6 +9,7 @@ import com.project.hiptour.sync.external.api.TourDataApiCaller;
 import com.project.hiptour.common.place.PlaceMapper;
 import com.project.hiptour.sync.infra.mapper.TourApiDtoMapper;
 import com.project.hiptour.common.reviews.repository.PlaceRepository;
+import com.project.hiptour.sync.infra.persistence.PlaceSyncRepository;
 import com.project.hiptour.sync.infra.persistence.SyncLogRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,20 +23,20 @@ import java.util.List;
 public class SyncPlaceCommandHandler {
     private final TourDataApiCaller tourDataApiCaller;
     private final TourApiDtoMapper mapper;
-    private final PlaceRepository placeRepository;
+    private final PlaceSyncRepository placeSyncRepository;
     private final SyncLogRepository logRepository;
     private final LogService logService;
     private final PlaceMapper placeMapper;
 
     public SyncPlaceCommandHandler(TourDataApiCaller tourDataApiCaller,
                                    TourApiDtoMapper mapper,
-                                   PlaceRepository placeRepository,
+                                   PlaceSyncRepository placeSyncRepository,
                                    SyncLogRepository logRepository,
                                    LogService logService,
                                    PlaceMapper placeMapper) {
         this.tourDataApiCaller = tourDataApiCaller;
         this.mapper = mapper;
-        this.placeRepository = placeRepository;
+        this.placeSyncRepository = placeSyncRepository;
         this.logRepository = logRepository;
         this.logService = logService;
         this.placeMapper = placeMapper;
@@ -50,7 +51,7 @@ public class SyncPlaceCommandHandler {
             List<TourApiDto> dtos = mapper.toDtoList(items);
             List<Place> places = mapper.toEntity(dtos);
 
-            placeRepository.saveAll(places);
+            placeSyncRepository.saveAll(places);
 
             SyncLog log = SyncLog.success("PLACE", places.size(), LocalDateTime.now());
             logRepository.save(log);
@@ -63,6 +64,6 @@ public class SyncPlaceCommandHandler {
 
     public void handle(List<PlaceDto> placeDtoList) {
         List<Place> places = placeMapper.toEntity(placeDtoList);
-        placeRepository.saveAll(places);
+        placeSyncRepository.saveAll(places);
     }
 }
