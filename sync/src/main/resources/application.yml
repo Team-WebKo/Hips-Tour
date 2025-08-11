@@ -1,12 +1,18 @@
 tourapi:
-  host: https://apis.data.go.kr/B551011/KorService1/areaBasedList2
-  service-key: #${서비스 키}
-  mobiles-os: ETC
+  base-url: https://apis.data.go.kr/B551011/KorService1/areaBasedList2
+  service-key: "tYu2ASMUNpTRGpR6+M3QuT8REPkbiUJCUM4zFhFFCDDLMETQY5n8K0B/31XV/blCnhmRp5fSlntXLrRsR/6jfw=="
+  mobile-os: ETC
   mobile-app: hipstour
-  default-rows: 100
-  default-page: 1
+#  default-rows: 100
+#  default-page: 1
   type: json
 
 sync:
   schedule:
-    place-cron: "0 0 1 * * *"
+    cron: "0 0 1 * * *"
+
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
