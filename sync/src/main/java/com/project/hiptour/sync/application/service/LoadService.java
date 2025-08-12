@@ -1,19 +1,23 @@
 package com.project.hiptour.sync.application.service;
 
 import com.project.hiptour.sync.application.port.TourApiPort;
+import com.project.hiptour.sync.domain.LoadStatus;
 import com.project.hiptour.sync.domain.SyncStatus;
 import com.project.hiptour.sync.domain.TourPlace;
 import com.project.hiptour.sync.global.dto.SyncPlaceDto;
+import com.project.hiptour.sync.infrastructure.persistence.LoadStatusRepository;
 import com.project.hiptour.sync.infrastructure.persistence.SyncStatusRepository;
 import com.project.hiptour.sync.infrastructure.persistence.TourPlaceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,51 +27,92 @@ public class LoadService {
     private final TourPlaceRepository tourPlaceRepository;
     private final PlaceMapper placeMapper;
     private final SyncStatusRepository syncStatusRepository;
+    private final LoadStatusRepository loadStatusRepository;
+
+    @Value("${sync.load.area-codes}")
+    private List<String> areaCodes;
+
+    private static final String JOB_NAME = "placeLoad";
+    private static final int DAILY_API_CALL_LIMIT = 950;
+    private static final String FINISHED_STATUS = "FINISHED";
 
     @Transactional
     public void loadAllPlaces() {
         log.info("TourAPI 전체 데이터 적재를 시작합니다.");
-        int pageNo = 1;
-        final int numOfRows = 100;
-        int totalSavedCount = 0;
+        Optional<LoadStatus> optionalLoadStatus = loadStatusRepository.findById(JOB_NAME);
 
-        while (true) {
-            try {
-                log.info("{} 페이지 데이터 적재를 시도합니다.", pageNo);
-                String jsonResponse = tourApiPort.fetchPlaceData(pageNo, numOfRows);
+        if (optionalLoadStatus.isPresent() && FINISHED_STATUS.equals(optionalLoadStatus.get().getLastSucceededAreaCode())) {
+            log.info("모든 지역의 데이터 적재가 완료되었습니다.");
+            return;
+        }
 
-                if (jsonResponse == null) {
-                    log.error("TourAPI로부터 응답을 받지 못했습니다. pageNo: {}", pageNo);
-                    break;
+        String startAreaCode = optionalLoadStatus.map(LoadStatus::getLastSucceededAreaCode).orElse(areaCodes.get(0));
+        int startPageNo = optionalLoadStatus.map(LoadStatus::getLastSucceededPageNo).map(page -> page + 1).orElse(1);
+
+        int apiCallCount = 0;
+        boolean startProcessing = false;
+
+        for (String areaCode : areaCodes) {
+            if (!startProcessing && !areaCode.equals(startAreaCode)) {
+                continue;
+            }
+            startProcessing = true;
+
+            log.info("지역코드 [{}] 데이터 적재를 시작합니다.", areaCode);
+            int currentPageNo = startPageNo;
+            startPageNo = 1;
+
+            while (true) {
+                if (apiCallCount >= DAILY_API_CALL_LIMIT) {
+                    log.info("일일 API 호출 제한에 도달했습니다. 작업을 종료합니다.");
+                    saveCurrentStatus(areaCode, currentPageNo - 1);
+                    return;
                 }
 
-                List<SyncPlaceDto> dtoList = placeMapper.parseResponseToDtoList(jsonResponse);
-                if (CollectionUtils.isEmpty(dtoList)) {
-                    log.info("더 이상 가져올 데이터가 없습니다. 적재 작업을 종료합니다.");
-                    break;
+                try {
+                    apiCallCount++;
+                    String jsonResponse = tourApiPort.fetchPlaceData(currentPageNo, 100, areaCode);
+                    if (jsonResponse == null) {
+                        break;
+                    }
+
+                    List<SyncPlaceDto> dtoList = placeMapper.parseResponseToDtoList(jsonResponse);
+                    if (CollectionUtils.isEmpty(dtoList)) {
+                        log.info("지역코드 [{}]의 모든 데이터를 적재했습니다.", areaCode);
+                        break;
+                    }
+
+                    List<TourPlace> entityList = placeMapper.mapDtoListToEntityList(dtoList);
+                    tourPlaceRepository.saveAll(entityList);
+                    currentPageNo++;
+
+                } catch (Exception e) {
+                    log.error("데이터 적재 중 areaCode={}, pageNo={}에서 오류가 발생했습니다.", areaCode, currentPageNo, e);
+                    return;
                 }
-
-                List<TourPlace> entityList = placeMapper.mapDtoListToEntityList(dtoList);
-                tourPlaceRepository.saveAll(entityList);
-                totalSavedCount += entityList.size();
-                pageNo++;
-
-                log.info("현재 페이지(pageNo={})에서 {}개의 정보를 적재하였습니다. (누적: {})", pageNo, entityList.size(), totalSavedCount);
-
-            } catch (Exception e) {
-                log.info("데이터 적재 중 pageNo={}에서 오류가 발생했습니다.", pageNo, e);
-                return;
             }
         }
 
-        updateLastSyncTimeToDB(LocalDateTime.now());
-        log.info("TourAPI 전체 데이터 적재 완료하였습니다. 총 {}개의 데이터가 저장되었습니다.", totalSavedCount);
+        saveCurrentStatus(FINISHED_STATUS, 0);
+        updateSyncServiceStartTime(LocalDateTime.now());
+        log.info("TourAPI 전체 데이터 적재 과정이 완료되었습니다.");
     }
 
-    private void updateLastSyncTimeToDB(LocalDateTime time) {
-        final String SYNC_ID = "placeSync";
-        SyncStatus status = new SyncStatus(SYNC_ID, time);
+    private void saveCurrentStatus(String areaCode, int pageNo) {
+        if (pageNo < 1) {
+            pageNo = 1;
+        }
+
+        LoadStatus currentStatus = new LoadStatus(JOB_NAME, areaCode, pageNo);
+        loadStatusRepository.save(currentStatus);
+        log.info("현재 작업 상태를 DB에 기록합니다. (areaCode: {}, pageNo: {})", areaCode, pageNo);
+    }
+
+    private void updateSyncServiceStartTime(LocalDateTime time) {
+        SyncStatus status = new SyncStatus("placeSync", time);
         syncStatusRepository.save(status);
-        log.info("전체 적재 작업 완료 시간을 DB에 기록했습니다. (동기화에 사용될) 기준 시간: {}", time);
+        log.info("전체 적재 작업 완료 시간을 DB에 기록했습니다. (동기화에 사용 될) 기준 시간: {}", time);
     }
 }
+
+

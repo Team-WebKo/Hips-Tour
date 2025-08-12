@@ -19,7 +19,7 @@ public class TourApiAdapter implements TourApiPort {
     private final TourApiProperties tourApiProperties;
 
     @Override
-    public String fetchPlaceData(int pageNo, int numOfRows) {
+    public String fetchPlaceData(int pageNo, int numOfRows, String areaCode) {
         String url = UriComponentsBuilder.fromHttpUrl(tourApiProperties.getBaseUrl() + "/areaBasedList2")
                 .queryParam("serviceKey", tourApiProperties.getServiceKey())
                 .queryParam("MobileOS", tourApiProperties.getMobileOS())
@@ -28,6 +28,7 @@ public class TourApiAdapter implements TourApiPort {
                 .queryParam("pageNo", pageNo)
                 .queryParam("numOfRows", numOfRows)
                 .queryParam("arrange", "A")
+                .queryParam("areaCode", areaCode)
                 // TODO: 필요한 파라미터 추가 (변경 시)
                 .build(true)
                 .toUriString();
@@ -46,7 +47,6 @@ public class TourApiAdapter implements TourApiPort {
 
     @Override
     public String fetchChangedPlaces(LocalDateTime lastSuccessTime, int pageNo, int numOfRows) {
-        // TODO: modifiedtime 파라미터를 추가하여 변경된 데이너만 가져오는 로직 구현
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String modifiedTime = lastSuccessTime.format(formatter);
 

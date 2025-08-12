@@ -22,9 +22,10 @@ public class TourApiAdapterTest {
         // given
         int pageNo = 1;
         int numOfRows = 10;
+        String areaCode = "1";
 
         // when
-        String response = tourApiAdapter.fetchPlaceData(pageNo, numOfRows);
+        String response = tourApiAdapter.fetchPlaceData(pageNo, numOfRows, areaCode);
 
         // then
         assertNotNull(response, "API 응답은 'null'이 아니어야 합니다.");

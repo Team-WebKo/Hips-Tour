@@ -5,15 +5,14 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation ("com.h2database:h2")
-        testImplementation(platform("org.junit:junit-bom:5.12.2"))
+        implementation(project(":common"))
+    testImplementation(platform("org.junit:junit-bom:5.12.2"))
 }
 
 tasks.named("bootJar") {
     enabled = false
 }
-
+4
 tasks.getByName<Jar>("jar") {
     enabled = true
 }
