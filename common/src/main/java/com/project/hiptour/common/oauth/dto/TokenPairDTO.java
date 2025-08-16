@@ -16,6 +16,8 @@ public class TokenPairDTO {
     public void printTokens(){
         System.out.println("Access Token : " + accessToken);
         System.out.println("Refresh Token : " + refreshToken);
+
+        System.out.println("발행 중인 토큰 출력 완료");
     }
 
     public String getAccessToken(){
