@@ -10,12 +10,28 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class PlaceMapper {
     private final ObjectMapper objectMapper;
+
+    public TourPlace mapDtoToNewEntity(SyncPlaceDto dto) {
+        String fullAddress = dto.getAddr1() + (dto.getAddr2() != null && !dto.getAddr2().isEmpty() ? " " + dto.getAddr2() : "");
+        return TourPlace.builder()
+                .contentId(dto.getContentid())
+                .title(dto.getTitle())
+                .address(fullAddress)
+                .imageUrl(dto.getFirstimage())
+                .build();
+    }
+
+    public void updateEntityFromDto(TourPlace tourPlace, SyncPlaceDto dto) {
+        String fullAddress = dto.getAddr1() + (dto.getAddr2() != null && !dto.getAddr2().isEmpty() ? " " + dto.getAddr2() : "");
+        tourPlace.setTitle(dto.getTitle());
+        tourPlace.setAddress(fullAddress);
+        tourPlace.setImageUrl(dto.getFirstimage());
+    }
 
     public List<SyncPlaceDto> parseResponseToDtoList(String jsonResponse) throws IOException {
         List<SyncPlaceDto> dtoList = new ArrayList<>();
@@ -30,21 +46,5 @@ public class PlaceMapper {
         }
 
         return dtoList;
-    }
-
-    public List<TourPlace> mapDtoListToEntityList(List<SyncPlaceDto> dtoList) {
-        return dtoList.stream()
-                .map(this::mapDtoToEntity)
-                .collect(Collectors.toList());
-    }
-
-    public TourPlace mapDtoToEntity(SyncPlaceDto dto) {
-        String fullAddress = dto.getAddr1() + (dto.getAddr2() != null && !dto.getAddr2().isEmpty() ? " " + dto.getAddr2() : "");
-        return TourPlace.builder()
-                .id(dto.getContentid())
-                .title(dto.getTitle())
-                .address(fullAddress)
-                .imageUrl(dto.getFirstimage())
-                .build();
     }
 }

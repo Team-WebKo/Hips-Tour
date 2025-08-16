@@ -66,7 +66,13 @@ public class SyncService {
                     LocalDateTime itemModifiedTime = LocalDateTime.parse(dto.getModifiedtime(), API_DATE_TIME_FORMATTER);
 
                     if (itemModifiedTime.isAfter(lastSyncTime)) {
-                        placesToSave.add(mapDtoToEntity(dto));
+                        TourPlace place = tourPlaceRepository.findByContentId(dto.getContentid())
+                                .map(existingPlace -> {
+                                    placeMapper.updateEntityFromDto(existingPlace, dto);
+                                    return existingPlace;
+                                })
+                                .orElseGet(() -> placeMapper.mapDtoToNewEntity(dto));
+                        placesToSave.add(place);
                     } else {
                         stopFlag = true;
                         break;
@@ -86,16 +92,6 @@ public class SyncService {
 
         updateLastSyncTimeToDB(syncStartedTime);
         log.info("TourAPI 변경분 동기화가 완료되었습니다.");
-    }
-
-    private TourPlace mapDtoToEntity(SyncPlaceDto dto) {
-        String fullAddress = dto.getAddr1() + (dto.getAddr2() != null && !dto.getAddr2().isEmpty() ? " " + dto.getAddr2() : "");
-        return TourPlace.builder()
-                .id(dto.getContentid())
-                .title(dto.getTitle())
-                .address(fullAddress)
-                .imageUrl(dto.getFirstimage())
-                .build();
     }
 
     private Optional<LocalDateTime> getLastSyncTimeFromDB() {

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,8 +83,18 @@ public class LoadService {
                         break;
                     }
 
-                    List<TourPlace> entityList = placeMapper.mapDtoListToEntityList(dtoList);
-                    tourPlaceRepository.saveAll(entityList);
+                    List<TourPlace> placesToSave = new ArrayList<>();
+                    for (SyncPlaceDto dto : dtoList) {
+                        TourPlace place = tourPlaceRepository.findByContentId(dto.getContentid())
+                                .map(existingPlace -> {
+                                    placeMapper.updateEntityFromDto(existingPlace, dto);
+                                    return existingPlace;
+                                })
+                                .orElseGet(() -> placeMapper.mapDtoToNewEntity(dto));
+                        placesToSave.add(place);
+                    }
+                    tourPlaceRepository.saveAll(placesToSave);
+
                     currentPageNo++;
 
                 } catch (Exception e) {
