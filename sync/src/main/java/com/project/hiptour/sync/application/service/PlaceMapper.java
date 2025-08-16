@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -32,22 +33,18 @@ public class PlaceMapper {
     }
 
     public List<TourPlace> mapDtoListToEntityList(List<SyncPlaceDto> dtoList) {
-        List<TourPlace> entityList = new ArrayList<>();
+        return dtoList.stream()
+                .map(this::mapDtoToEntity)
+                .collect(Collectors.toList());
+    }
 
-        for (SyncPlaceDto dto : dtoList) {
-            String fullAddress = dto.getAddr1() + (dto.getAddr2() != null && !dto.getAddr2().isEmpty() ? " " + dto.getAddr2() : "");
-            TourPlace entity = TourPlace.builder()
-                    .id(dto.getContentid())
-                    .title(dto.getTitle())
-                    .address(fullAddress)
-                    .contentTypeId(null)
-                    .imageUrl(dto.getFirstimage())
-                    .description(null)
-                    .build();
-
-            entityList.add(entity);
-        }
-
-        return entityList;
+    public TourPlace mapDtoToEntity(SyncPlaceDto dto) {
+        String fullAddress = dto.getAddr1() + (dto.getAddr2() != null && !dto.getAddr2().isEmpty() ? " " + dto.getAddr2() : "");
+        return TourPlace.builder()
+                .id(dto.getContentid())
+                .title(dto.getTitle())
+                .address(fullAddress)
+                .imageUrl(dto.getFirstimage())
+                .build();
     }
 }
