@@ -35,10 +35,19 @@ dependencies {
 	runtimeOnly("com.mysql:mysql-connector-j")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+	testImplementation("org.mockito:mockito-core:5.12.0")
+	testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+}
+
+tasks.test {
+	useJUnitPlatform()
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+

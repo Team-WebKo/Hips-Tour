@@ -1,7 +1,9 @@
 package com.project.hiptour.common.login.test.service;
 
 import com.project.hiptour.common.repository.UserTestRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserTestService {
 
     private final UserTestRepository userTestRepository;
