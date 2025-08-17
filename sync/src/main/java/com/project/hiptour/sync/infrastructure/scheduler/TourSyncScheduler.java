@@ -20,6 +20,7 @@ public class TourSyncScheduler {
     private static final String SYNC_ID = "placeSync";
 
     @Scheduled(cron = "${sync.schedule.cron}")
+    @Transactional
     public void runSync() {
         log.info("정기 TourAPI 데이터 동기화 스케쥴을 시작합니다.");
 
