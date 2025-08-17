@@ -1,8 +1,8 @@
 package com.project.hiptour.sync.infra.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.hiptour.common.place.GeoPoint;
-import com.project.hiptour.common.place.Place;
+import com.project.hiptour.common.entity.place.embedable.GeoPoint;
+import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.sync.dto.TourApiDto;
 import com.project.hiptour.sync.dto.TourApiItem;
 import com.project.hiptour.sync.dto.TourApiResponseDto;
@@ -23,8 +23,9 @@ public class TourApiDtoMapper {
         return new Place(
                 dto.getPlaceName(),
                 dto.getAddress1(),
-                dto.getAddress2()
-//                new GeoPoint(dto.getLatitude(), dto.getLongitude())
+                dto.getAddress2(),
+                new GeoPoint(dto.getLatitude(), dto.getLongitude()),
+                null
         );
     }
 
