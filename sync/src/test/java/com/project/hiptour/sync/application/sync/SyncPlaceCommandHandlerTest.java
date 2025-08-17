@@ -1,7 +1,7 @@
 package com.project.hiptour.sync.application.sync;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.hiptour.common.place.Place;
+import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.sync.application.LogService;
 import com.project.hiptour.sync.application.SyncPlaceCommandHandler;
 import com.project.hiptour.sync.application.util.TourApiTestJsonFactory;
@@ -26,7 +26,6 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static com.project.hiptour.sync.application.util.TourApiTestJsonFactory.createJsonFromItems;
 
 @ExtendWith(MockitoExtension.class)
 class SyncPlaceCommandHandlerTest {
