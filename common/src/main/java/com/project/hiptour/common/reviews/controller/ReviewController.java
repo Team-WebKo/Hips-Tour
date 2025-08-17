@@ -1,11 +1,11 @@
 package com.project.hiptour.common.reviews.controller;
 
+import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.reviews.dto.CreateReviewRequestDto;
+import com.project.hiptour.common.reviews.dto.MyReviewResponseDto;
 import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
 import com.project.hiptour.common.reviews.dto.UpdateReviewRequestDto;
-import com.project.hiptour.common.reviews.entity.Review;
 import com.project.hiptour.common.reviews.service.*;
-import com.project.hiptour.common.users.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -14,18 +14,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
 
     private final CreateReviewService createReviewService;
     private final ReviewService reviewService;
-    private final ReviewQueryService reviewQueryService;
     private final UpdateReviewService updateReviewService;
     private final DeleteReviewService deleteReviewService;
+    private final MyReviewService myReviewService;
 
 
     @Operation(summary = "리뷰 목록 조회", description = "장소 ID(placeId)에 해당하는 리뷰 offset, limit 나눠 조회")
@@ -38,72 +37,52 @@ public class ReviewController {
         return reviewService.getReviewsByPlaceId(placeId, offset, limit);
     }
 
-    @PostMapping("/places/{placeId}/reviews")
+    @Operation(summary = "리뷰 작성")
+    @PostMapping
     public ResponseEntity<?> createReview(
-            @PathVariable Long placeId,
-            @RequestBody CreateReviewRequestDto reviewRequestDto
-            // 유저 인증 정보 필요
-            ) {
-        reviewRequestDto.setPlaceId(placeId);
-
-        User user = new User(); /**유저 정보 및 인증 에 대한 추가 이후 방향 결정 필요**/
-        Long reviewId = createReviewService.create(reviewRequestDto, user);
-        return ResponseEntity.ok(Map.of("reviewId", reviewId));
-/**
- * 현재 User 객체를 직접 생성하도록 되어있습니다.
- * 추후 유저 및 로그인 기능 추가 이후 작업 필요합니다.
- *
- *
- * **/
-    }
-
-    /**
-     * 여행지 상세 페이제에서가 아닌 리뷰 작성 접근 후 여행지 선택에 대한 기능입니다.
-     * **/
-    @PostMapping("/reviews")
-    public ResponseEntity<?> createReviewWithoutPlace(
-            @RequestBody CreateReviewRequestDto dto
+            @RequestBody CreateReviewRequestDto requestDto
+            // TODO: 인증 기능 추가 후 주석 제거 필요
     ) {
-        User user = new User(); //인증 대체
-        Long reviewId = createReviewService.create(dto, user);
+        // TODO: 인증 기능 추가 전까지 임시 UserInfo 객체 생성. 실제 인증된 사용자로 교체 필요
+        UserInfo userInfo = new UserInfo();
+        Long reviewId = createReviewService.create(requestDto, userInfo);
         return ResponseEntity.ok(Map.of("reviewId", reviewId));
     }
 
-    /**
-     * 자신이 작성한 리뷰에 대한 기능
-     * **/
-    @GetMapping("/places/{placeId}/my_review")
-    public ResponseEntity<?> getMyReview(
-            @PathVariable Long placeId
+    @Operation(summary = "내 리뷰 목록 조회")
+    @GetMapping("/my")
+    public ResponseEntity<List<MyReviewResponseDto>> getMyReviews(
+            // TODO: 인증 기능 추가 후 주석 제거 필요
     ) {
-        User user = new User();
-        Optional<Review> review = reviewQueryService.findByUserAndPlace(user, placeId);
+        // TODO: 인증 기능 추가 전까지 임시 UserInfo 객체 생성. 실제 인증된 사용자로 교체 필요
+        UserInfo userInfo = new UserInfo();
 
-        return review.map(target -> ResponseEntity.ok(Map.of(
-                "reviewId", target.getReviewId(),
-                "content", target.getContent(),
-                "imageUrls", target.getImageUrls()//이미지에 대한 내용 논의 필요
-        ))).orElse(ResponseEntity.noContent().build());
+        List<MyReviewResponseDto> myReviews = myReviewService.getMyReview(userInfo);
+        return ResponseEntity.ok(myReviews);
     }
 
-    @PatchMapping("/reviews/{reviewId}")
+    @Operation(summary = "리뷰 수정")
+    @PatchMapping("/{reviewId}")
     public ResponseEntity<?> updateReview(
             @PathVariable Long reviewId,
             @RequestBody UpdateReviewRequestDto requestDto
-            //사용자 인증 정보 필요
-            ) {
-        User user = new User();//임시 객체
-        updateReviewService.update(reviewId, requestDto, user);
+            // TODO: 인증 기능 추가 후 주석 제거 필요
+    ) {
+        // TODO: 인증 기능 추가 전까지 임시 UserInfo 객체 생성. 실제 인증된 사용자로 교체 필요
+        UserInfo userInfo = new UserInfo();
+        updateReviewService.update(reviewId, requestDto, userInfo);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/reviews/{reviewId}")
+    @Operation(summary = "리뷰 삭제")
+    @DeleteMapping("/{reviewId}")
     public ResponseEntity<?> deleteReview(
             @PathVariable Long reviewId
-            // 유저 인증 처리 필요
+            // TODO: 인증 기능 추가 후 주석 제거 필요
     ) {
-        User user = new User();//임시 인증 객체
-        deleteReviewService.delete(reviewId, user);
+        // TODO: 인증 기능 추가 전까지 임시 UserInfo 객체 생성. 실제 인증된 사용자로 교체 필요
+        UserInfo userInfo = new UserInfo();
+        deleteReviewService.delete(reviewId, userInfo);
         return ResponseEntity.noContent().build();
     }
 }

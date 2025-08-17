@@ -14,12 +14,15 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateReviewRequestDto {
     @NotNull(message = "장소 ID는 필수항목입니다.")
-    private Long placeId;
+    private Integer placeId;
+
+    @NotNull(message = "제목을 입력해 주세요.")
+    private String headText;
 
     @NotNull(message = "내용을 입력해 주세요.")
-    private String content;
+    private String bodyText;
 
-    private Boolean isLove;
+//    private Boolean isLove;
 
-    private List<String> imageUrls;
+    private List<String> hashTags;
 }
