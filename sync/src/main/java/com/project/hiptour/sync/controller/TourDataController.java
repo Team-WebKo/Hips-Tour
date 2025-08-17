@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("api/tour/data")
 @RequiredArgsConstructor
@@ -18,12 +20,12 @@ public class TourDataController {
     @PostMapping("/load-all")
     public ResponseEntity<String> loadAllPlaces() {
         loadService.loadAllPlaces();
-        return ResponseEntity.ok("TourApi 데이터 적재를 시작합니다.");
+        return ResponseEntity.ok("TourAPI 데이터 적재");
     }
 
     @PostMapping("/sync-updated")
-    public ResponseEntity<String> syncUpdatedPlaces() {
-        syncService.syncUpdatedPlaces();
-        return ResponseEntity.ok("TourAPI 변경 데이터 동기화를 시작합니다.");
+    public ResponseEntity<String> syncUpdatedPlaces(LocalDateTime time) {
+        syncService.syncUpdatedPlaces(time);
+        return ResponseEntity.ok("TourAPI 변경 데이터 동기화");
     }
 }
