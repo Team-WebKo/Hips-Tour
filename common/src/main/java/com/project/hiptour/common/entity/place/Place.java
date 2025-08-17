@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 public class Place extends BaseUpdateEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long placeId;
+    private Integer placeId;
 
     private String placeName;
 
@@ -24,6 +24,15 @@ public class Place extends BaseUpdateEntity {
 
     @Embedded
     private TelNumber telNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")
+    private RegionInfo regionInfo;
 
     private String address1;
     private String address2;
