@@ -1,7 +1,7 @@
 package com.project.hiptour.sync.infra.mapper;
 
-import com.project.hiptour.common.place.GeoPoint;
-import com.project.hiptour.common.place.Place;
+import com.project.hiptour.common.entity.place.embedable.GeoPoint;
+import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.sync.dto.PlaceDto;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,8 @@ public class PlaceMapper {
                 dto.getName(),
                 dto.getAddress1(),
                 dto.getAddress2(),
-                new GeoPoint(dto.getLatitude(), dto.getLongitude())
+                new GeoPoint(dto.getLatitude(), dto.getLongitude()),
+                null
         );
     }
 

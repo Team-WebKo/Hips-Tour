@@ -1,6 +1,6 @@
 package com.project.hiptour.sync.application;
 
-import com.project.hiptour.common.place.Place;
+import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.sync.dto.PlaceDto;
 import com.project.hiptour.sync.dto.TourApiDto;
 import com.project.hiptour.sync.dto.TourApiItem;
