@@ -1,0 +1,20 @@
+package com.project.hiptour.common.entity.users;
+
+import com.project.hiptour.common.entity.BaseTimeEntity;
+import com.project.hiptour.common.entity.BaseUpdateEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class TaskInfo extends BaseUpdateEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer taskId;
+
+    private String description;
+
+
+}
