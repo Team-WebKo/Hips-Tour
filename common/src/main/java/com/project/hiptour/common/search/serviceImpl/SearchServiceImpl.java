@@ -17,18 +17,6 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public Page<SearchResponseDto> searchPlaces(String keyword, Pageable pageable) {
         return searchRepository.findByPlaceNameContaining(keyword, pageable)
-                .map(this::toDto);
-    }
-
-    private SearchResponseDto toDto(Place place) {
-        return SearchResponseDto.builder()
-                .placeId(place.getPlaceId())
-                .placeName(place.getPlaceName())
-                .address1(place.getAddress1())
-                .address2(place.getAddress2())
-                .tel(place.getTelNumber() != null ? place.getTelNumber().toString() : null)
-                .regionName(place.getRegionInfo() != null ? place.getRegionInfo().getRegionName() : null)
-                .categoryName(place.getCategory() != null ? place.getCategory().getCategoryName() : null)
-                .build();
+                .map(SearchResponseDto::new);
     }
 }

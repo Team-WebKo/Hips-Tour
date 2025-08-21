@@ -21,6 +21,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class SearchServiceImplTest {
@@ -32,7 +33,7 @@ class SearchServiceImplTest {
     private SearchServiceImpl searchService;
 
     @Test
-    void searchPlaces_returnsPagedResults() {
+    void 장소검색_성공시() {
         // given
         Category category = new Category();
         category.setCategoryName("관광지");
@@ -64,4 +65,21 @@ class SearchServiceImplTest {
         assertThat(result.getContent().get(0).getPlaceName()).isEqualTo("서울타워");
         assertThat(result.getContent().get(0).getCategoryName()).isEqualTo("관광지");
     }
+
+    @Test
+    void 없는키워드_빈페이지() {
+        // given
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("placeName"));
+        given(searchRepository.findByPlaceNameContaining("없는키워드", pageable))
+                .willReturn(Page.empty(pageable));
+
+        // when
+        Page<SearchResponseDto> result = searchService.searchPlaces("없는키워드", pageable);
+
+        // then
+        assertThat(result.getTotalElements()).isZero();
+        assertThat(result.getContent()).isEmpty();
+        verify(searchRepository).findByPlaceNameContaining("없는키워드", pageable);
+    }
+
 }

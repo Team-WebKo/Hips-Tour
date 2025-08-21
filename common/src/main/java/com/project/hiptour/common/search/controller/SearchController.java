@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/Search")
+@RequestMapping("/api/search")
 @RequiredArgsConstructor
 public class SearchController {
     private final SearchService searchService;
