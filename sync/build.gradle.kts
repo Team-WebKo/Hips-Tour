@@ -5,14 +5,23 @@ plugins {
 }
 
 dependencies {
-        implementation(project(":common"))
-    testImplementation(platform("org.junit:junit-bom:5.12.2"))
+    implementation(project(":common"))
+
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+    testCompileOnly("org.projectlombok:lombok")
+    testAnnotationProcessor("org.projectlombok:lombok")
+    testImplementation("org.springframework.boot::spring-boot-starter-test")
 }
 
 tasks.named("bootJar") {
     enabled = false
 }
-4
+
 tasks.getByName<Jar>("jar") {
     enabled = true
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
