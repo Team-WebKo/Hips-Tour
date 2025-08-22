@@ -14,18 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-public class UserTestController {
+public class LoginTestController {
 
     private final UserTestRepository userTestRepository;
     //아래처럼 new 하지 말고 bean 객체로 주입하기 + 방법 찾아보기. 테스트할 때 bean 객체가 있어야 가능하다고 함.
-    private final JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public UserTestController(UserTestRepository userTestRepository){
+    public LoginTestController(UserTestRepository userTestRepository, JwtTokenProvider jwtTokenProvider){
         this.userTestRepository = userTestRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping("/user")
-    public ResponseEntity<OAuth2User> user(OAuth2AuthenticationToken token){
+    public ResponseEntity<TokenPairDTO> user(OAuth2AuthenticationToken token){
 
         OAuth2User oauth2User = token.getPrincipal();
         Map<String, Object> tokenAttributes = oauth2User.getAttributes();
@@ -33,6 +34,7 @@ public class UserTestController {
         //아래 두줄 코드 너무 위험함. 타입체크나 NULL체크같은거 넣는 습관 들이기.
         Long oauthName = Long.valueOf(tokenAttributes.get("id").toString());
         String nickname = ((Map<String, Object>)tokenAttributes.get("properties")).get("nickname").toString();
+        boolean isFirstLogin;
 
         //accessToken, refreshToken 생성 메서드
         //토큰 유효성 검증 메서드
@@ -41,13 +43,16 @@ public class UserTestController {
         //서비스로 빼보기. 컨트롤러는 판단을 하지 않는다 - 정민 님
         if(userTestRepository.existsByOauthName(oauthName) == true){
             System.out.println("로그인 한 적이 있는 카카오 사용자입니다.");
+            isFirstLogin = false;
         } else {
             System.out.println("처음 접속한 사용자입니다. DB에 정보를 저장합니다.");
             UserTest usertest = new UserTest(oauthName, nickname);
+            isFirstLogin = true;
             userTestRepository.save(usertest);
         }
 
-        TokenPairDTO tokenPairDTO = jwtTokenProvider.generateTokens(oauthName);
+        TokenPairDTO tokenPairDTO = jwtTokenProvider.generateTokens(oauthName, isFirstLogin);
+
         tokenPairDTO.printTokens();
 
         //서비스로 빼보기.
@@ -67,9 +72,8 @@ public class UserTestController {
         //System.out.println("토큰으로부터 추출한 카카오 id : " + oauthName);
         //System.out.println("토큰으로부터 추출한 카카오 닉네임 : " + nickname);
         System.out.println("Attributes : " + oauth2User.getAttributes());
-        return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + tokenPairDTO.getAccessToken())
-                .body(oauth2User);
+
+        return ResponseEntity.ok(tokenPairDTO);
     }
 
 //    public OAuth2User user(Principal principal){

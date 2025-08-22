@@ -31,7 +31,7 @@ public class JwtTokenProviderTest {
 
         Long kakaoId = 123456789L;
 
-        TokenPairDTO tokenPairDTO = jwtTokenProvider.generateTokens(kakaoId);
+        TokenPairDTO tokenPairDTO = jwtTokenProvider.generateTokens(kakaoId, true);
 
         assertThat(tokenPairDTO.getAccessToken()).isNotEmpty();
         assertThat(tokenPairDTO.getRefreshToken()).isNotEmpty();
@@ -42,7 +42,7 @@ public class JwtTokenProviderTest {
     void AccessToken_및_RefreshToken_유효성_검사(){
 
         Long kakaoId = 123456789L;
-        TokenPairDTO tokenPairDTO = jwtTokenProvider.generateTokens(kakaoId);
+        TokenPairDTO tokenPairDTO = jwtTokenProvider.generateTokens(kakaoId, true);
 
         assertThat(jwtTokenProvider.validateToken(tokenPairDTO.getAccessToken())).isTrue();
         assertThat(jwtTokenProvider.validateToken(tokenPairDTO.getRefreshToken())).isTrue();

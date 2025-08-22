@@ -19,7 +19,7 @@ public class RefreshToken {
     private Long id;
 
     @Column(name = "kakaoid", nullable = false)
-    private Long kakaoid;
+    private Long kakaoId;
 
     @Column(name = "issuedat", nullable = false)
     private LocalDateTime issuedat;
@@ -27,8 +27,8 @@ public class RefreshToken {
     @Column(name = "expireat", nullable = false)
     private LocalDateTime expireat;
 
-    public RefreshToken(Long kakaoid, LocalDateTime issuedat, LocalDateTime expireat){
-        this.kakaoid = kakaoid;
+    public RefreshToken(Long kakaoId, LocalDateTime issuedat, LocalDateTime expireat){
+        this.kakaoId = kakaoId;
         this.issuedat = issuedat;
         this.expireat = expireat;
     }

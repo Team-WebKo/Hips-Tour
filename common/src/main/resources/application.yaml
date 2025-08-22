@@ -1,3 +1,18 @@
+jwt:
+  secret: ${JWT_SECRET:'q7fPm2JvN0xHb4Q9YVpzd1g3SlpLc3R1TUV4a2NhZDJpR0tMdXJ5bE83cDZBV1hidHMyRXpQbGQ5S0h5cTFiYQ=='}
+  access-validity-ms: 120000
+  refresh-validity-ms: 604800000
+
+
+logging:
+  level:
+     org.hibernate.tool.schema: debug
+     org.hibernate.SQL: debug
+     org.hibernate.orm.boot: debug
+     org.springframework.orm.jpa: debug
+     org.springframework.security: DEBUG
+     org.springframework.security.web: DEBUG
+
 spring:
   application:
     name: common
@@ -47,12 +62,7 @@ spring:
       use_sql_comment: true
       highlight_sql: true
 
-  logging:
-    level:
-      org.hibernate.tool.schema: debug
-      org.hibernate.SQL: debug
-      org.hibernate.orm.boot: debug
-      org.springframework.orm.jpa: debug
+
 
 ---
 spring:
