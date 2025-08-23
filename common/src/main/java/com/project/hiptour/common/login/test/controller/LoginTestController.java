@@ -1,9 +1,12 @@
 package com.project.hiptour.common.login.test.controller;
 
+import com.project.hiptour.common.domain.RefreshToken;
 import com.project.hiptour.common.domain.UserTest;
 import com.project.hiptour.common.oauth.jwt.JwtTokenProvider;
 import com.project.hiptour.common.oauth.dto.TokenPairDTO;
+import com.project.hiptour.common.repository.JwtRepository;
 import com.project.hiptour.common.repository.UserTestRepository;
+import io.jsonwebtoken.Claims;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -11,17 +14,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.ZoneId;
 import java.util.Map;
 
 @RestController
 public class LoginTestController {
 
     private final UserTestRepository userTestRepository;
+    private final JwtRepository jwtRepository;
     //아래처럼 new 하지 말고 bean 객체로 주입하기 + 방법 찾아보기. 테스트할 때 bean 객체가 있어야 가능하다고 함.
     private final JwtTokenProvider jwtTokenProvider;
 
-    public LoginTestController(UserTestRepository userTestRepository, JwtTokenProvider jwtTokenProvider){
+    public LoginTestController(UserTestRepository userTestRepository, JwtRepository jwtRepository, JwtTokenProvider jwtTokenProvider){
         this.userTestRepository = userTestRepository;
+        this.jwtRepository = jwtRepository;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -52,8 +58,18 @@ public class LoginTestController {
         }
 
         TokenPairDTO tokenPairDTO = jwtTokenProvider.generateTokens(oauthName, isFirstLogin);
-
         tokenPairDTO.printTokens();
+
+        String refreshForDB = tokenPairDTO.getRefreshToken();
+        Claims refreshClaims = jwtTokenProvider.parseClaims(refreshForDB);
+
+        RefreshToken refreshTokenEntity = new RefreshToken(
+                oauthName,
+                refreshForDB,
+                refreshClaims.getIssuedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
+                refreshClaims.getExpiration().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+        );
+        jwtRepository.save(refreshTokenEntity);
 
         //서비스로 빼보기.
         if(jwtTokenProvider.validateToken(tokenPairDTO.getAccessToken()) == true){

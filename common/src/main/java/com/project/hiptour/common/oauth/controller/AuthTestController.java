@@ -3,6 +3,7 @@ package com.project.hiptour.common.oauth.controller;
 import com.project.hiptour.common.oauth.dto.TokenValidateDTO;
 import com.project.hiptour.common.oauth.dto.TokenPairDTO;
 import com.project.hiptour.common.oauth.jwt.JwtTokenProvider;
+import com.project.hiptour.common.repository.JwtRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,11 @@ import java.util.Map;
 public class AuthTestController {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtRepository jwtRepository;
 
-    public AuthTestController(JwtTokenProvider jwtTokenProvider){
+    public AuthTestController(JwtTokenProvider jwtTokenProvider, JwtRepository jwtRepository){
         this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtRepository = jwtRepository;
     }
 
     @PostMapping("/validate-access")
@@ -84,23 +87,31 @@ public class AuthTestController {
             return ResponseEntity.badRequest().body("refreshToken is required");
         }
 
+        // 1) 기본 유효성 검사
         if (!jwtTokenProvider.validateToken(refresh)) {
             return ResponseEntity.status(401).body("invalid_or_expired_refresh");
         }
 
         try {
-            SecretKey key = jwtTokenProvider.getSecretKey();
-            Claims claims = jwtTokenProvider.parseClaims(refresh); // 동일 키로 파싱
+            // 2) 클레임 파싱 + subject 확인
+            Claims claims = jwtTokenProvider.parseClaims(refresh);
             if (!"refresh".equals(claims.getSubject())) {
                 return ResponseEntity.status(401).body("not_a_refresh_token");
             }
             Long kakaoId = claims.get("kakaoId", Long.class);
-            String newAccess = jwtTokenProvider.generateAccessToken(kakaoId);
 
-            System.out.println("액세스토큰이 만료되어 새로 생성합니다. 토큰 값 : " + newAccess);
-
-            // 재발급 단계에선 access만 반환 (refresh 회전은 다음 단계에서)
-            return ResponseEntity.ok(new TokenPairDTO(newAccess, null, false));
+            // 3) DB의 최신 리프레시 토큰과 문자열 비교
+            return jwtRepository.findTopByKakaoIdOrderByExpireatDesc(kakaoId)
+                    .map(saved -> {
+                        if (!saved.getToken().equals(refresh)) {
+                            return ResponseEntity.status(401).body("refresh_not_latest");
+                        }
+                        // 4) 통과 → 새 access 발급
+                        String newAccess = jwtTokenProvider.generateAccessToken(kakaoId);
+                        System.out.println("[AUTH] 액세스토큰이 만료되어 새로 생성합니다. 토큰 값 : " + newAccess);
+                        return ResponseEntity.ok(new TokenPairDTO(newAccess, null, false));
+                    })
+                    .orElseGet(() -> ResponseEntity.status(401).body("no_refresh_token_record"));
 
         } catch (JwtException e) {
             return ResponseEntity.status(401).body("invalid_refresh_token");

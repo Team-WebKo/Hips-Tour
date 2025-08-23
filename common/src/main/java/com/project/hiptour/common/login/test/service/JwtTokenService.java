@@ -15,15 +15,15 @@ public class JwtTokenService {
         this.jwtRepository = jwtRepository;
     }
 
-    public void saveRefreshToken(Long kakaoid, LocalDateTime issuedAt, LocalDateTime expireAt){
+    public void saveRefreshToken(Long kakaoid, String token, LocalDateTime issuedAt, LocalDateTime expireAt){
 
-        RefreshToken refreshToken = new RefreshToken(kakaoid, issuedAt, expireAt);
+        RefreshToken refreshToken = new RefreshToken(kakaoid, token, issuedAt, expireAt);
         jwtRepository.save(refreshToken);
 
     }
 
     public boolean isKakaoIdExists(Long kakaoid){
-        return jwtRepository.existsBykakaoId(kakaoid);
+        return jwtRepository.existsByKakaoId(kakaoid);
     }
 
 }

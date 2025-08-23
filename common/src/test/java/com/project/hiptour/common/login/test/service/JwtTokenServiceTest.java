@@ -30,14 +30,15 @@ public class JwtTokenServiceTest {
     void saveRefreshTokenTest(){
 
         Long kakaoid = 123456789L;
+        String token = "abcdefghijklmnop";
         LocalDateTime issuedAt = LocalDateTime.now();
         LocalDateTime expireAt = issuedAt.plusDays(7);
-        RefreshToken token = new RefreshToken(kakaoid, issuedAt, expireAt);
+        RefreshToken refreshToken = new RefreshToken(kakaoid, token, issuedAt, expireAt);
 
         //when -
-        when(jwtRepository.save(any(RefreshToken.class))).thenReturn(token);
+        when(jwtRepository.save(any(RefreshToken.class))).thenReturn(refreshToken);
 
-        jwtTokenService.saveRefreshToken(kakaoid, issuedAt, expireAt);
+        jwtTokenService.saveRefreshToken(kakaoid, token, issuedAt, expireAt);
 
     }
 
