@@ -26,7 +26,7 @@ import java.util.Optional;
 public class LoadService {
     private final TourApiPort tourApiPort;
     private final TourPlaceRepository tourPlaceRepository;
-    private final PlaceMapper placeMapper;
+    private final PlaceEntityMapper placeEntityMapper;
     private final SyncStatusRepository syncStatusRepository;
     private final LoadStatusRepository loadStatusRepository;
 
@@ -77,7 +77,7 @@ public class LoadService {
                         break;
                     }
 
-                    List<SyncPlaceDto> dtoList = placeMapper.parseResponseToDtoList(jsonResponse);
+                    List<SyncPlaceDto> dtoList = placeEntityMapper.parseResponseToDtoList(jsonResponse);
                     if (CollectionUtils.isEmpty(dtoList)) {
                         log.info("지역코드 [{}]의 모든 데이터를 적재했습니다.", areaCode);
                         break;
@@ -87,10 +87,10 @@ public class LoadService {
                     for (SyncPlaceDto dto : dtoList) {
                         TourPlace place = tourPlaceRepository.findByContentId(dto.getContentid())
                                 .map(existingPlace -> {
-                                    placeMapper.updateEntityFromDto(existingPlace, dto);
+                                    placeEntityMapper.updateEntityFromDto(existingPlace, dto);
                                     return existingPlace;
                                 })
-                                .orElseGet(() -> placeMapper.mapDtoToNewEntity(dto));
+                                .orElseGet(() -> placeEntityMapper.mapDtoToNewEntity(dto));
                         placesToSave.add(place);
                     }
                     tourPlaceRepository.saveAll(placesToSave);

@@ -23,7 +23,7 @@ import java.util.List;
 public class SyncService {
     private final TourApiPort tourApiPort;
     private final TourPlaceRepository tourPlaceRepository;
-    private final PlaceMapper placeMapper;
+    private final PlaceEntityMapper placeEntityMapper;
     private final SyncStatusRepository syncStatusRepository;
     private static final DateTimeFormatter API_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     private static final String SYNC_ID = "placeSync";
@@ -43,7 +43,7 @@ public class SyncService {
                     break;
                 }
 
-                List<SyncPlaceDto> dtoList = placeMapper.parseResponseToDtoList(jsonResponse);
+                List<SyncPlaceDto> dtoList = placeEntityMapper.parseResponseToDtoList(jsonResponse);
 
                 if (CollectionUtils.isEmpty(dtoList)) {
                     break;
@@ -57,10 +57,10 @@ public class SyncService {
                     if (itemModifiedTime.isAfter(lastSyncTime)) {
                         TourPlace place = tourPlaceRepository.findByContentId(dto.getContentid())
                                 .map(existingPlace -> {
-                                    placeMapper.updateEntityFromDto(existingPlace, dto);
+                                    placeEntityMapper.updateEntityFromDto(existingPlace, dto);
                                     return existingPlace;
                                 })
-                                .orElseGet(() -> placeMapper.mapDtoToNewEntity(dto));
+                                .orElseGet(() -> placeEntityMapper.mapDtoToNewEntity(dto));
                         placesToSave.add(place);
                     } else {
                         stopFlag = true;

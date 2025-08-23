@@ -13,7 +13,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class PlaceMapper {
+public class PlaceEntityMapper {
     private final ObjectMapper objectMapper;
 
     public TourPlace mapDtoToNewEntity(SyncPlaceDto dto) {
