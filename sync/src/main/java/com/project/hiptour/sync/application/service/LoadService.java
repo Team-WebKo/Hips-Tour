@@ -71,7 +71,6 @@ public class LoadService {
                 }
 
                 try {
-                    apiCallCount++;
                     String jsonResponse = tourApiPort.fetchPlaceData(currentPageNo, 100, areaCode);
                     if (jsonResponse == null) {
                         break;
@@ -95,6 +94,7 @@ public class LoadService {
                     }
                     tourPlaceRepository.saveAll(placesToSave);
 
+                    apiCallCount++;
                     currentPageNo++;
 
                 } catch (Exception e) {
