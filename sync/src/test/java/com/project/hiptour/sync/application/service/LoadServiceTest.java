@@ -101,4 +101,34 @@ public class LoadServiceTest {
         // Then: API 호출이 전혀 발생하지 않았는지 확인합니다.
         verify(tourApiPort, never()).fetchPlaceData(anyInt(), anyInt(), anyString());
     }
+
+    @Test
+    @DisplayName("다음 지역 코드로 넘어갈 때, 페이지 번호는 1로 초기화외어야 한다.")
+    void loadAddPlaces_should_reset_pageNo_for_subsequent_areaCodes() throws Exception {
+        // Given: 지역코드 1은 2페이지, 지역코드 2는 1페이지의 데이터를 가지도록 설정
+        String areaCode1Page1Response = """
+                {"response":{"body":{"items":{"item":[{"contentid":"1","addr1":"addr2"}]}}}}
+                """;
+        String areaCode1Page2Response = """
+                {"response":{"body":{"items":{"item":[{"contentid":"2","addr1":"addr2"}]}}}}
+                """;
+        String areaCode2Page1Response = """
+                {"response":{"body":{"items":{"item":[{"contentid":"3","addr1":"addr2"}]}}}}
+                """;
+
+        when(tourApiPort.fetchPlaceData(1, 100, "1")).thenReturn(areaCode1Page1Response);
+        when(tourApiPort.fetchPlaceData(2, 100, "1")).thenReturn(areaCode1Page2Response);
+        when(tourApiPort.fetchPlaceData(3, 100, "1")).thenReturn("{\"response\":{\"body\":{\"items\":{}}}}");
+
+        when(tourApiPort.fetchPlaceData(1, 100, "2")).thenReturn(areaCode2Page1Response);
+        when(tourApiPort.fetchPlaceData(2, 100, "2")).thenReturn("{\"response\":{\"body\":{\"items\":{}}}}");
+
+        // When
+        loadService.loadAllPlaces();
+
+        // Then: API 호출 시의 pageNo 인자들을 검증
+        verify(tourApiPort).fetchPlaceData(1, 100, "1");
+        verify(tourApiPort).fetchPlaceData(2, 100, "1");
+        verify(tourApiPort).fetchPlaceData(3, 100, "1");
+    }
 }
