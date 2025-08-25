@@ -1,53 +1,14 @@
 plugins {
-	java
-	id("org.springframework.boot") version "3.5.0"
-	id("io.spring.dependency-management") version "1.1.7"
-}
-
-group = "com.project.hiptour"
-version = "0.0.1-SNAPSHOT"
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
-}
-
-configurations {
-	compileOnly {
-		extendsFrom(configurations.annotationProcessor.get())
-	}
+	id("org.springframework.boot")
+	id("io.spring.dependency-management")
+	id("common-convention")
 }
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
-	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
-	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	developmentOnly("com.h2database:h2")
 	testImplementation("com.h2database:h2")
 	runtimeOnly("com.mysql:mysql-connector-j")
-	annotationProcessor("org.projectlombok:lombok")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
-	testImplementation("org.mockito:mockito-core:5.12.0")
-	testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 }
-
-tasks.test {
-	useJUnitPlatform()
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
-}
-
-
