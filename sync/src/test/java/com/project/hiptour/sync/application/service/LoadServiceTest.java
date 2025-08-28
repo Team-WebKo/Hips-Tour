@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,7 +103,7 @@ public class LoadServiceTest {
     }
 
     @Test
-    @DisplayName("다음 지역 코드로 넘어갈 때, 페이지 번호는 1로 초기화외어야 한다.")
+    @DisplayName("다음 지역 코드로 넘어갈 때, 페이지 번호는 1로 초기화되어야 한다.")
     void loadAddPlaces_should_reset_pageNo_for_subsequent_areaCodes() throws Exception {
         // Given: 지역코드 1은 2페이지, 지역코드 2는 1페이지의 데이터를 가지도록 설정
         String areaCode1Page1Response = """
@@ -130,5 +130,73 @@ public class LoadServiceTest {
         verify(tourApiPort).fetchPlaceData(1, 100, "1");
         verify(tourApiPort).fetchPlaceData(2, 100, "1");
         verify(tourApiPort).fetchPlaceData(3, 100, "1");
+    }
+
+    @Test
+    @DisplayName("이전 작업이 중단된 지점부터 데이터 적재를 재개해야 합니다.")
+    void should_resume_from_last_succeeded_area_code() throws Exception {
+        // Given
+        List<String> areaCodes = Arrays.asList("1", "2", "3", "4");
+        ReflectionTestUtils.setField(loadService, "areaCodes", areaCodes);
+
+        // 1. 이전 작업 상태를 설정합니다. 지역코드 "2", 페이지 5까지 성공
+        String jobName = "placeLoad";
+        LoadStatus lastStatus = new LoadStatus(jobName, "2", 5);
+        loadStatusRepository.save(lastStatus);
+
+        // 2. tourApiPort의 행동을 정의
+        String emptyItemsResponse = """
+                {"response":{"body":{"items":{"item":[]}}}}
+                """;
+        when(tourApiPort.fetchPlaceData(anyInt(), anyInt(), anyString())).thenReturn(emptyItemsResponse);
+
+        // When
+        loadService.loadAllPlaces();
+
+        // Then
+
+        // 1. 지역코드 "1"에 대해서는 fetchPlaceData 메서드가 한 번도 호출되지 않았는지 검증
+        verify(tourApiPort, never()).fetchPlaceData(anyInt(), anyInt(), eq("1"));
+
+        // 2. 지역코드 "2"에 대해서는 '6페이지'부터 호출이 시작되었는지 검증
+        verify(tourApiPort, times(1)).fetchPlaceData(eq(6), anyInt(), eq("2"));
+
+        // 3. 지역코드 "3"에 대해서는 '1페이지'부터 호출이 시작되었는지 검증
+        verify(tourApiPort, times(1)).fetchPlaceData(eq(1), anyInt(), eq("3"));
+
+        // 4. 지역코드 "4"에 대해서는 '1페이지'부터 호출이 되었는지 검증
+        verify(tourApiPort, times(1)).fetchPlaceData(eq(1), anyInt(), eq("4"));
+
+        // 5. 전체 작업이 완료 -> 최종 상태("FINISHED")가 저장되었는지 검증
+        Optional<LoadStatus> finalStatus = loadStatusRepository.findById(jobName);
+        assertThat(finalStatus).isPresent();
+        assertThat(finalStatus.get().getLastSucceededAreaCode()).isEqualTo("FINISHED");
+    }
+
+    @Test
+    @DisplayName("일일 API 호출 제한에 도달하면, 작업을 중단하고 마지막 성공 지점을 저장해야 한다")
+    void should_stop_and_save_status_when_api_call_limit_is_reached() throws Exception {
+        // Given
+        ReflectionTestUtils.setField(loadService, "DAILY_API_CALL_LIMIT", 2);
+
+        String nonEmptyResponse = """
+                {"response":{"body":{"items":{"item":[{"contentid":"1","addr1":"addr1"}]}}}}
+                """;
+
+        when(tourApiPort.fetchPlaceData(anyInt(), anyInt(), anyString())).thenReturn(nonEmptyResponse);
+
+        // When
+        loadService.loadAllPlaces();
+
+        // Then
+        Optional<LoadStatus> finalStatus = loadStatusRepository.findById("placeLoad");
+
+        // 상태가 저장되었는지 확인
+        assertThat(finalStatus).isPresent();
+
+        assertThat(finalStatus.get().getLastSucceededAreaCode()).isNotEqualTo("FINISHED");
+
+        assertThat(finalStatus.get().getLastSucceededAreaCode()).isEqualTo("1");
+        assertThat(finalStatus.get().getLastSucceededPageNo()).isEqualTo(2);
     }
 }

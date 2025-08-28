@@ -33,8 +33,10 @@ public class LoadService {
     @Value("${sync.load.area-codes}")
     private List<String> areaCodes;
 
+    @Value("${sync.load.daily-api-call-limit}")
+    private int dailyApiCallLimit;
+
     private static final String JOB_NAME = "placeLoad";
-    private static final int DAILY_API_CALL_LIMIT = 950;
     private static final String FINISHED_STATUS = "FINISHED";
 
     @Transactional
@@ -64,7 +66,7 @@ public class LoadService {
             startPageNo = 1;
 
             while (true) {
-                if (apiCallCount >= DAILY_API_CALL_LIMIT) {
+                if (apiCallCount >= dailyApiCallLimit) {
                     log.info("일일 API 호출 제한에 도달했습니다. 작업을 종료합니다.");
                     saveCurrentStatus(areaCode, currentPageNo - 1);
                     return;
