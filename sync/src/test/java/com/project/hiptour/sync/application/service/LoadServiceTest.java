@@ -201,4 +201,20 @@ public class LoadServiceTest {
         assertThat(finalStatus.get().getLastSucceededAreaCode()).isEqualTo("1");
         assertThat(finalStatus.get().getLastSucceededPageNo()).isEqualTo(2);
     }
+
+    @Test
+    @DisplayName("API 호출 중 예외가 발생하면, 작업을 중단하고 상태를 변경하지 않아야 한다.")
+    void should_stop_when_api_call_throws_exception() {
+        // Given
+        when(tourApiPort.fetchPlaceData(anyInt(), anyInt(), anyString())).thenThrow(new RuntimeException("API 연결 오류 상황"));
+
+        // When
+        loadService.loadAllPlaces();
+
+        // Then
+        verify(tourApiPort, times(1)).fetchPlaceData(anyInt(), anyInt(), anyString());
+
+        Optional<LoadStatus> finalStatus = loadStatusRepository.findById("placeLoad");
+        assertThat(finalStatus).isEmpty();
+    }
 }
