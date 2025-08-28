@@ -177,7 +177,7 @@ public class LoadServiceTest {
     @DisplayName("일일 API 호출 제한에 도달하면, 작업을 중단하고 마지막 성공 지점을 저장해야 한다")
     void should_stop_and_save_status_when_api_call_limit_is_reached() throws Exception {
         // Given
-        ReflectionTestUtils.setField(loadService, "DAILY_API_CALL_LIMIT", 2);
+        ReflectionTestUtils.setField(loadService, "dailyApiCallLimit", 2);
 
         String nonEmptyResponse = """
                 {"response":{"body":{"items":{"item":[{"contentid":"1","addr1":"addr1"}]}}}}
@@ -189,6 +189,8 @@ public class LoadServiceTest {
         loadService.loadAllPlaces();
 
         // Then
+        verify(tourApiPort, times(2)).fetchPlaceData(anyInt(), anyInt(), anyString());
+
         Optional<LoadStatus> finalStatus = loadStatusRepository.findById("placeLoad");
 
         // 상태가 저장되었는지 확인
