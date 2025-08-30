@@ -8,9 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -22,8 +19,6 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @AllArgsConstructor
 @Configuration
 public class SecurityConfig {
-
-    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> kakaoSecurityService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,

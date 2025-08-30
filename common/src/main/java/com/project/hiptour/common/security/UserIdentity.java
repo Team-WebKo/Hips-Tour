@@ -1,4 +1,6 @@
 package com.project.hiptour.common.security;
 
-public class UserIdentity {
+public interface UserIdentity {
+    String getUserIdentifier();
+    String getNickName();
 }

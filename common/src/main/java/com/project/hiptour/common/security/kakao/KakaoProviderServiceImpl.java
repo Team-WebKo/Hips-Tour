@@ -1,5 +1,6 @@
 package com.project.hiptour.common.security.kakao;
 
+import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.security.UserIdentity;
 import lombok.AllArgsConstructor;
@@ -57,7 +58,7 @@ public class KakaoProviderServiceImpl implements OauthProviderService {
 
         log.debug("got kakao id");
 
-        return null;
+        return new KakaoUserIdentity(kakaoId);
     }
 
     @Override
