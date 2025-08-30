@@ -1,10 +1,16 @@
 package com.project.hiptour.common.config;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -13,8 +19,11 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+@AllArgsConstructor
 @Configuration
 public class SecurityConfig {
+
+    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> kakaoSecurityService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
@@ -26,7 +35,6 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth-test/**").permitAll()
                         .requestMatchers("/error", "/error/**").permitAll()
                         .requestMatchers(
                                 "/h2-console/**",
@@ -37,11 +45,10 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()// ✅ 인증 없이 허용
                 )
-                .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
-                .oauth2Login(oauth2 -> oauth2.defaultSuccessUrl("/user", true))
+                .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .exceptionHandling(e -> e.defaultAuthenticationEntryPointFor(unauthorized401, apiOnly))
-                .requestCache(c ->c.disable());
+                .requestCache(RequestCacheConfigurer::disable);
 
         return http.build();
     }
