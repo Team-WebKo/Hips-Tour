@@ -5,10 +5,13 @@ import com.project.hiptour.common.entity.BaseUpdateEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
+@NoArgsConstructor
 public class UserInfo extends BaseUpdateEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -17,4 +20,10 @@ public class UserInfo extends BaseUpdateEntity {
     private String nickName;
     private String userIdentifier;
 
+    @Builder
+    public UserInfo(String email, String nickName, String userIdentifier) {
+        this.email = email;
+        this.nickName = nickName;
+        this.userIdentifier = userIdentifier;
+    }
 }

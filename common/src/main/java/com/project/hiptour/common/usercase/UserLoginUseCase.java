@@ -54,7 +54,7 @@ public class UserLoginUseCase {
             pair = this.tokenService.createToken(userInfoByIdentifier.get());
         }
 
-        this.tokenService.updateToken(pair.getRefreshToken());
+        this.tokenService.updateToken(userIdentity.getUserId(), pair.getRefreshToken());
         log.debug("token successfully updated!");
 
         return LoginResult.builder()

@@ -21,7 +21,7 @@ oauth2:
 
 logging:
   level:
-     root: debug
+     root: INFO
      org.hibernate.tool.schema: debug
      org.hibernate.SQL: debug
      org.hibernate.orm.boot: debug

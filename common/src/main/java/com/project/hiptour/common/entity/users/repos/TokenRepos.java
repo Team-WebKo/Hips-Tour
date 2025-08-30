@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TokenRepos extends JpaRepository<TokenInfo, Long> {
+    TokenInfo findByUserId(long userId);
 }

@@ -9,6 +9,7 @@ import com.project.hiptour.common.usercase.services.token.TokenService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,10 +34,16 @@ public class LoginController {
     }
 
     @GetMapping("/oauth2/code/kakao")
-    public Map<String,Object> handleAuthentication(@RequestParam String code){
+    public ResponseEntity<LoginReqResponse> handleAuthentication(@RequestParam String code){
 
-        LoginResult tokenPair = this.loginUseCase.createTokenPair(code);;
+        LoginResult res = this.loginUseCase.createTokenPair(code);;
+        LoginReqResponse response = LoginReqResponse.builder()
+                .isSignUpNeeded(res.isNewSingUp())
+                .accessToken(res.getPair().getAccessToken().getToken())
+                .refreshToken(res.getPair().getRefreshToken().getToken())
+                .build();
+        //TODO :: 예외처리 추가 필요
 
-        return Map.of();
+        return ResponseEntity.ok(response);
     }
 }

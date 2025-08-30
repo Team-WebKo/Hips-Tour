@@ -10,13 +10,20 @@ public class KakaoUserIdentity implements UserIdentity {
 
     private final long userId;
 
+
+
     @Override
     public String getUserIdentifier() {
-        return "provider-kakao-"+this.getUserIdentifier();
+        return "provider-kakao-"+this.userId;
     }
 
     @Override
     public String getNickName() {
         return "kakao-"+new Random().doubles();
+    }
+
+    @Override
+    public long getUserId() {
+        return this.userId;
     }
 }
