@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Getter
 public class Category extends BaseUpdateEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
