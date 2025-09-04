@@ -25,4 +25,6 @@ public class CreateReviewRequestDto {
 //    private Boolean isLove;
 
     private List<String> hashTags;
+
+    private List<String> imageUrls;
 }
