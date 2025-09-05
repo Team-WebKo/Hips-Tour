@@ -12,4 +12,5 @@ public class UpdateReviewRequestDto {
     private String headText;
     private String bodyText;
     private List<HashTag> hashTags;
+    private List<String> imageUrls;
 }

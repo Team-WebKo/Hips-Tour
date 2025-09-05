@@ -23,8 +23,9 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(review -> {
                     ReviewListResponseDto dto = new ReviewListResponseDto();
                     dto.setReviewId(review.getReviewId());
-                    dto.setContent(review.getContent());
-                    dto.setIsLove(review.getIsLove());
+                    dto.setHeadText(review.getHeadText());
+                    dto.setBodyText(review.getBodyText());
+//                    dto.setIsLove(review.getIsLove());
                     dto.setImageUrls(review.getImageUrls());
                     dto.setUserId(dto.getUserId());
                     dto.setNickname(dto.getNickname());
