@@ -3,9 +3,7 @@ package com.project.hiptour.common.entity.users;
 import com.project.hiptour.common.entity.BaseTimeEntity;
 import com.project.hiptour.common.entity.BaseUpdateEntity;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserInfo extends BaseUpdateEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter
     private Long userId;
     @Column(unique = true)
     private String email;
