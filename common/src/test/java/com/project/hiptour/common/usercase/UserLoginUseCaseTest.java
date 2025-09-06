@@ -7,6 +7,7 @@ import com.project.hiptour.common.security.UserIdentity;
 import com.project.hiptour.common.security.kakao.KakaoUserIdentity;
 import com.project.hiptour.common.usercase.services.login.UserService;
 import com.project.hiptour.common.usercase.services.token.*;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@Transactional  // 각 테스트 후 롤백
 @ActiveProfiles("local")
 class UserLoginUseCaseTest {
 
@@ -40,9 +43,9 @@ class UserLoginUseCaseTest {
     @Test
     void t1(){
 
-        UserIdentity identity = new KakaoUserIdentity(10);
+        UserIdentity identity = new KakaoUserIdentity(new Random(100).nextInt());
 
-        when(mockService.getUserIdentity(anyString())).thenReturn(identity);
+        when(mockService.getUserIdentity(identity.getUserIdentifier())).thenReturn(identity);
 
         LoginResult loginResult = this.userLoginUseCase.createTokenPair(identity.getUserIdentifier());
 
@@ -61,9 +64,11 @@ class UserLoginUseCaseTest {
     @DisplayName("새로운 유저가 생성되면, 유저 정보를 저장한다.")
     void t2(){
 
-        UserIdentity identity = new KakaoUserIdentity(10);
+        UserIdentity identity = new KakaoUserIdentity(new Random().nextInt());
 
         when(mockService.getUserIdentity(anyString())).thenReturn(identity);
+
+        this.userService.insertNewUserAndGet(identity);
 
         Optional<UserInfo> userInfoByIdentifier = this.userService.findUserInfoByIdentifier(identity.getUserIdentifier());
         assertTrue(userInfoByIdentifier.isPresent());
@@ -74,12 +79,13 @@ class UserLoginUseCaseTest {
     @DisplayName("유저가 로그인하면, 리프레시 토큰을 저장, 관리한다.")
     void t3(){
 
-        UserIdentity identity = new KakaoUserIdentity(10);
+        int userId = new Random().nextInt();
+        UserIdentity identity = new KakaoUserIdentity(userId);
 
         when(mockService.getUserIdentity(anyString())).thenReturn(identity);
         this.userLoginUseCase.createTokenPair(identity.getUserIdentifier());
 
-        TokenInfo tokenInfo = this.tokenService.findByUserId(10);
+        TokenInfo tokenInfo = this.tokenService.findByUserId(userId);
 
         assertNotNull(tokenInfo);
 
