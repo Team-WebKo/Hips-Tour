@@ -17,11 +17,9 @@ public class TokenTemplate {
     private long userId;
     private List<Long> roleIds;
 
-    public TokenTemplate(Long userId, List<UserRole> userRoles) {
+    public TokenTemplate(Long userId, List<Long> userRoles) {
         this.userId = userId;
-        this.roleIds = userRoles == null ? List.of() : userRoles.stream()
-                .map(UserRole::getUserRoleId)
-                .toList();
+        this.roleIds = userRoles == null ? List.of() :userRoles;
     }
 
     public Token toAccessToken(TokenContext context){
@@ -39,7 +37,6 @@ public class TokenTemplate {
         Date expiresAt = new Date(System.currentTimeMillis() + context.getREFRESH_EXPIRE());
         String refreshToken = JWT.create()
                 .withSubject(String.valueOf(this.userId))
-                .withClaim("role", this.roleIds)
                 .withIssuedAt(new Date())
                 .withExpiresAt(expiresAt)
                 .sign(context.getAlgorithm());
