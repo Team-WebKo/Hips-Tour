@@ -1,15 +1,11 @@
-package com.project.hiptour.common.web.auth;
+package com.project.hiptour.common.web.auth.login;
 
 import com.project.hiptour.common.security.OauthProviderService;
-import com.project.hiptour.common.security.UserIdentity;
 import com.project.hiptour.common.usercase.LoginResult;
 import com.project.hiptour.common.usercase.UserLoginUseCase;
-import com.project.hiptour.common.usercase.services.login.UserService;
-import com.project.hiptour.common.usercase.services.token.TokenService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/login")
