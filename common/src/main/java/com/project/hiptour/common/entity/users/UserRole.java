@@ -3,6 +3,7 @@ package com.project.hiptour.common.entity.users;
 import com.project.hiptour.common.entity.BaseTimeEntity;
 import com.project.hiptour.common.entity.BaseUpdateEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,6 +11,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Getter
+@Builder
 public class UserRole extends BaseUpdateEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

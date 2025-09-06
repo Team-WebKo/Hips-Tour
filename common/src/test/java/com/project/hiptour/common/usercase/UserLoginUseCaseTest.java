@@ -2,6 +2,7 @@ package com.project.hiptour.common.usercase;
 
 import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
+import com.project.hiptour.common.entity.users.repos.UserRepos;
 import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.security.UserIdentity;
 import com.project.hiptour.common.security.kakao.KakaoUserIdentity;
@@ -38,6 +39,8 @@ class UserLoginUseCaseTest {
     TokenService tokenService;
     @MockBean
     OauthProviderService mockService;
+    @Autowired
+    UserRepos userRepos;
 
     @DisplayName("새로운 유저가 생성되면, 토큰과 함께, 새로운 유저라는 플래그가 추가된 결과를 반환한다.")
     @Test
@@ -70,7 +73,7 @@ class UserLoginUseCaseTest {
 
         this.userService.insertNewUserAndGet(identity);
 
-        Optional<UserInfo> userInfoByIdentifier = this.userService.findUserInfoByIdentifier(identity.getUserIdentifier());
+        Optional<UserInfo> userInfoByIdentifier = this.userRepos.findByUserIdentifier(identity.getUserIdentifier());
         assertTrue(userInfoByIdentifier.isPresent());
 
     }

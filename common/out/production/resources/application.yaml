@@ -63,7 +63,7 @@ spring:
 spring:
   config:
     activate:
-      on-profile: test
+      on-profile: local
   sql:
     init:
       data-locations: classpath:basic-data.sql

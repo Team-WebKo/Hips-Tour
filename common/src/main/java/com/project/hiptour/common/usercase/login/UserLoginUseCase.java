@@ -2,6 +2,7 @@ package com.project.hiptour.common.usercase.login;
 
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.entity.users.UserRole;
+import com.project.hiptour.common.entity.users.repos.UserRepos;
 import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
 import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.security.UserIdentity;
@@ -22,6 +23,7 @@ import java.util.Optional;
 public class UserLoginUseCase {
 
     private final TokenService tokenService;
+    private final UserRepos userRepos;
     private final UserService userService;
     private final OauthProviderService providerService;
     private final UserRoleRepo userRoleRepo;
@@ -40,7 +42,7 @@ public class UserLoginUseCase {
 
         UserIdentity userIdentity = this.providerService.getUserIdentity(userCode);
 
-        Optional<UserInfo> userInfoByIdentifier = userService.findUserInfoByIdentifier(userIdentity.getUserIdentifier());
+        Optional<UserInfo> userInfoByIdentifier = userRepos.findByUserIdentifier(userIdentity.getUserIdentifier());
 
         boolean isThisUserAlreadyExisting = false;
 
