@@ -5,6 +5,7 @@ import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.security.UserIdentity;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @AllArgsConstructor
 @Slf4j
+@Profile("!test")
 public class KakaoProviderServiceImpl implements OauthProviderService {
 
     private final KakaoProperties properties;
