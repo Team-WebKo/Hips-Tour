@@ -1,14 +1,69 @@
+jwt:
+  secret: ${JWT_SECRET:'q7fPm2JvN0xHb4Q9YVpzd1g3SlpLc3R1TUV4a2NhZDJpR0tMdXJ5bE83cDZBV1hidHMyRXpQbGQ5S0h5cTFiYQ=='}
+  access-validity-ms: 120000
+  refresh-validity-ms: 604800000
+  #604800000
+
+oauth2:
+  kakao:
+    client-id: 59136a0497ad9e53666ed8a5fd7caf11
+    redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
+    authorization-grant-type: authorization_code
+    client-name: Kakao
+    provider: kakao
+    scope:
+      - profile_nickname
+    authorization-uri: https://kauth.kakao.com/oauth/authorize
+    token-uri: https://kauth.kakao.com/oauth/token
+    user-info-uri: https://kapi.kakao.com/v2/user/me
+    user-name-attribute: id
+    resource-url: https://kauth.kakao.com/oauth/token
+
+logging:
+  level:
+     root: INFO
+     org.hibernate.tool.schema: debug
+     org.hibernate.SQL: debug
+     org.hibernate.orm.boot: debug
+     org.springframework.orm.jpa: debug
+     org.springframework.security: DEBUG
+     org.springframework.security.web: DEBUG
+
 spring:
   application:
-    name:
-      common
+    name: common
+
+
+#  datasource:
+#    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#    driver-class-name: org.h2.Driver
+#    username: sa
+#    password:
+
+  datasource:
+    url: jdbc:h2:file:~/testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties.hibernate:
+      format_sql: true
+      use_sql_comment: true
+      highlight_sql: true
+
 
 
 ---
 spring:
   config:
     activate:
-      on-profile: test
+      on-profile: local
   sql:
     init:
       data-locations: classpath:basic-data.sql
@@ -29,13 +84,9 @@ spring:
       format_sql: true
       ddl-auto: create-drop
       use_sql_comment: true
-      hightlight_sql: true
-
-
-
+      highlight_sql: true
 
 ---
-
 spring:
   config:
     activate:
@@ -52,7 +103,6 @@ spring:
       ddl-auto: create-drop
 
 ---
-
 spring:
   config:
     activate:
