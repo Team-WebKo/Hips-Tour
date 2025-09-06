@@ -1,0 +1,82 @@
+package com.project.hiptour.common.usercase.services.token;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.hiptour.common.entity.users.TokenInfo;
+import com.project.hiptour.common.entity.users.UserInfo;
+import com.project.hiptour.common.entity.users.UserRole;
+import com.project.hiptour.common.entity.users.repos.TokenRepos;
+import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.*;
+
+@Slf4j
+@Service
+public class DefaultTokenServiceImpl implements TokenService{
+
+    private final TokenContext tokenContext;
+    private final TokenRepos tokenRepos;
+    private final UserRoleRepo userRoleRepo;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public DefaultTokenServiceImpl(KeyProvider keyProvider, TokenContext tokenContext, TokenRepos tokenRepos, UserRoleRepo repos) {
+        this.tokenContext = tokenContext;
+        this.tokenRepos = tokenRepos;
+        this.userRoleRepo = repos;
+    }
+
+    @Override
+    public TokenPair createToken(UserInfo userInfo, List<UserRole> userRoles) {
+
+        TokenTemplate template = new TokenTemplate(userInfo.getUserId(), userRoles);
+        Token accessToken = template.toAccessToken(this.tokenContext);
+        Token refreshToken = template.toRefreshToken(this.tokenContext);
+
+        return new TokenPair(accessToken, refreshToken);
+    }
+    @Transactional(Transactional.TxType.SUPPORTS)
+    @Override
+    public void updateToken(Long userId, Token refreshToken) {
+        TokenInfo tokenInfo = TokenInfo.builder()
+                .refreshToken(refreshToken.getToken())
+                .userId(userId)
+                .build();
+
+        this.tokenRepos.save(tokenInfo);
+
+    }
+
+    @Override
+    public TokenTemplate decodeToken(String token) {
+        try {
+            DecodedJWT decodedJWT = JWT.require(this.tokenContext.getAlgorithm())
+                    .build()
+                    .verify(token);
+
+            String payload = decodedJWT.getPayload();
+            byte[] decode = Base64.getUrlDecoder().decode(payload);
+            String tokenInfo = new String(decode);
+
+            return this.mapper.readValue(tokenInfo, TokenTemplate.class);
+
+        }catch (JWTDecodeException e){
+            log.warn("invalid token {}",e.getMessage());
+            return null;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public TokenInfo findByUserId(long userId) {
+        return this.tokenRepos.findByUserId(userId);
+    }
+
+}
