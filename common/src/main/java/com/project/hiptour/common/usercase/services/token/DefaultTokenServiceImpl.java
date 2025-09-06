@@ -2,20 +2,25 @@ package com.project.hiptour.common.usercase.services.token;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
+import com.project.hiptour.common.entity.users.UserRole;
 import com.project.hiptour.common.entity.users.repos.TokenRepos;
+import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
 import com.project.hiptour.common.util.DateUtils;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalUnit;
+import java.util.Base64;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Service
 public class DefaultTokenServiceImpl implements TokenService{
 
@@ -24,18 +29,23 @@ public class DefaultTokenServiceImpl implements TokenService{
 
     private Algorithm algorithm;
     private final TokenRepos tokenRepos;
+    private final UserRoleRepo userRoleRepo;
 
-    public DefaultTokenServiceImpl(KeyProvider keyProvider, TokenRepos tokenRepos) {
+    public DefaultTokenServiceImpl(KeyProvider keyProvider, TokenRepos tokenRepos, UserRoleRepo repos) {
         this.algorithm = Algorithm.HMAC256(keyProvider.getKey());
         this.tokenRepos = tokenRepos;
+        this.userRoleRepo = repos;
     }
 
     @Override
     public TokenPair createToken(UserInfo userInfo) {
+
+        List<UserRole> userRoles = this.userRoleRepo.findByUserInfo(userInfo).orElse(List.of());
+
         Date expiresAt = new Date(System.currentTimeMillis() + ACCESSKEY_EXPIRE);
         String accessToken = JWT.create()
                 .withSubject(String.valueOf(userInfo.getUserId()))
-                .withClaim("role", "")
+                .withClaim("role", userRoles)
                 .withIssuedAt(new Date())
                 .withExpiresAt(expiresAt)
                 .sign(algorithm);
