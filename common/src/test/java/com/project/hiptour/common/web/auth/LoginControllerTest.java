@@ -85,31 +85,26 @@ class LoginControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.accessToken").exists())
                 .andExpect(jsonPath("$.refreshToken").exists())
-                .andExpect(jsonPath("$.signUpNeeded").value(true))
-                .andExpect(result -> {
-                    String contentAsString = result.getResponse().getContentAsString();
-                    System.out.println(contentAsString);
-                });
+                .andExpect(jsonPath("$.signUpNeeded").value(true));
 
     }
 
     @Test
-    @DisplayName("redirection 후, 토큰이 발급된다. 이때, 최초 가입자의 경우, 표시된다")
+    @DisplayName("redirection 후, 토큰이 발급된다. 이때, 최초 가입자가 아닌 경우, 최초 가입자가 아님을 표시한다.")
     void t2() throws Exception {
 
         mvc.perform(get("/login/kakao"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(redirection));
 
+        mvc.perform(get(redirection).queryParam("code","code"));
+
         mvc.perform(get(redirection).queryParam("code","code"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.accessToken").exists())
                 .andExpect(jsonPath("$.refreshToken").exists())
-                .andExpect(jsonPath("$.signUpNeeded").value(true))
-                .andExpect(result -> {
-                    String contentAsString = result.getResponse().getContentAsString();
-                    System.out.println(contentAsString);
-                });
+                .andExpect(jsonPath("$.signUpNeeded").value(false));
+
 
     }
 
