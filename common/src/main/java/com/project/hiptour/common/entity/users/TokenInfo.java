@@ -23,4 +23,8 @@ public class TokenInfo extends BaseTimeEntity {
         this.refreshToken = refreshToken;
         this.isActive = true;
     }
+
+    public boolean isStillAvailable(LocalDateTime curTime){
+        return !this.isActive || this.getCreatedAt().isBefore(curTime);
+    }
 }

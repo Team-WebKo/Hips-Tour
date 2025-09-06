@@ -6,6 +6,9 @@ import com.project.hiptour.common.entity.users.UserInfo;
 public interface TokenService {
     TokenPair createToken(UserInfo userInfo);
     void updateToken(Long userId, Token refreshToken);
-    Token decodeToken(String token);
+    /**
+     * @return 만약 토큰 정보가 잘못되었다면, null을 반환할 수 있으므로 null체크가 필요
+     * **/
+    TokenTemplate decodeToken(String token);
     TokenInfo findByUserId(long userId);
 }

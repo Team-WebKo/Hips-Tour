@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.entity.users.UserRole;
@@ -15,10 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -75,15 +74,28 @@ public class DefaultTokenServiceImpl implements TokenService{
     }
 
     @Override
-    public Token decodeToken(String token) {
-        DecodedJWT decodedJWT = JWT.require(algorithm)
-                .build()
-                .verify(token);
+    public TokenTemplate decodeToken(String token) {
+        try {
+            DecodedJWT decodedJWT = JWT.require(algorithm)
+                    .build()
+                    .verify(token);
 
-        return new Token(
-                decodedJWT.getToken(),
-                LocalDateTime.now(),
-                DateUtils.convert(decodedJWT.getExpiresAt()));
+            String payload = decodedJWT.getPayload();
+            byte[] decode = Base64.getUrlDecoder().decode(payload);
+            String tokenInfo = new String(decode);
+
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                Map claim = mapper.readValue(tokenInfo, Map.class);
+                long sub = Long.valueOf((String) claim.get("sub"));
+                return new TokenTemplate(sub,List.of());
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }catch (JWTDecodeException e){
+            log.warn("invalid token {}",e.getMessage());
+            return null;
+        }
     }
 
     @Override
