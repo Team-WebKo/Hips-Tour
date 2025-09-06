@@ -32,7 +32,7 @@ public class TokenTemplate {
                 .withIssuedAt(new Date())
                 .withExpiresAt(expiresAt)
                 .sign(context.getAlgorithm());
-        return new Token(token, LocalDateTime.now(), LocalDateTime.now());
+        return getToken(token);
     }
 
     public Token toRefreshToken(TokenContext context){
@@ -43,8 +43,10 @@ public class TokenTemplate {
                 .withIssuedAt(new Date())
                 .withExpiresAt(expiresAt)
                 .sign(context.getAlgorithm());
-        return new Token(refreshToken, LocalDateTime.now(), LocalDateTime.now());
+        return getToken(refreshToken);
     }
 
-
+    private Token getToken(String refreshToken) {
+        return new Token(refreshToken, LocalDateTime.now(), LocalDateTime.now());
+    }
 }
