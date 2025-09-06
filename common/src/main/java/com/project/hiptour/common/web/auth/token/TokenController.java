@@ -2,10 +2,14 @@ package com.project.hiptour.common.web.auth.token;
 
 import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
+import com.project.hiptour.common.entity.users.UserRole;
 import com.project.hiptour.common.entity.users.repos.UserRepos;
+import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
 import com.project.hiptour.common.usercase.services.token.TokenPair;
 import com.project.hiptour.common.usercase.services.token.TokenService;
 import com.project.hiptour.common.usercase.services.token.TokenTemplate;
+import com.project.hiptour.common.usercase.token.TokenRequestResult;
+import com.project.hiptour.common.usercase.token.TokenUseCase;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,8 +29,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TokenController {
 
-    private final TokenService tokenService;
-    private final UserRepos userRepos;
+    private final TokenUseCase tokenUseCase;
     /**
      * @apiNote refresh token 유효성 검사를 수행하고, 성공하면 새로운 access token을 발급한다
      * **/
@@ -39,38 +43,13 @@ public class TokenController {
         log.debug("refresh token request");
 
         String requestRefreshToken = request.getRefreshToken();
-        TokenTemplate tokenTemplate = tokenService.decodeToken(requestRefreshToken);
-        if(tokenTemplate == null){
-            log.warn("this token request is invalid");
-            return ResponseEntity.badRequest().body(
-                new TokenResponse("invalid token","")
-            );
+        TokenRequestResult result = tokenUseCase.validateRefreshToken(requestRefreshToken);
+
+        if(result.isSuccess()){
+            return ResponseEntity.ok(new TokenResponse("success", result.getAccessToken()));
+        }else{
+            return ResponseEntity.badRequest().body(new TokenResponse(result.getMessage(), ""));
         }
-
-        long userId = tokenTemplate.getUserId();
-        TokenInfo tokenInfo = this.tokenService.findByUserId(userId);
-
-        if(tokenInfo != null && tokenInfo.isStillAvailable(LocalDateTime.now())){
-            log.debug("this refresh token is still available");
-            Optional<UserInfo> userInfo = this.userRepos.findById(userId);
-            if(userInfo.isEmpty()){
-                return ResponseEntity.badRequest().body(
-                        new TokenResponse("user is not present","")
-                );
-            }
-
-            TokenPair token = this.tokenService.createToken(userInfo.get());
-
-            return ResponseEntity.ok(
-                    new TokenResponse("success", token.getAccessToken().getToken())
-            );
-
-        }
-
-        return ResponseEntity.badRequest().body(
-                new TokenResponse("request failed","")
-        );
-
     }
 
 }

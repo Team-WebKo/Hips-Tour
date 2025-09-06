@@ -5,16 +5,16 @@ import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.security.UserIdentity;
 import com.project.hiptour.common.security.kakao.KakaoUserIdentity;
+import com.project.hiptour.common.usercase.login.LoginResult;
+import com.project.hiptour.common.usercase.login.UserLoginUseCase;
 import com.project.hiptour.common.usercase.services.login.UserService;
 import com.project.hiptour.common.usercase.services.token.*;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;

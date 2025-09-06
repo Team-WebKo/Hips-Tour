@@ -1,8 +1,8 @@
 package com.project.hiptour.common.web.auth.login;
 
 import com.project.hiptour.common.security.OauthProviderService;
-import com.project.hiptour.common.usercase.LoginResult;
-import com.project.hiptour.common.usercase.UserLoginUseCase;
+import com.project.hiptour.common.usercase.login.LoginResult;
+import com.project.hiptour.common.usercase.login.UserLoginUseCase;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
