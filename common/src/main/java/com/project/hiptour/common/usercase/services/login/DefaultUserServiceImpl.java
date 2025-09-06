@@ -15,11 +15,8 @@ import java.util.Optional;
 public class DefaultUserServiceImpl implements UserService {
 
     private final UserRepos userRepos;
-
-    @Override
-    public Optional<UserInfo> findUserInfoByIdentifier(String userIdentifier) {
-        return this.userRepos.findByUserIdentifier(userIdentifier);
-    }
+    private final UserRoleRepo userRoleRepo;
+    private final RoleInfoRepo roleInfoRepo;
 
     @Override
     public UserInfo insertNewUserAndGet(UserIdentity userIdentity) {
