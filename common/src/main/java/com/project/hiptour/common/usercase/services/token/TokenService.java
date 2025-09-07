@@ -8,4 +8,5 @@ public interface TokenService {
     void updateToken(Long userId, Token refreshToken);
     Token decodeToken(String token);
     TokenInfo findByUserId(long userId);
+    void logout(Long userId);
 }

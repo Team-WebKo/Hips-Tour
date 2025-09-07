@@ -23,4 +23,8 @@ public class TokenInfo extends BaseTimeEntity {
         this.refreshToken = refreshToken;
         this.isActive = true;
     }
+
+    public void deactivate() {
+        this.isActive = false;
+    }
 }
