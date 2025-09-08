@@ -4,11 +4,20 @@ import com.project.hiptour.common.entity.BaseTimeEntity;
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.users.UserInfo;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Heart extends BaseTimeEntity {
+
+    @Builder
+    public Heart(boolean isActive, UserInfo userId, Place feedId) {
+        this.isActive = isActive;
+        this.userId = userId;
+        this.feedId = feedId;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
