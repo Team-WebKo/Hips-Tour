@@ -1,5 +1,6 @@
 package com.project.hiptour.common.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,7 +20,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests.requestMatchers(HttpMethod.POST, "/logout", "/reviews").authenticated()
-                        .anyRequest().permitAll());
+                        .anyRequest().permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            if (authentication == null) {
+                                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                            } else {
+                                response.setStatus(HttpServletResponse.SC_OK);
+                            }
+                        })
+                );
 
         // TODO: JWT 필터 추가 예정
 
