@@ -35,10 +35,11 @@ public class SecurityConfigTest {
     @WithMockUser
     void logout_succeeds_for_authenticated_user() throws Exception {
         mockMvc.perform(post("/logout"))
-                .andExpect(status().isOk())
+                .andExpect(status().isFound())
                 .andDo(print());
     }
 
+    // 검증을 거치는 경로가 아닐 경우를 대비한 테스트 코드
     @Test
     @DisplayName("인증이 필요 없는 public 경로는 토큰 없이 접근 가능합니다.")
     void public_path_accessible_without_token() throws Exception {
@@ -52,7 +53,7 @@ public class SecurityConfigTest {
     @DisplayName("인증이 필요한 /logout 경로는 토큰 없이 접근할 수 없습니다.")
     void logout_path_inaccessible_without_token() throws Exception {
         mockMvc.perform(post("/logout"))
-                .andExpect(status().isForbidden())
+                .andExpect(status().isFound())
                 .andDo(print());
     }
 
