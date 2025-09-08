@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HeartRepos extends JpaRepository<Heart,Long> {
+    Heart findByUserIdAndFeedId(long userId, int feedId);
 }
