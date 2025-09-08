@@ -55,4 +55,12 @@ public class SecurityConfigTest {
                 .andExpect(status().isForbidden())
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("인증이 필요한 /reviews 경로는 토큰 없이는 접근할 수 없습니다.")
+    void reviews_path_inaccessible_without_token() throws Exception {
+        mockMvc.perform(post("/reviews"))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
 }
