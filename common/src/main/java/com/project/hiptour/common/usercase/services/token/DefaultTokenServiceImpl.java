@@ -32,23 +32,24 @@ public class DefaultTokenServiceImpl implements TokenService{
 
     @Override
     public TokenPair createToken(UserInfo userInfo) {
+        String userId = String.valueOf(userInfo.getUserId());
         Date expiresAt = new Date(System.currentTimeMillis() + ACCESSKEY_EXPIRE);
         String accessToken = JWT.create()
-                .withSubject(String.valueOf(userInfo.getUserId()))
+                .withSubject(userId)
                 .withClaim("role", "")
                 .withIssuedAt(new Date())
                 .withExpiresAt(expiresAt)
                 .sign(algorithm);
 
-        Token acctoken = new Token(accessToken, LocalDateTime.now(), LocalDateTime.now().minusMinutes(30));
+        Token acctoken = new Token(accessToken, userId, LocalDateTime.now(), LocalDateTime.now().minusMinutes(30));
 
         String refreshToken = JWT.create()
-                .withSubject(String.valueOf(userInfo.getUserId()))
+                .withSubject(userId)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_EXPIRE))
                 .sign(algorithm);
 
-        Token refToken = new Token(refreshToken, LocalDateTime.now(), LocalDateTime.now().plusDays(7));
+        Token refToken = new Token(refreshToken, userId, LocalDateTime.now(), LocalDateTime.now().plusDays(7));
 
         return new TokenPair(acctoken, refToken);
     }
@@ -72,6 +73,7 @@ public class DefaultTokenServiceImpl implements TokenService{
 
         return new Token(
                 decodedJWT.getToken(),
+                decodedJWT.getSubject(),
                 LocalDateTime.now(),
                 DateUtils.convert(decodedJWT.getExpiresAt()));
     }
