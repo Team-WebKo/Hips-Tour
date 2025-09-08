@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Place extends BaseUpdateEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer placeId;
