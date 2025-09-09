@@ -29,7 +29,7 @@ public class HeartUserCase {
      * </p>
      *
      * **/
-    @Transactional
+    @Transactional(Transactional.TxType.SUPPORTS)
     public HeartResult makeHeart(long userId, int feedId){
 
         Optional<UserInfo> userInfo = this.userRepos.findById(userId);
@@ -47,8 +47,8 @@ public class HeartUserCase {
         Place place = placeId.get();
 
         Heart heart = Heart.builder()
-                .feedId(place)
-                .userId(ui)
+                .feed(place)
+                .user(ui)
                 .isActive(true)
                 .build();
 
@@ -57,19 +57,20 @@ public class HeartUserCase {
 
     }
 
-    @Transactional
-    public HeartResult unHeart(long userId, int feedId){
-
-        Heart byUserIdAndFeedId = this.heartRepos.findByUserIdAndFeedId(userId, feedId);
-        if(byUserIdAndFeedId == null || !byUserIdAndFeedId.isActive()){
-            return new HeartResult(false, "invalid state!");
-        }
-
-        byUserIdAndFeedId.setActive(false);
-        byUserIdAndFeedId.setUpdatedAt(LocalDateTime.now());
-        return new HeartResult(true, "successfully unmarked");
-
-    }
-
+//    @Transactional
+//    public HeartResult unHeart(long userId, int feedId){
+//
+////        Heart byUserIdAndFeedId = this.heartRepos.findByUserIdAndFeedId(userId, feedId);
+////        if(byUserIdAndFeedId == null || !byUserIdAndFeedId.isActive()){
+////            return new HeartResult(false, "invalid state!");
+////        }
+////
+////        byUserIdAndFeedId.setActive(false);
+////        byUserIdAndFeedId.setUpdatedAt(LocalDateTime.now());
+////
+////        return new HeartResult(true, "successfully unmarked");
+//
+//    }
+//
 
 }

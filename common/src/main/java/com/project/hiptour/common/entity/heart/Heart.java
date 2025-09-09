@@ -13,10 +13,10 @@ import lombok.*;
 public class Heart extends BaseTimeEntity {
 
     @Builder
-    public Heart(boolean isActive, UserInfo userId, Place feedId) {
+    public Heart(boolean isActive, UserInfo user, Place feed) {
         this.isActive = isActive;
-        this.userId = userId;
-        this.feedId = feedId;
+        this.user = user;
+        this.feed = feed;
     }
 
     @Id
@@ -25,13 +25,13 @@ public class Heart extends BaseTimeEntity {
 
     private boolean isActive;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private UserInfo userId;
+    private UserInfo user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feed_id")
-    private Place feedId;
+    private Place feed;
 
 
 

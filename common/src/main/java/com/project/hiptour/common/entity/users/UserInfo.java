@@ -1,18 +1,16 @@
 package com.project.hiptour.common.entity.users;
 
-import com.project.hiptour.common.entity.BaseTimeEntity;
 import com.project.hiptour.common.entity.BaseUpdateEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @ToString
 @NoArgsConstructor
 public class UserInfo extends BaseUpdateEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter
     private Long userId;
     @Column(unique = true)
