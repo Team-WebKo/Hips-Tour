@@ -1,4 +1,4 @@
-package com.project.hiptour.common.category;
+package com.project.hiptour.common.category.service;
 
 import com.project.hiptour.common.category.dto.CategoryResponseDto;
 import com.project.hiptour.common.category.repository.CategoryRepository;
@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -42,5 +43,18 @@ public class CategoryServiceTest {
         assertThat(result.get(0).getCategoryName()).isEqualTo("카테고리1");
         assertThat(result.get(1).getCategoryId()).isEqualTo(2);
         assertThat(result.get(1).getCategoryName()).isEqualTo("카테고리2");
+    }
+
+    @Test
+    @DisplayName("전체 카테고리 조회 - 카테고리가 없을 경우")
+    void getAllCategories_Empty() {
+        given(categoryRepository.findAll()).willReturn(Collections.emptyList());
+
+        List<CategoryResponseDto> result = categoryServiceImpl.getAllCategories();
+
+        assertThat(result).isNotNull();
+        assertThat(result).isEmpty();
+
+        verify(categoryRepository).findAll();
     }
 }
