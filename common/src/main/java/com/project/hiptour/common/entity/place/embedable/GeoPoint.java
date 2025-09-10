@@ -1,4 +1,4 @@
-package com.project.hiptour.common.place;
+package com.project.hiptour.common.entity.place.embedable;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;

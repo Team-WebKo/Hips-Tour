@@ -6,7 +6,4 @@
  */
 
 rootProject.name = "Hips-Tour"
-include("common")
-include("util")
-include("sync")
-
+include("common", "sync", "ImageUpload", "util")

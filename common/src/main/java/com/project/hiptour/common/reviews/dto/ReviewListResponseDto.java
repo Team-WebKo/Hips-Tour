@@ -10,8 +10,9 @@ import java.util.List;
 @NoArgsConstructor
 public class ReviewListResponseDto {
     private Long reviewId;
-    private String content;
-    private Boolean isLove;
+    private String headText;
+    private String bodyText;
+//    private Boolean isLove;
     private List<String> imageUrls;
     private Long userId;
     private String nickname;

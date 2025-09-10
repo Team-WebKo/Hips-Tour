@@ -1,7 +1,7 @@
 package com.project.hiptour.sync.application.sync;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.hiptour.common.place.Place;
+import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.sync.application.LogService;
 import com.project.hiptour.sync.application.SyncPlaceCommandHandler;
 import com.project.hiptour.sync.application.util.TourApiTestJsonFactory;
@@ -9,9 +9,9 @@ import com.project.hiptour.sync.dto.TourApiDto;
 import com.project.hiptour.sync.dto.TourApiItem;
 import com.project.hiptour.sync.dto.TourApiResponseDto;
 import com.project.hiptour.sync.external.api.TourDataApiCaller;
-import com.project.hiptour.common.place.PlaceMapper;
+import com.project.hiptour.sync.infra.mapper.PlaceMapper;
 import com.project.hiptour.sync.infra.mapper.TourApiDtoMapper;
-import com.project.hiptour.common.reviews.repository.PlaceRepository;
+import com.project.hiptour.sync.infra.persistence.PlaceRepository;
 import com.project.hiptour.sync.infra.persistence.SyncLogRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,16 +20,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-@SpringBootTest
-@ActiveProfiles("test")
+
 @ExtendWith(MockitoExtension.class)
 class SyncPlaceCommandHandlerTest {
     @Mock
@@ -68,7 +65,7 @@ class SyncPlaceCommandHandlerTest {
         );
     }
 
-    @DisplayName("흐름만 검증하는 기본 성공 테스트")
+    @DisplayName("시렞 흐름만 검증하는 기본 성공 테스트")
     @Test
     public void syncPlaceData_success_flow() {
         String jsonResponse = "testSample";
