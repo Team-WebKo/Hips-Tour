@@ -8,4 +8,5 @@ import lombok.Getter;
 public class HeartResult {
     private final boolean isSuccess;
     private final String message;
+    private final HeartCase heartCase;
 }
