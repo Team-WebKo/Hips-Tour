@@ -1,11 +1,8 @@
 package com.project.hiptour.common.reviews.repository;
 
-import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.reviews.entity.Review;
-import com.project.hiptour.common.place.Place;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,7 +30,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             Pageable pageable
     );
 
-    default List<Review> findByPlaceIdWithOffsetLimit(Long placeId, int offset, int limit) {
+    // TODO: PageRequest 로 제공되는 부분에 대해 이해를 못하였습니다.
+    default List<Review> findByPlaceIdWithOffsetLimit(int placeId, int offset, int limit) {
         return findByPlaceIdWithOffsetLimit(placeId, PageRequest.of(offset / limit, limit));
     }
 }

@@ -62,15 +62,9 @@ public class Review extends BaseEntity {
         this.pinnedAt = null; // 다시 일반 리뷰처럼 정렬됨
     }
     public void update(String content, Boolean isLove, List<String> imageUrls) {
-        if (content != null) this.content = content;
-        if (isLove != null) this.isLove = isLove;
+        if (headText != null) this.headText = headText;
+        if (bodyText != null) this.bodyText = bodyText;
+//        if (isLove != null) this.isLove = isLove;
         if (imageUrls != null) this.imageUrls = imageUrls;
-        if (bodyText != null) {
-            this.bodyText = bodyText;
-        }
-
-        if (hashTags != null) {
-            this.hashTags = hashTags;
-        }
     }
 }

@@ -62,7 +62,7 @@ class ReviewServiceImplTest {
     @DisplayName("ex) offset=0, limit=2 → 첫 2개 리뷰를 반환")
     void getReviews_firstPage() {
         // given
-        Long placeId = 1L;
+        int placeId = 1L;
         int offset = 0;
         int limit  = 2;
 

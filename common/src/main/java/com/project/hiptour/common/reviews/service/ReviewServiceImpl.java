@@ -16,7 +16,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
 
     @Override
-    public List<ReviewListResponseDto> getReviewsByPlaceId(Long placeId, int offset, int limit) {
+    public List<ReviewListResponseDto> getReviewsByPlaceId(int placeId, int offset, int limit) {
         List<Review> reviews = reviewRepository.findByPlaceIdWithOffsetLimit(placeId, offset, limit);
 
         return reviews.stream()

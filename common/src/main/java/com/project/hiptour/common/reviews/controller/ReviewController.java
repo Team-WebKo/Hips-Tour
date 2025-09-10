@@ -31,7 +31,7 @@ public class ReviewController {
     @Operation(summary = "리뷰 목록 조회", description = "장소 ID(placeId)에 해당하는 리뷰 offset, limit 나눠 조회")
     @GetMapping("/place/{placeId}")
     public List<ReviewListResponseDto> getReviewsByPlaceId(
-            @Parameter(description = "장소 ID") @PathVariable Long placeId,
+            @Parameter(description = "장소 ID") @PathVariable int placeId,
             @Parameter(description = "처음 가져올 개수") @RequestParam int offset,
             @Parameter(description = "가져올 개수") @RequestParam int limit
     ) {

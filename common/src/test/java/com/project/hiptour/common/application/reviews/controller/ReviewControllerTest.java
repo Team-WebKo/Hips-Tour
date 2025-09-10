@@ -40,8 +40,8 @@ class ReviewControllerTest {
     @Autowired
     private UpdateReviewService updateReviewService;
 
-    @Autowired
-    private ReviewQueryService reviewQueryService;
+//    @Autowired
+//    private ReviewQueryService reviewQueryService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -49,14 +49,14 @@ class ReviewControllerTest {
     @Test
     @DisplayName("특정 장소 리뷰 목록 조회 성공")
     void getReviewsByPlaceIdSuccess() throws Exception {
-        Long placeId = 1L;
+        int placeId = 1;
         int offset = 0;
         int limit = 10;
 
         ReviewListResponseDto review = new ReviewListResponseDto(
                 1L,
+                "제목1",
                 "내용1",
-                true,
                 List.of("https://image.com/1", "https://image.com/2"),
                 100L,
                 "hip_user",
