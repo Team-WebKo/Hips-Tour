@@ -8,11 +8,16 @@ import com.project.hiptour.common.entity.users.repos.UserRepos;
 import com.project.hiptour.common.place.repository.PlaceRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
+import static com.project.hiptour.common.usercase.heart.HeartCase.USER_NOT_EXISTING;
+
+@Slf4j
 @Service
 @AllArgsConstructor
 public class HeartUserCase {
@@ -36,11 +41,11 @@ public class HeartUserCase {
         Optional<Place> placeId = this.placeRepository.findById(feedId);
 
         if(userInfo.isEmpty()){
-            return new HeartResult(false, "unknown user information");
+            return new HeartResult(false, "unknown user information", USER_NOT_EXISTING);
         }
 
         if(placeId.isEmpty()){
-            return new HeartResult(false, "unknown place information");
+            return new HeartResult(false, "unknown place information", USER_NOT_EXISTING);
         }
 
         UserInfo ui = userInfo.get();
@@ -53,24 +58,32 @@ public class HeartUserCase {
                 .build();
 
         this.heartRepos.save(heart);
-        return new HeartResult(true, "success");
+        return new HeartResult(true, "success", HeartCase.SUCCESS);
 
     }
 
-//    @Transactional
-//    public HeartResult unHeart(long userId, int feedId){
-//
-////        Heart byUserIdAndFeedId = this.heartRepos.findByUserIdAndFeedId(userId, feedId);
-////        if(byUserIdAndFeedId == null || !byUserIdAndFeedId.isActive()){
-////            return new HeartResult(false, "invalid state!");
-////        }
-////
-////        byUserIdAndFeedId.setActive(false);
-////        byUserIdAndFeedId.setUpdatedAt(LocalDateTime.now());
-////
-////        return new HeartResult(true, "successfully unmarked");
-//
-//    }
-//
+    @Transactional
+    public HeartResult unHeart(long heartId){
+
+        log.debug("unHeart request came with id {}", heartId);
+
+        Optional<Heart> byUserUserIdAndFeedPlaceId = this.heartRepos.findById(heartId);;
+
+        if(byUserUserIdAndFeedPlaceId.isEmpty()){
+            log.warn("this un-heart request contains invalid id key! {}", heartId);
+            return new HeartResult(false, "invalid state!! the id is not existing", HeartCase.NOT_EXISTING);
+        }else{
+            Heart heart = byUserUserIdAndFeedPlaceId.get();
+            if(!heart.isActive()){
+                log.debug("the state is already inactive!! {}", heart);
+                return new HeartResult(false, "invalid state!! the id is already inactive", HeartCase.ALREADY_INACTIVE);
+            }
+
+            heart.setActive(false);
+            return new HeartResult(true, "successfully unmarked", HeartCase.SUCCESS);
+
+        }
+    }
+
 
 }
