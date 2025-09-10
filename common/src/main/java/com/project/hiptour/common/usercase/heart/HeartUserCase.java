@@ -41,10 +41,12 @@ public class HeartUserCase {
         Optional<Place> placeId = this.placeRepository.findById(feedId);
 
         if(userInfo.isEmpty()){
+            log.warn("this user {} is not existing", userId);
             return new HeartResult(false, "unknown user information", USER_NOT_EXISTING);
         }
 
         if(placeId.isEmpty()){
+            log.warn("this place {} is not existing", feedId);
             return new HeartResult(false, "unknown place information", USER_NOT_EXISTING);
         }
 
@@ -58,6 +60,9 @@ public class HeartUserCase {
                 .build();
 
         this.heartRepos.save(heart);
+
+        log.debug("successfully updated heart!!");
+
         return new HeartResult(true, "success", HeartCase.SUCCESS);
 
     }
