@@ -8,15 +8,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PlaceController.class)
-public class PlaceServiceTest {
+public class PlaceConterollerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -36,5 +40,22 @@ public class PlaceServiceTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.placeId").value(1))
                 .andExpect(jsonPath("$.placeName").value("Fake 여행지"));
+    }
+
+    @Test
+    @DisplayName("카테고리별 여행지 목록 조회 API - 성공")
+    void getPlacesByCategoryApi_Success() throws Exception {
+        int categoryId = 1;
+        PlaceDto dto1 = PlaceDto.builder().placeId(10).placeName("장소10").build();
+        PlaceDto dto2 = PlaceDto.builder().placeId(20).placeName("장소20").build();
+        List<PlaceDto> mockDtos = List.of(dto1, dto2);
+
+        given(placeService.findPlacesByCategoryId(categoryId)).willReturn(mockDtos);
+
+        mockMvc.perform(get("/api/places").param("categoryId", String.valueOf(categoryId)).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].placeName").value("장소10"))
+                .andExpect(jsonPath("$[1].placeName").value("장소20"))
+                .andDo(print());
     }
 }

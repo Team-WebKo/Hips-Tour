@@ -4,10 +4,9 @@ import com.project.hiptour.common.place.dto.PlaceDto;
 import com.project.hiptour.common.place.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/places")
@@ -19,5 +18,11 @@ public class PlaceController {
     public ResponseEntity<PlaceDto> getPlace(@PathVariable("id") Integer id) {
         PlaceDto placeDto = placeService.findPlace(id);
         return ResponseEntity.ok(placeDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PlaceDto>> getPlacesByCategory(@RequestParam("categoryId") Integer categoryId) {
+        List<PlaceDto> places=  placeService.findPlacesByCategoryId(categoryId);
+        return ResponseEntity.ok(places);
     }
 }
