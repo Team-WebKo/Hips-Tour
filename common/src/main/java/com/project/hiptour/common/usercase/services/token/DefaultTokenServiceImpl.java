@@ -89,7 +89,6 @@ public class DefaultTokenServiceImpl implements TokenService{
         TokenInfo tokenInfo = this.tokenRepos.findByUserId(userId);
         if (tokenInfo != null) {
             tokenInfo.deactivate();
-            this.tokenRepos.save(tokenInfo);
         }
     }
 }
