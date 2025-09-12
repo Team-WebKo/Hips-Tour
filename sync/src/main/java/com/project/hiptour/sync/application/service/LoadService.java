@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -29,6 +29,7 @@ public class LoadService {
     private final PlaceEntityMapper placeEntityMapper;
     private final SyncStatusRepository syncStatusRepository;
     private final LoadStatusRepository loadStatusRepository;
+    private final PlaceMapperService placeMapperService;
 
     @Value("${sync.load.area-codes}")
     private List<String> areaCodes;
@@ -38,6 +39,7 @@ public class LoadService {
 
     private static final String JOB_NAME = "placeLoad";
     private static final String FINISHED_STATUS = "FINISHED";
+    private int apiCallCount = 0;
 
     @Transactional
     public void loadAllPlaces() {
@@ -52,63 +54,61 @@ public class LoadService {
         String startAreaCode = optionalLoadStatus.map(LoadStatus::getLastSucceededAreaCode).orElse(areaCodes.get(0));
         int startPageNo = optionalLoadStatus.map(LoadStatus::getLastSucceededPageNo).map(page -> page + 1).orElse(1);
 
-        int apiCallCount = 0;
         boolean startProcessing = false;
-
         for (String areaCode : areaCodes) {
             if (!startProcessing && !areaCode.equals(startAreaCode)) {
                 continue;
             }
             startProcessing = true;
 
-            log.info("지역코드 [{}] 데이터 적재를 시작합니다.", areaCode);
-            int currentPageNo = startPageNo;
-            startPageNo = 1;
-
-            while (true) {
-                if (apiCallCount >= dailyApiCallLimit) {
-                    log.info("일일 API 호출 제한에 도달했습니다. 작업을 종료합니다.");
-                    saveCurrentStatus(areaCode, currentPageNo - 1);
-                    return;
-                }
-
-                try {
-                    String jsonResponse = tourApiPort.fetchPlaceData(currentPageNo, 100, areaCode);
-                    if (jsonResponse == null) {
-                        break;
-                    }
-
-                    List<SyncPlaceDto> dtoList = placeEntityMapper.parseResponseToDtoList(jsonResponse);
-                    if (CollectionUtils.isEmpty(dtoList)) {
-                        log.info("지역코드 [{}]의 모든 데이터를 적재했습니다.", areaCode);
-                        break;
-                    }
-
-                    List<TourPlace> placesToSave = new ArrayList<>();
-                    for (SyncPlaceDto dto : dtoList) {
-                        TourPlace place = tourPlaceRepository.findByContentId(dto.getContentid())
-                                .map(existingPlace -> {
-                                    placeEntityMapper.updateEntityFromDto(existingPlace, dto);
-                                    return existingPlace;
-                                })
-                                .orElseGet(() -> placeEntityMapper.mapDtoToNewEntity(dto));
-                        placesToSave.add(place);
-                    }
-                    tourPlaceRepository.saveAll(placesToSave);
-
-                    apiCallCount++;
-                    currentPageNo++;
-
-                } catch (Exception e) {
-                    log.error("데이터 적재 중 areaCode={}, pageNo={}에서 오류가 발생했습니다.", areaCode, currentPageNo, e);
-                    return;
-                }
+            if (!processAreaCode(areaCode, startPageNo)) {
+                return;
             }
+            startPageNo = 1;
         }
 
         saveCurrentStatus(FINISHED_STATUS, 0);
         updateSyncServiceStartTime(LocalDateTime.now());
         log.info("TourAPI 전체 데이터 적재 과정이 완료되었습니다.");
+    }
+
+    private boolean processAreaCode(String areaCode, int startPageNo) {
+        log.info("지역코드 [{}] 데이터 적재를 시작합니다. 시작 페이지: {}", areaCode, startPageNo);
+        int currentPageNo = startPageNo;
+
+        while (true) {
+            if (apiCallCount >= dailyApiCallLimit) {
+                log.info("일일 API 호출 제한에 도달했습니다. 작업을 종료합니다.");
+                saveCurrentStatus(areaCode, currentPageNo - 1);
+                return false;
+            }
+
+            try {
+                String jsonResponse = tourApiPort.fetchPlaceData(currentPageNo, 100, areaCode);
+                apiCallCount++;
+                if (jsonResponse == null) {
+                    break;
+                }
+
+                List<SyncPlaceDto> dtoList = placeEntityMapper.parseResponseToDtoList(jsonResponse);
+                if (CollectionUtils.isEmpty(dtoList)) {
+                    log.info("지역코드 [{}]의 모든 데이터를 적재했습니다.", areaCode);
+                    break;
+                }
+
+                List<TourPlace> placesToSave = dtoList.stream()
+                        .map(placeMapperService::mapToEntity)
+                        .collect(Collectors.toList());
+                tourPlaceRepository.saveAll(placesToSave);
+
+                currentPageNo++;
+            } catch (Exception e) {
+                log.error("데이터 적재 중 areaCode={}, pageNo={}에서 오류가 발생했습니다.", areaCode, currentPageNo, e);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void saveCurrentStatus(String areaCode, int pageNo) {
@@ -127,5 +127,3 @@ public class LoadService {
         log.info("전체 적재 작업 완료 시간을 DB에 기록했습니다. (동기화에 사용 될) 기준 시간: {}", time);
     }
 }
-
-

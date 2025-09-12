@@ -1,6 +1,7 @@
 package com.project.hiptour.sync.infrastructure.scheduler;
 
 import com.project.hiptour.sync.application.service.SyncService;
+import com.project.hiptour.sync.application.util.TimeProvider;
 import com.project.hiptour.sync.domain.SyncStatus;
 import com.project.hiptour.sync.infrastructure.persistence.SyncStatusRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class TourSyncScheduler {
     private final SyncService syncService;
     private final SyncStatusRepository syncStatusRepository;
+    private final TimeProvider timeProvider;
     private static final String SYNC_ID = "placeSync";
 
     @Scheduled(cron = "${sync.schedule.cron}")
@@ -32,7 +34,7 @@ public class TourSyncScheduler {
         }
 
         LocalDateTime lastSyncTime = lastSyncTimeOptional.get();
-        LocalDateTime syncStartedTime = LocalDateTime.now();
+        LocalDateTime syncStartedTime = timeProvider.now();
         log.info("마지막 동기화 시간: {}", lastSyncTime);
 
         try {

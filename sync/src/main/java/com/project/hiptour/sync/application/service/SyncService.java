@@ -3,7 +3,6 @@ package com.project.hiptour.sync.application.service;
 import com.project.hiptour.sync.application.port.TourApiPort;
 import com.project.hiptour.sync.domain.TourPlace;
 import com.project.hiptour.sync.global.dto.SyncPlaceDto;
-import com.project.hiptour.sync.infrastructure.persistence.SyncStatusRepository;
 import com.project.hiptour.sync.infrastructure.persistence.TourPlaceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +23,8 @@ public class SyncService {
     private final TourApiPort tourApiPort;
     private final TourPlaceRepository tourPlaceRepository;
     private final PlaceEntityMapper placeEntityMapper;
-    private final SyncStatusRepository syncStatusRepository;
+    private final PlaceMapperService placeMapperService;
     private static final DateTimeFormatter API_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-    private static final String SYNC_ID = "placeSync";
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void syncUpdatedPlaces(LocalDateTime lastSyncTime) {
@@ -39,13 +37,14 @@ public class SyncService {
         while (!stopFlag) {
             try {
                 String jsonResponse = tourApiPort.fetchChangedPlaces(lastSyncTime, pageNo, numOfRows);
-                if (jsonResponse == null) {
-                    break;
+
+                List<SyncPlaceDto> dtoList = null;
+                if (jsonResponse != null) {
+                    dtoList = placeEntityMapper.parseResponseToDtoList(jsonResponse);
                 }
 
-                List<SyncPlaceDto> dtoList = placeEntityMapper.parseResponseToDtoList(jsonResponse);
-
                 if (CollectionUtils.isEmpty(dtoList)) {
+                    log.info("동기화할 새로운 데이터가 없습니다. 작업을 종료합니다.");
                     break;
                 }
 
@@ -55,13 +54,7 @@ public class SyncService {
                     LocalDateTime itemModifiedTime = LocalDateTime.parse(dto.getModifiedtime(), API_DATE_TIME_FORMATTER);
 
                     if (itemModifiedTime.isAfter(lastSyncTime)) {
-                        TourPlace place = tourPlaceRepository.findByContentId(dto.getContentid())
-                                .map(existingPlace -> {
-                                    placeEntityMapper.updateEntityFromDto(existingPlace, dto);
-                                    return existingPlace;
-                                })
-                                .orElseGet(() -> placeEntityMapper.mapDtoToNewEntity(dto));
-                        placesToSave.add(place);
+                        placesToSave.add(placeMapperService.mapToEntity(dto));
                     } else {
                         stopFlag = true;
                         break;
