@@ -11,4 +11,5 @@ dependencies {
 	testImplementation("com.h2database:h2")
 	runtimeOnly("com.mysql:mysql-connector-j")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation(project(":sync"))
 }

@@ -1,6 +1,5 @@
 package com.project.hiptour.common.entity.place;
 
-import com.project.hiptour.common.entity.BaseTimeEntity;
 import com.project.hiptour.common.entity.BaseUpdateEntity;
 import com.project.hiptour.common.entity.place.embedable.GeoPoint;
 import com.project.hiptour.common.entity.place.embedable.TelNumber;
@@ -8,14 +7,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @Setter
 public class Place extends BaseUpdateEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer placeId;
+
+    @Column(unique = true)
+    private String contentId;
 
     private String placeName;
 

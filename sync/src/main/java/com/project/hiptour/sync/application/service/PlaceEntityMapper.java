@@ -22,6 +22,7 @@ public class PlaceEntityMapper {
                 .contentId(dto.getContentid())
                 .title(dto.getTitle())
                 .address(fullAddress)
+                .areaCode(dto.getAreacode())
                 .imageUrl(dto.getFirstimage())
                 .build();
     }
@@ -30,6 +31,7 @@ public class PlaceEntityMapper {
         String fullAddress = dto.getAddr1() + (dto.getAddr2() != null && !dto.getAddr2().isEmpty() ? " " + dto.getAddr2() : "");
         tourPlace.setTitle(dto.getTitle());
         tourPlace.setAddress(fullAddress);
+        tourPlace.setAreaCode(dto.getAreacode());
         tourPlace.setImageUrl(dto.getFirstimage());
     }
 
