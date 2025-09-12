@@ -43,13 +43,13 @@ class SearchServiceImplTest {
         Place place1 = new Place("서울타워", "서울시 중구", "남산공원",
                 new GeoPoint(37.551169, 126.988227), new TelNumber("02-123-4567"));
         place1.setPlaceId(1);
-        place1.setCategory(category);
+//        place1.setCategory(category);
         place1.setRegionInfo(region);
 
         Place place2 = new Place("부산 해운대", "부산시 해운대구", "해운대 해수욕장",
                 new GeoPoint(35.158698, 129.160384), new TelNumber("051-987-6543"));
         place2.setPlaceId(2);
-        place2.setCategory(category);
+//        place2.setCategory(category);
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("placeName"));
         Page<Place> mockPage = new PageImpl<>(List.of(place1, place2), pageable, 2);
