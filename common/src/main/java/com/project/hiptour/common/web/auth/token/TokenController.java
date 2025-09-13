@@ -46,9 +46,9 @@ public class TokenController {
         TokenRequestResult result = tokenUseCase.validateRefreshToken(requestRefreshToken);
 
         if(result.isSuccess()){
-            return ResponseEntity.ok(new TokenResponse("success", result.getAccessToken()));
+            return ResponseEntity.ok(new TokenResponse(true,"success", result.getAccessToken()));
         }else{
-            return ResponseEntity.badRequest().body(new TokenResponse(result.getMessage(), ""));
+            return ResponseEntity.badRequest().body(new TokenResponse(false, result.getMessage(), ""));
         }
     }
 

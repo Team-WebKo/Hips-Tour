@@ -2,6 +2,7 @@ package com.project.hiptour.common.usercase;
 
 import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
+import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.entity.users.repos.UserRepos;
 import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.security.UserIdentity;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -41,6 +43,8 @@ class UserLoginUseCaseTest {
     OauthProviderService mockService;
     @Autowired
     UserRepos userRepos;
+    @Autowired
+    TokenRepos tokenRepos;
 
     @DisplayName("새로운 유저가 생성되면, 토큰과 함께, 새로운 유저라는 플래그가 추가된 결과를 반환한다.")
     @Test
@@ -88,9 +92,8 @@ class UserLoginUseCaseTest {
         when(mockService.getUserIdentity(anyString())).thenReturn(identity);
         this.userLoginUseCase.createTokenPair(identity.getUserIdentifier());
 
-        TokenInfo tokenInfo = this.tokenService.findByUserId(userId);
-
-        assertNotNull(tokenInfo);
+        List<TokenInfo> allTokenInfo = this.tokenRepos.findAll();
+        assertEquals(1, allTokenInfo.size());
 
     }
 

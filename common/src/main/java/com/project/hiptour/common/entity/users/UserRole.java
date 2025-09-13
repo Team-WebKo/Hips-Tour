@@ -3,15 +3,12 @@ package com.project.hiptour.common.entity.users;
 import com.project.hiptour.common.entity.BaseTimeEntity;
 import com.project.hiptour.common.entity.BaseUpdateEntity;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @ToString
 @Getter
-@Builder
+@NoArgsConstructor
 public class UserRole extends BaseUpdateEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +22,10 @@ public class UserRole extends BaseUpdateEntity {
     @JoinColumn(name = "user_id")
     private UserInfo userInfo;
 
+    @Builder
+    public UserRole(Long userRoleId, RoleInfo roleInfo, UserInfo userInfo) {
+        this.userRoleId = userRoleId;
+        this.roleInfo = roleInfo;
+        this.userInfo = userInfo;
+    }
 }

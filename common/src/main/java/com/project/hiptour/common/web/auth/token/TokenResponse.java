@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class TokenResponse {
+    private final boolean isSuccess;
     private final String message;
     private final String accessToken;
 }

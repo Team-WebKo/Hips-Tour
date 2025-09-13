@@ -25,6 +25,7 @@ public class LoginController {
 
     @GetMapping("/kakao")
     public void redirectToKakao(HttpServletResponse response) throws IOException {
+        //TODO :: 로그인이 된 상태에서 반복적으로 로그인 시도를 하는 것을 막는 로직이 있으면 좋을 듯!!
         log.info("request for this url came");
         String redirectUrl =providerService.getRedirectUrl();
         response.sendRedirect(redirectUrl);

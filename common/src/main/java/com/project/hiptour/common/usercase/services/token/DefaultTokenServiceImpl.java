@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
-import com.project.hiptour.common.entity.users.UserRole;
 import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
 import jakarta.transaction.Transactional;
@@ -18,7 +17,7 @@ import java.util.*;
 
 @Slf4j
 @Service
-public class DefaultTokenServiceImpl implements TokenService{
+public class DefaultTokenServiceImpl implements TokenService {
 
     private final TokenContext tokenContext;
     private final TokenRepos tokenRepos;
@@ -32,7 +31,7 @@ public class DefaultTokenServiceImpl implements TokenService{
     }
 
     @Override
-    public TokenPair createToken(UserInfo userInfo, List<UserRole> userRoles) {
+    public TokenPair createToken(UserInfo userInfo, List<Long> userRoles) {
 
         TokenTemplate template = new TokenTemplate(userInfo.getUserId(), userRoles);
         Token accessToken = template.toAccessToken(this.tokenContext);
@@ -40,7 +39,7 @@ public class DefaultTokenServiceImpl implements TokenService{
 
         return new TokenPair(accessToken, refreshToken);
     }
-  
+
     @Transactional(Transactional.TxType.SUPPORTS)
     @Override
     public void updateToken(Long userId, Token refreshToken) {
@@ -64,19 +63,17 @@ public class DefaultTokenServiceImpl implements TokenService{
             byte[] decode = Base64.getUrlDecoder().decode(payload);
             String tokenInfo = new String(decode);
 
-            return this.mapper.readValue(tokenInfo, TokenTemplate.class);
+            Map payloadAsMap = this.mapper.readValue(tokenInfo, Map.class);
+            long userId = Long.parseLong((String) payloadAsMap.getOrDefault("sub", 0));
+            List<Long> roles = (List<Long>) payloadAsMap.getOrDefault("role", List.of());
+            return new TokenTemplate(userId, roles);
 
-        }catch (JWTDecodeException e){
-            log.warn("invalid token {}",e.getMessage());
+        } catch (JWTDecodeException e) {
+            log.warn("invalid token {}", e.getMessage());
             return null;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public TokenInfo findByUserId(long userId) {
-        return this.tokenRepos.findByUserId(userId);
     }
 
     @Override

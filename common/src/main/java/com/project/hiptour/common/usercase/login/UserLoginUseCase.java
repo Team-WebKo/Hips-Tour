@@ -57,13 +57,15 @@ public class UserLoginUseCase {
             userInfo = userInfoByIdentifier.get();
         }
 
-        List<UserRole> userRoles = this.userRoleRepo
+        List<Long> userRoleIds = this.userRoleRepo
                 .findByUserInfo(userInfo)
-                .orElse(List.of());
+                .orElse(List.of())
+                .stream().map(UserRole::getUserRoleId)
+                .toList();
 
-        TokenPair pair = this.tokenService.createToken(userInfo, userRoles);
+        TokenPair pair = this.tokenService.createToken(userInfo, userRoleIds);
 
-        this.tokenService.updateToken(userIdentity.getUserId(), pair.getRefreshToken());
+        this.tokenService.updateToken(userInfo.getUserId(), pair.getRefreshToken());
         log.debug("token successfully updated!");
 
         return LoginResult.builder()
