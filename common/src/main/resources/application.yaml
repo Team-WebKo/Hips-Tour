@@ -97,7 +97,7 @@ spring:
 
 oauth2:
   kakao:
-    client-id: SDRCUkLca0AropRF7LigqVS3L3zkU7nR
+    client-id: d1bdb8862e252dbf25e8ec2e273107e7
     redirect-uri: "http://211.188.56.10:8080/login/oauth2/code/kakao"
     authorization-grant-type: authorization_code
     client-name: Kakao
