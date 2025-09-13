@@ -49,6 +49,12 @@ spring:
 spring:
   config:
     activate:
+      on-profile: test
+  sql:
+    init:
+      data-locations: classpath:basic-data.sql
+      mode: always
+
       on-profile: local
   sql:
   datasource:
