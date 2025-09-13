@@ -1,21 +1,15 @@
 package com.project.hiptour.common.entity.place;
 
-import com.project.hiptour.common.entity.BaseTimeEntity;
 import com.project.hiptour.common.entity.BaseUpdateEntity;
 import com.project.hiptour.common.entity.place.embedable.GeoPoint;
 import com.project.hiptour.common.entity.place.embedable.TelNumber;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Place extends BaseUpdateEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer placeId;
@@ -28,10 +22,6 @@ public class Place extends BaseUpdateEntity {
     @Embedded
     private TelNumber telNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
-
     @OneToOne
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
@@ -40,6 +30,15 @@ public class Place extends BaseUpdateEntity {
     private String address1;
     private String address2;
 
+    @Builder
+    public Place(String placeName, GeoPoint geoPoint, TelNumber telNumber, RegionInfo regionInfo, String address1, String address2) {
+        this.placeName = placeName;
+        this.geoPoint = geoPoint;
+        this.telNumber = telNumber;
+        this.regionInfo = regionInfo;
+        this.address1 = address1;
+        this.address2 = address2;
+    }
 
     public Place(String placeName, String address1, String address2, GeoPoint geoPoint, TelNumber telNumber) {
         this.placeName = placeName;
