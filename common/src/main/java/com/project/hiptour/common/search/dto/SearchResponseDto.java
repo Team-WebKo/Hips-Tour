@@ -23,6 +23,6 @@ public class SearchResponseDto {
         this.address2 = place.getAddress2();
         this.tel = place.getTelNumber() != null ? place.getTelNumber().toString() : null;
         this.regionName = place.getRegionInfo() != null ? place.getRegionInfo().getRegionName() : null;
-        this.categoryName = place.getCategory() != null ? place.getCategory().getCategoryName() : null;
+//        this.categoryName = place.getCategory() != null ? place.getCategory().getCategoryName() : null;
     }
 }
