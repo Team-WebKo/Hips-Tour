@@ -45,12 +45,14 @@ public class LoadServiceTest {
         loadStatusRepository.deleteAll();
         syncStatusRepository.deleteAll();
         ReflectionTestUtils.setField(loadService, "areaCodes", List.of("1", "2"));
+        ReflectionTestUtils.setField(loadService, "apiCallCount", 0);
     }
 
     @Test
     @DisplayName("초기 상태에서 전체 데이터 적재 시, API 응답에 따라 모든 데이터를 적재하고 완료 상태를 기록해야 한다.")
     void loadAllPlaces_initialLoad_success() throws Exception {
         // Given
+        ReflectionTestUtils.setField(loadService, "dailyApiCallLimit", 10);
         String areaCode1Page1Response = """
                 {"response":{"header":{"resultCode":"0000","resultMsg":"OK"},"body":{"items":{"item":[{"contentid":"1","addr1":"addr1"}]},"numOfRows":1,"pageNo":1,"totalCount":1}}}
                 """;
