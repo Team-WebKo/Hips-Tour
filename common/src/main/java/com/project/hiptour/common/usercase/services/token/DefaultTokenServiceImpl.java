@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
-import com.project.hiptour.common.entity.users.UserRole;
 import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
 import jakarta.transaction.Transactional;
@@ -76,7 +75,6 @@ public class DefaultTokenServiceImpl implements TokenService {
             throw new RuntimeException(e);
         }
     }
-}
 
     @Override
     @Transactional

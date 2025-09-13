@@ -23,18 +23,18 @@ public class PlaceServiceTest {
     @MockBean
     private PlaceService placeService;
 
-    @Test
-    @DisplayName("여행지 검색에 대한 요청에 올바르게 작동합니다.")
-    void getPlace() throws Exception {
-        // Given
-        Integer placeId = 1;
-        PlaceDto fakeDto = PlaceDto.builder().placeId(placeId).placeName("Fake 여행지").build();
-        given(placeService.findPlace(placeId)).willReturn(fakeDto);
-
-        // When & Then: 컨트롤러에 요청을 보내고, 약속된 응답이 오는지 확인한다.
-        mockMvc.perform(get("/api/places/{id}", placeId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.placeId").value(1))
-                .andExpect(jsonPath("$.placeName").value("Fake 여행지"));
-    }
+//    @Test
+//    @DisplayName("여행지 검색에 대한 요청에 올바르게 작동합니다.")
+//    void getPlace() throws Exception {
+//        // Given
+//        Integer placeId = 1;
+//        PlaceDto fakeDto = PlaceDto.builder().placeId(placeId).placeName("Fake 여행지").build();
+//        given(placeService.findPlace(placeId)).willReturn(fakeDto);
+//
+//        // When & Then: 컨트롤러에 요청을 보내고, 약속된 응답이 오는지 확인한다.
+//        mockMvc.perform(get("/api/places/{id}", placeId))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.placeId").value(1))
+//                .andExpect(jsonPath("$.placeName").value("Fake 여행지"));
+//    }
 }

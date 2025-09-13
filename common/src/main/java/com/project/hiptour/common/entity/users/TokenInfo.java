@@ -26,7 +26,7 @@ public class TokenInfo extends BaseTimeEntity {
 
     public void deactivate() {
         this.isActive = false;
-
+    }
     public boolean isStillAvailable(LocalDateTime curTime){
         return !this.isActive || this.getCreatedAt().isBefore(curTime);
     }

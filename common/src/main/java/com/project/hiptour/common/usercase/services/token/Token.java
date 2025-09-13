@@ -14,13 +14,11 @@ public class Token {
     private final String header;
     private final String payload;
     private final String signature;
-    private final String targetUserId;
     private final LocalDateTime createdTime;
     private final LocalDateTime expireTime;
 
-    public Token(String token, String targetUserId, LocalDateTime createdTime, LocalDateTime expireTime) {
+    public Token(String token, LocalDateTime createdTime, LocalDateTime expireTime) {
         this.token = token;
-        this.targetUserId = targetUserId;
         this.createdTime = createdTime;
         this.expireTime = expireTime;
         this.header = token.substring(0, token.indexOf("."));
