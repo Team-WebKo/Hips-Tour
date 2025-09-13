@@ -78,3 +78,12 @@ public class DefaultTokenServiceImpl implements TokenService {
     }
 }
 
+    @Override
+    @Transactional
+    public void logout(Long userId) {
+        TokenInfo tokenInfo = this.tokenRepos.findByUserId(userId);
+        if (tokenInfo != null) {
+            tokenInfo.deactivate();
+        }
+    }
+}

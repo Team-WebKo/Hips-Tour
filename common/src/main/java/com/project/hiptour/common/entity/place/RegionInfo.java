@@ -14,4 +14,7 @@ public class RegionInfo extends BaseUpdateEntity {
     private Integer regionId;
     private String regionName;
 
+    @Column(unique = true)
+    private String areaCode;
+
 }
