@@ -28,8 +28,4 @@ public class MockServiceConfig {
         return Mockito.mock(UpdateReviewService.class);
     }
 
-    @Bean
-    public ReviewQueryService reviewQueryService() {
-        return Mockito.mock(ReviewQueryService.class);
-    }
 }

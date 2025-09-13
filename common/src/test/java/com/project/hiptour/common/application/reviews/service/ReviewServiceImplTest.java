@@ -1,6 +1,7 @@
 package com.project.hiptour.common.application.reviews.service;
 
-import com.project.hiptour.common.place.Place;
+import com.project.hiptour.common.entity.place.Place;
+import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
 import com.project.hiptour.common.reviews.dto.ReviewPinRequestDto;
 import com.project.hiptour.common.reviews.entity.Review;
@@ -46,7 +47,7 @@ class ReviewServiceImplTest {
     private ReviewServiceImpl reviewService;
 
     private Place place;
-    private User user;
+    private UserInfo userInfo;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -62,25 +63,25 @@ class ReviewServiceImplTest {
     @DisplayName("ex) offset=0, limit=2 → 첫 2개 리뷰를 반환")
     void getReviews_firstPage() {
         // given
-        int placeId = 1L;
+        int placeId = 1;
         int offset = 0;
         int limit  = 2;
 
         Review r1 = Review.builder()
                 .reviewId(10L)
                 .place(place)
-                .user(user)
-                .content("리뷰1")
-                .isLove(true)
+                .userInfo(userInfo)
+                .headText("제목")
+                .bodyText("내용")
                 .imageUrls(List.of("a.jpg"))
                 .build();
 
         Review r2 = Review.builder()
                 .reviewId(11L)
                 .place(place)
-                .user(user)
-                .content("리뷰2")
-                .isLove(false)
+                .userInfo(userInfo)
+                .headText("제목")
+                .bodyText("내용")
                 .imageUrls(List.of("b.jpg", "c.jpg"))
                 .build();
 
@@ -96,14 +97,14 @@ class ReviewServiceImplTest {
         // then
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getReviewId()).isEqualTo(10L);
-        assertThat(result.get(0).getContent()).isEqualTo("리뷰1");
-        assertThat(result.get(0).getIsLove()).isTrue();
+        assertThat(result.get(0).getHeadText()).isEqualTo("제목1");
+        assertThat(result.get(0).getBodyText()).isEqualTo("내용1");
         assertThat(result.get(0).getImageUrls()).containsExactly("a.jpg");
         assertThat(result.get(0).getUserId()).isEqualTo(101L);
         assertThat(result.get(0).getNickname()).isEqualTo("테스터");
 
         assertThat(result.get(1).getReviewId()).isEqualTo(11L);
-        assertThat(result.get(1).getIsLove()).isFalse();
+//        assertThat(result.get(1).getIsLove()).isFalse();
         assertThat(result.get(1).getImageUrls()).containsExactly("b.jpg", "c.jpg");
 
         verify(placeRepository, times(1)).findById(placeId);
@@ -115,16 +116,16 @@ class ReviewServiceImplTest {
     @DisplayName("ex) offset=2, limit=2 → 다음 페이지(추가 2개)를 반환")
     void getReviews_nextPage() {
         // given
-        Long placeId = 1L;
+        int placeId = 1;
         int offset = 2;
         int limit  = 2;
 
         Review r3 = Review.builder()
                 .reviewId(12L)
                 .place(place)
-                .user(user)
-                .content("리뷰3")
-                .isLove(true)
+                .userInfo(userInfo)
+                .headText("제목")
+                .bodyText("내용")
                 .imageUrls(List.of())
                 .build();
 
@@ -140,7 +141,8 @@ class ReviewServiceImplTest {
         // then
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getReviewId()).isEqualTo(12L);
-        assertThat(result.get(0).getContent()).isEqualTo("리뷰3");
+        assertThat(result.get(0).getHeadText()).isEqualTo("제목2");
+        assertThat(result.get(0).getBodyText()).isEqualTo("내용2");
 
         verify(placeRepository, times(1)).findById(placeId);
         verify(reviewRepository, times(1)).findByPlaceIdOrderedWithOffsetLimit(placeId, pageable);
@@ -196,9 +198,9 @@ class ReviewServiceImplTest {
         Review review = Mockito.spy(Review.builder()
                 .reviewId(reviewId)
                 .place(place)
-                .user(user)
-                .content("내용")
-                .isLove(true)
+                .userInfo(userInfo)
+                .headText("제목")
+                .bodyText("내용")
                 .imageUrls(List.of())
                 .build());
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
@@ -219,9 +221,9 @@ class ReviewServiceImplTest {
         Review review = Mockito.spy(Review.builder()
                 .reviewId(reviewId)
                 .place(place)
-                .user(user)
-                .content("내용")
-                .isLove(true)
+                .userInfo(userInfo)
+                .headText("제목")
+                .bodyText("내용")
                 .imageUrls(List.of())
                 .build());
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));

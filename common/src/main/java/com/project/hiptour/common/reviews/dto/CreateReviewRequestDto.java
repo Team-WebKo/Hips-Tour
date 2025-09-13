@@ -1,5 +1,6 @@
 package com.project.hiptour.common.reviews.dto;
 
+import com.project.hiptour.common.entity.review.HashTag;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +25,7 @@ public class CreateReviewRequestDto {
 
 //    private Boolean isLove;
 
-    private List<String> hashTags;
+    private List<HashTag> hashTags;
 
     private List<String> imageUrls;
 }
