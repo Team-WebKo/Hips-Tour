@@ -1,6 +1,9 @@
-package com.project.hiptour.common.usercase;
+package com.project.hiptour.common.usercase.login;
 
 import com.project.hiptour.common.entity.users.UserInfo;
+import com.project.hiptour.common.entity.users.UserRole;
+import com.project.hiptour.common.entity.users.repos.UserRepos;
+import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
 import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.security.UserIdentity;
 import com.project.hiptour.common.usercase.services.login.UserService;
@@ -11,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -19,9 +23,10 @@ import java.util.Optional;
 public class UserLoginUseCase {
 
     private final TokenService tokenService;
+    private final UserRepos userRepos;
     private final UserService userService;
     private final OauthProviderService providerService;
-
+    private final UserRoleRepo userRoleRepo;
     /**
      * user의 Oauth 로그인에 따라 토큰을 생성한다 - access token, refresh token
      * @param userCode 사용자가 auth provider의 auth server로부터 인증 후 받은 코드 정보
@@ -37,22 +42,26 @@ public class UserLoginUseCase {
 
         UserIdentity userIdentity = this.providerService.getUserIdentity(userCode);
 
-        Optional<UserInfo> userInfoByIdentifier = userService.findUserInfoByIdentifier(userIdentity.getUserIdentifier());
-
-        TokenPair pair;
+        Optional<UserInfo> userInfoByIdentifier = userRepos.findByUserIdentifier(userIdentity.getUserIdentifier());
 
         boolean isThisUserAlreadyExisting = false;
+
+        UserInfo userInfo = null;
 
         if(userInfoByIdentifier.isEmpty()){
             //TODO :: 유저의 정보를 로그로 남기는 것은 피해야함! 우선은 두고, 추후 변경
             log.debug("this user {} does not exists", userIdentity.getUserIdentifier());
-            UserInfo userInfo = this.userService.insertNewUserAndGet(userIdentity);
-            pair = this.tokenService.createToken(userInfo);
+            userInfo = this.userService.insertNewUserAndGet(userIdentity);
             isThisUserAlreadyExisting = true;
-
         }else{
-            pair = this.tokenService.createToken(userInfoByIdentifier.get());
+            userInfo = userInfoByIdentifier.get();
         }
+
+        List<UserRole> userRoles = this.userRoleRepo
+                .findByUserInfo(userInfo)
+                .orElse(List.of());
+
+        TokenPair pair = this.tokenService.createToken(userInfo, userRoles);
 
         this.tokenService.updateToken(userIdentity.getUserId(), pair.getRefreshToken());
         log.debug("token successfully updated!");

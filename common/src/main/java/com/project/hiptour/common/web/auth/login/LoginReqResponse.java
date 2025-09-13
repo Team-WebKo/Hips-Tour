@@ -1,4 +1,4 @@
-package com.project.hiptour.common.web.auth;
+package com.project.hiptour.common.web.auth.login;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

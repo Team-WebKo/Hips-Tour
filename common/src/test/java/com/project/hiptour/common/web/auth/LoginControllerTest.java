@@ -2,6 +2,7 @@ package com.project.hiptour.common.web.auth;
 
 import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.security.UserIdentity;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 @ActiveProfiles("test")
 class LoginControllerTest {
 
@@ -43,24 +46,6 @@ class LoginControllerTest {
     @BeforeEach
     void init(){
         when(this.mockService.getRedirectUrl()).thenReturn(redirection);
-        when(this.mockService.getUserIdentity(anyString())).thenReturn(
-                new UserIdentity() {
-                    @Override
-                    public String getUserIdentifier() {
-                        return "user";
-                    }
-
-                    @Override
-                    public String getNickName() {
-                        return "nick";
-                    }
-
-                    @Override
-                    public long getUserId() {
-                        return 1;
-                    }
-                }
-        );
     }
 
     @Test
@@ -76,6 +61,10 @@ class LoginControllerTest {
     @Test
     @DisplayName("redirection 후, 토큰이 발급된다. 이때, 최초 가입자의 경우, 표시된다")
     void t1() throws Exception {
+
+        when(this.mockService.getUserIdentity(anyString())).thenReturn(
+                getUserIdentity(UUID.randomUUID().toString())
+        );
 
         mvc.perform(get("/login/kakao"))
                 .andExpect(status().is3xxRedirection())
@@ -93,6 +82,11 @@ class LoginControllerTest {
     @DisplayName("redirection 후, 토큰이 발급된다. 이때, 최초 가입자가 아닌 경우, 최초 가입자가 아님을 표시한다.")
     void t2() throws Exception {
 
+        UserIdentity userIdentity = getUserIdentity(UUID.randomUUID().toString());
+        when(this.mockService.getUserIdentity(anyString()))
+                .thenReturn(userIdentity)
+                .thenReturn(userIdentity);
+
         mvc.perform(get("/login/kakao"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(redirection));
@@ -106,6 +100,25 @@ class LoginControllerTest {
                 .andExpect(jsonPath("$.signUpNeeded").value(false));
 
 
+    }
+
+    private static UserIdentity getUserIdentity(String id) {
+        return new UserIdentity() {
+            @Override
+            public String getUserIdentifier() {
+                return id;
+            }
+
+            @Override
+            public String getNickName() {
+                return id;
+            }
+
+            @Override
+            public long getUserId() {
+                return 1;
+            }
+        };
     }
 
 

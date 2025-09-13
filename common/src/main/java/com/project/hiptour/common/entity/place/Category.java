@@ -7,9 +7,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity
 @Getter
+@Setter
+@Entity
+@NoArgsConstructor
 public class Category extends BaseUpdateEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,5 +21,8 @@ public class Category extends BaseUpdateEntity {
     private String categoryName;
     private String description;
 
-
+    public Category(String categoryName, String description) {
+        this.categoryName = categoryName;
+        this.description = description;
+    }
 }

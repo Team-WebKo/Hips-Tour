@@ -1,58 +1,46 @@
 package com.project.hiptour.common.usercase.services.token;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
+import com.project.hiptour.common.entity.users.UserRole;
 import com.project.hiptour.common.entity.users.repos.TokenRepos;
-import com.project.hiptour.common.util.DateUtils;
+import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.temporal.TemporalUnit;
-import java.util.Date;
+import java.util.*;
 
+@Slf4j
 @Service
 public class DefaultTokenServiceImpl implements TokenService{
 
-    private final long ACCESSKEY_EXPIRE = 60 * 30;
-    private final long REFRESH_EXPIRE = 7 * 24 * 60 * 60;
-
-    private Algorithm algorithm;
+    private final TokenContext tokenContext;
     private final TokenRepos tokenRepos;
+    private final UserRoleRepo userRoleRepo;
+    private final ObjectMapper mapper = new ObjectMapper();
 
-    public DefaultTokenServiceImpl(KeyProvider keyProvider, TokenRepos tokenRepos) {
-        this.algorithm = Algorithm.HMAC256(keyProvider.getKey());
+    public DefaultTokenServiceImpl(KeyProvider keyProvider, TokenContext tokenContext, TokenRepos tokenRepos, UserRoleRepo repos) {
+        this.tokenContext = tokenContext;
         this.tokenRepos = tokenRepos;
+        this.userRoleRepo = repos;
     }
 
     @Override
-    public TokenPair createToken(UserInfo userInfo) {
-        String userId = String.valueOf(userInfo.getUserId());
-        Date expiresAt = new Date(System.currentTimeMillis() + ACCESSKEY_EXPIRE);
-        String accessToken = JWT.create()
-                .withSubject(userId)
-                .withClaim("role", "")
-                .withIssuedAt(new Date())
-                .withExpiresAt(expiresAt)
-                .sign(algorithm);
+    public TokenPair createToken(UserInfo userInfo, List<UserRole> userRoles) {
 
-        Token acctoken = new Token(accessToken, userId, LocalDateTime.now(), LocalDateTime.now().minusMinutes(30));
+        TokenTemplate template = new TokenTemplate(userInfo.getUserId(), userRoles);
+        Token accessToken = template.toAccessToken(this.tokenContext);
+        Token refreshToken = template.toRefreshToken(this.tokenContext);
 
-        String refreshToken = JWT.create()
-                .withSubject(userId)
-                .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_EXPIRE))
-                .sign(algorithm);
-
-        Token refToken = new Token(refreshToken, userId, LocalDateTime.now(), LocalDateTime.now().plusDays(7));
-
-        return new TokenPair(acctoken, refToken);
+        return new TokenPair(accessToken, refreshToken);
     }
+  
     @Transactional(Transactional.TxType.SUPPORTS)
     @Override
     public void updateToken(Long userId, Token refreshToken) {
@@ -66,16 +54,24 @@ public class DefaultTokenServiceImpl implements TokenService{
     }
 
     @Override
-    public Token decodeToken(String token) {
-        DecodedJWT decodedJWT = JWT.require(algorithm)
-                .build()
-                .verify(token);
+    public TokenTemplate decodeToken(String token) {
+        try {
+            DecodedJWT decodedJWT = JWT.require(this.tokenContext.getAlgorithm())
+                    .build()
+                    .verify(token);
 
-        return new Token(
-                decodedJWT.getToken(),
-                decodedJWT.getSubject(),
-                LocalDateTime.now(),
-                DateUtils.convert(decodedJWT.getExpiresAt()));
+            String payload = decodedJWT.getPayload();
+            byte[] decode = Base64.getUrlDecoder().decode(payload);
+            String tokenInfo = new String(decode);
+
+            return this.mapper.readValue(tokenInfo, TokenTemplate.class);
+
+        }catch (JWTDecodeException e){
+            log.warn("invalid token {}",e.getMessage());
+            return null;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

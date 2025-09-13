@@ -1,4 +1,4 @@
-package com.project.hiptour.common.usercase;
+package com.project.hiptour.common.usercase.login;
 
 import com.project.hiptour.common.usercase.services.token.TokenPair;
 import lombok.AllArgsConstructor;
