@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @ToString
 public class Token {
     private final String token;
+    private final String targetUserId;
     private final LocalDateTime createdTime;
     private final LocalDateTime expireTime;
 }
