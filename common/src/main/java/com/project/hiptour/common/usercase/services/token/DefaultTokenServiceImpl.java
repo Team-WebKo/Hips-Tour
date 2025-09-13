@@ -40,6 +40,7 @@ public class DefaultTokenServiceImpl implements TokenService{
 
         return new TokenPair(accessToken, refreshToken);
     }
+  
     @Transactional(Transactional.TxType.SUPPORTS)
     @Override
     public void updateToken(Long userId, Token refreshToken) {
@@ -78,4 +79,12 @@ public class DefaultTokenServiceImpl implements TokenService{
         return this.tokenRepos.findByUserId(userId);
     }
 
+    @Override
+    @Transactional
+    public void logout(Long userId) {
+        TokenInfo tokenInfo = this.tokenRepos.findByUserId(userId);
+        if (tokenInfo != null) {
+            tokenInfo.deactivate();
+        }
+    }
 }

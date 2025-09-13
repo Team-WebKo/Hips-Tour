@@ -14,4 +14,5 @@ public interface TokenService {
      * **/
     TokenTemplate decodeToken(String token);
     TokenInfo findByUserId(long userId);
+    void logout(Long userId);
 }
