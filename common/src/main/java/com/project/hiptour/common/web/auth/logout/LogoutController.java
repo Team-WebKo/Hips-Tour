@@ -1,4 +1,4 @@
-package com.project.hiptour.common.web.auth;
+package com.project.hiptour.common.web.auth.logout;
 
 import com.project.hiptour.common.usercase.UserLogoutUseCase;
 import lombok.RequiredArgsConstructor;
