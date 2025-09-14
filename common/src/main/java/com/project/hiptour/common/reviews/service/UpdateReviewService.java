@@ -21,6 +21,6 @@ public class UpdateReviewService {
             throw new IllegalArgumentException("본인의 리뷰만 수정이 가능합니다.");
         }
 
-        review.update(dto.getHeadText(), dto.getBodyText(), dto.getHashTags());
+        review.update(dto.getHeadText(), dto.getBodyText(), dto.getImageUrls(), dto.getHashTags());
     }
 }
