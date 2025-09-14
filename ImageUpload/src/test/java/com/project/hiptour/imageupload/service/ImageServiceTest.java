@@ -8,8 +8,13 @@ import com.project.hiptour.imageupload.storage.LocalImageStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
+
+import javax.imageio.ImageIO;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -30,9 +35,17 @@ class ImageServiceTest {
     }
 
 
+    // 테스트용 이미지 생성 메서드 (jpg/png 등 원하는 포맷 지정 가능)
+    private byte[] createTestImage(String format) throws IOException {
+        BufferedImage image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, format, baos);
+        return baos.toByteArray();
+    }
+
     @Test
     void 이미지_저장() throws IOException {
-        MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "abc123".getBytes());
+        MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg", createTestImage("jpg"));
 
         when(imageRepository.save(any(ImageEntity.class))).thenAnswer(invocation -> {
             ImageEntity saved = invocation.getArgument(0);
@@ -49,10 +62,7 @@ class ImageServiceTest {
 
     @Test
     void PNG_업로드_시_JPG로_변환되어_저장() throws IOException {
-        // PNG 포맷으로 업로드된 이미지 (확장자 무관하게 jpg로 변환)
-        byte[] pngData = "fake-png-content".getBytes(); // thumbnailator 테스트용
-
-        MockMultipartFile pngFile = new MockMultipartFile("file", "sample.png", "image/png", pngData);
+        MockMultipartFile pngFile = new MockMultipartFile("file", "sample.png", "image/png", createTestImage("png"));
 
         when(imageRepository.save(any(ImageEntity.class))).thenAnswer(invocation -> {
             ImageEntity saved = invocation.getArgument(0);
@@ -67,8 +77,8 @@ class ImageServiceTest {
     }
 
     @Test
-    void 이미지_삭제시_deletedAt() {
-        MockMultipartFile file = new MockMultipartFile("file", "delete.jpg", "image/jpeg", "data".getBytes());
+    void 이미지_삭제시_deletedAt() throws IOException {
+        MockMultipartFile file = new MockMultipartFile("file", "delete.jpg", "image/jpeg", createTestImage("jpg"));
 
         when(imageRepository.save(any(ImageEntity.class))).thenAnswer(invocation -> {
             ImageEntity saved = invocation.getArgument(0);
@@ -78,10 +88,14 @@ class ImageServiceTest {
         });
 
         ImageEntity saved = imageService.save(file);
+
+        when(imageRepository.findById(saved.getId())).thenReturn(java.util.Optional.of(saved));
+
         imageService.delete(saved.getId());
 
         assertThat(saved.getDeletedAt()).isNotNull();
     }
+
     //예외처리
 
     @Test
