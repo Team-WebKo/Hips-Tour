@@ -41,7 +41,6 @@ public class ReviewServiceImpl implements ReviewService {
                     dto.setReviewId(review.getReviewId());
                     dto.setHeadText(review.getHeadText());
                     dto.setBodyText(review.getBodyText());
-//                    dto.setIsLove(review.getIsLove());
                     dto.setImageUrls(review.getImageUrls());
                     dto.setUserId(review.getUserInfo().getUserId());
                     dto.setNickname(review.getUserInfo().getNickName());
