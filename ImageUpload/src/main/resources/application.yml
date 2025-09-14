@@ -1,9 +1,7 @@
-file:
-  upload-dir: uploads/
-
-image:
-  base-url: https://your-nginx-image-server.com/image-upload
 spring:
+  profiles:
+    active: dev  # 기본은 local로 실행
+
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
@@ -11,6 +9,7 @@ spring:
     password:
     hikari:
       maximum-pool-size: 5
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,8 +20,7 @@ spring:
       enabled: true
       path: /h2-console  # 브라우저에서 접속 가능
 
-  spring:
-    task:
-      scheduling:
-        pool:
-          size: 2
+  task:
+    scheduling:
+      pool:
+        size: 2
