@@ -2,4 +2,4 @@ file:
   upload-dir: /usr/share/nginx/html
 
 image:
-  base-url: https://your-nginx-image-server.com/image-upload
+  base-url: http://211.188.56.10
