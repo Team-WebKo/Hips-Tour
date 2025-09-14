@@ -36,6 +36,7 @@ public class Review extends BaseEntity {
 
     private String headText;
     private String bodyText;
+    private List<String> imageUrls;
 
     @Builder.Default
     @ElementCollection
