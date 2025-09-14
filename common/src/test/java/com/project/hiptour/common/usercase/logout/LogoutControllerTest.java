@@ -41,7 +41,7 @@ class LogoutControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("로그아웃에 성공하였습니다."));
+                .andExpect(jsonPath("$.message").value("로그아웃에 성공했습니다."));
 
         verify(userLogoutUseCase, times(1)).logout(userId);
     }
