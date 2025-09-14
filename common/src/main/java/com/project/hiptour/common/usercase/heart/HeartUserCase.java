@@ -3,16 +3,14 @@ package com.project.hiptour.common.usercase.heart;
 import com.project.hiptour.common.entity.heart.Heart;
 import com.project.hiptour.common.entity.heart.repos.HeartRepos;
 import com.project.hiptour.common.entity.place.Place;
+import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.entity.users.repos.UserRepos;
-import com.project.hiptour.common.place.repository.PlaceRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import static com.project.hiptour.common.usercase.heart.HeartCase.USER_NOT_EXISTING;
@@ -72,13 +70,13 @@ public class HeartUserCase {
 
         log.debug("unHeart request came with id {}", heartId);
 
-        Optional<Heart> byUserUserIdAndFeedPlaceId = this.heartRepos.findById(heartId);;
+        Optional<Heart> optionalHeart = this.heartRepos.findById(heartId);;
 
-        if(byUserUserIdAndFeedPlaceId.isEmpty()){
+        if(optionalHeart.isEmpty()){
             log.warn("this un-heart request contains invalid id key! {}", heartId);
             return new HeartResult(false, "invalid state!! the id is not existing", HeartCase.NOT_EXISTING);
         }else{
-            Heart heart = byUserUserIdAndFeedPlaceId.get();
+            Heart heart = optionalHeart.get();
             if(!heart.isActive()){
                 log.debug("the state is already inactive!! {}", heart);
                 return new HeartResult(false, "invalid state!! the id is already inactive", HeartCase.ALREADY_INACTIVE);

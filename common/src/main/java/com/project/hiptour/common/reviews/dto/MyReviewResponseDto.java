@@ -21,8 +21,8 @@ public class MyReviewResponseDto {
 
     public MyReviewResponseDto(Review review) {
         this.reviewId = review.getReviewId();
-        this.placeId = review.getPlaceId().getPlaceId();
-        this.placeName = review.getPlaceId().getPlaceName();
+        this.placeId = review.getPlace().getPlaceId();;
+        this.placeName = review.getPlace().getPlaceName();
         this.headText = review.getHeadText();
         this.bodyText = review.getBodyText();
         this.hashTags = review.getHashTags();
