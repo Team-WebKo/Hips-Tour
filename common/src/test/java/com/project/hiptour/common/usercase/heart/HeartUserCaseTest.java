@@ -4,9 +4,9 @@ import com.project.hiptour.common.entity.heart.Heart;
 import com.project.hiptour.common.entity.heart.repos.HeartRepos;
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.place.embedable.GeoPoint;
+import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.entity.users.repos.UserRepos;
-import com.project.hiptour.common.place.repository.PlaceRepository;
 import com.project.hiptour.common.security.OauthProviderService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;

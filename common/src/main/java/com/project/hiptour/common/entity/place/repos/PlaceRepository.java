@@ -1,4 +1,4 @@
-package com.project.hiptour.common.place.repository;
+package com.project.hiptour.common.entity.place.repos;
 
 import com.project.hiptour.common.entity.place.Place;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +11,7 @@ import java.util.List;
 
 @Repository
 public interface PlaceRepository extends JpaRepository<Place, Integer> {
+    boolean existsByPlaceNameAndAddress1(String placeName, String address1);
     @Query("SELECT p FROM Place p " +
             "LEFT JOIN Heart h ON p.placeId = h.feed.placeId AND h.isActive = true " +
             "GROUP BY p.placeId " +

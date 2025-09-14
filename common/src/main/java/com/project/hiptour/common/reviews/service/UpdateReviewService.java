@@ -2,8 +2,8 @@ package com.project.hiptour.common.reviews.service;
 
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.reviews.dto.UpdateReviewRequestDto;
-import com.project.hiptour.common.reviews.entity.Review;
-import com.project.hiptour.common.reviews.repository.ReviewRepository;
+import com.project.hiptour.common.entity.review.Review;
+import com.project.hiptour.common.entity.review.repos.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

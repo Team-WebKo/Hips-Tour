@@ -1,8 +1,8 @@
 package com.project.hiptour.common.place.service;
 
 import com.project.hiptour.common.entity.place.Place;
+import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.common.place.dto.PlaceDto;
-import com.project.hiptour.common.place.repository.PlaceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

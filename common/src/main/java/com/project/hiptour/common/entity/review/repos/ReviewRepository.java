@@ -1,8 +1,8 @@
-package com.project.hiptour.common.reviews.repository;
+package com.project.hiptour.common.entity.review.repos;
 
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.users.UserInfo;
-import com.project.hiptour.common.reviews.entity.Review;
+import com.project.hiptour.common.entity.review.Review;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
