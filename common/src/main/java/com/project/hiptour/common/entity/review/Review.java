@@ -1,5 +1,6 @@
 package com.project.hiptour.common.entity.review;
 
+import com.project.hiptour.common.entity.BaseTimeEntity;
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.reviews.global.entity.BaseEntity;
@@ -16,9 +17,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Review extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewId;
+public class Review extends BaseTimeEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -30,18 +32,16 @@ public class Review extends BaseEntity {
 
     private String headText;
     private String bodyText;
+
+    @ElementCollection
+    @CollectionTable(name = "review_image_urls", joinColumns = @JoinColumn(name = "review_id"))
+    @Column(name = "image_url")
     private List<String> imageUrls;
 
     @Builder.Default
     @ElementCollection
     @CollectionTable(name = "review_hashtags", joinColumns = @JoinColumn(name = "review_id"))
     private List<HashTag> hashTags = new ArrayList<>();
-
-    public void update(String headText, String bodyText, List<HashTag> hashTags) {
-        if (headText != null) {
-            this.headText = headText;
-        }
-    }
 
     private Boolean pinned = false;
 
@@ -56,10 +56,11 @@ public class Review extends BaseEntity {
         this.pinned = false;
         this.pinnedAt = null; // 다시 일반 리뷰처럼 정렬됨
     }
-    public void update(String content, Boolean isLove, List<String> imageUrls) {
+
+    public void update(String headText, String bodyText, List<String> imageUrls, List<HashTag> hashTags) {
         if (headText != null) this.headText = headText;
         if (bodyText != null) this.bodyText = bodyText;
-//        if (isLove != null) this.isLove = isLove;
         if (imageUrls != null) this.imageUrls = imageUrls;
+        if (hashTags != null) this.hashTags = hashTags;
     }
 }
