@@ -43,7 +43,7 @@ public class ImageController {
         ImageResponseDto response = new ImageResponseDto(
                 image.getId(),
                 image.getOriginalName(),
-                baseUrl +  image.getPath()
+                baseUrl + "/" + image.getPath()
         );
         return ResponseEntity.ok(response);
     }
@@ -56,7 +56,7 @@ public class ImageController {
         ImageResponseDto response = new ImageResponseDto(
                 image.getId(),
                 image.getOriginalName(),
-                baseUrl + image.getPath()
+                baseUrl + "/" + image.getPath()
         );
         return ResponseEntity.ok(response);
     }

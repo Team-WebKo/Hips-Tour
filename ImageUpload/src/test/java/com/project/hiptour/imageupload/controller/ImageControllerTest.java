@@ -36,7 +36,7 @@ public class ImageControllerTest {
 
         when(imageService.save(any())).thenReturn(image);
 
-        mockMvc.perform(multipart("/images").file(mockFile))
+        mockMvc.perform(multipart("/image-upload/images").file(mockFile))
                 .andDo(result -> System.out.println("응답 JSON: " + result.getResponse().getContentAsString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -50,7 +50,7 @@ public class ImageControllerTest {
         MockMultipartFile mockFile = new MockMultipartFile("file", "fail.jpg", "image/jpeg", "fail".getBytes());
         when(imageService.save(any())).thenThrow(new RuntimeException("파일 업로드에 실패했습니다."));
 
-        mockMvc.perform(multipart("/images").file(mockFile))
+        mockMvc.perform(multipart("/image-upload/images").file(mockFile))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status").value(500))
                 .andExpect(jsonPath("$.message").value("서버 오류가 발생했습니다."));

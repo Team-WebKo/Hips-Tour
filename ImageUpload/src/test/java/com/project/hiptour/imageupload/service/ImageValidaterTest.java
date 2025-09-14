@@ -39,13 +39,13 @@ public class ImageValidaterTest {
         byte[] fakeImage = new byte[]{'M', 'Z'}; // exe 매직넘버
         MockMultipartFile file = new MockMultipartFile("file", "hacked.jpg", "image/jpeg", fakeImage);
         Exception e = assertThrows(IllegalArgumentException.class, () -> ImageValidator.validate(file));
-        assertEquals("유효하지 않은 이미지 포맷입니다.", e.getMessage());
+        assertEquals("실제 이미지가 아닙니다.", e.getMessage());
     }
 
     @Test
     void 빈_파일_거부() {
         MockMultipartFile empty = new MockMultipartFile("file", "empty.jpg", "image/jpeg", new byte[0]);
         Exception e = assertThrows(IllegalArgumentException.class, () -> ImageValidator.validate(empty));
-        assertEquals("유효하지 않은 이미지 포맷입니다.", e.getMessage());
+        assertEquals("파일이 비어 있습니다.", e.getMessage());
     }
 }
