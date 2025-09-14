@@ -1,11 +1,7 @@
 package com.project.hiptour.common.reviews.controller;
 
 import com.project.hiptour.common.entity.users.UserInfo;
-import com.project.hiptour.common.reviews.dto.CreateReviewRequestDto;
-import com.project.hiptour.common.reviews.dto.MyReviewResponseDto;
-import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
-import com.project.hiptour.common.reviews.dto.ReviewPinRequestDto;
-import com.project.hiptour.common.reviews.dto.UpdateReviewRequestDto;
+import com.project.hiptour.common.reviews.dto.*;
 import com.project.hiptour.common.reviews.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
