@@ -22,9 +22,8 @@ public class HeartController {
     public ResponseEntity<HeartResponse> makeHeart(@RequestBody HeartRequest request){
 
         HeartResult heartResult = this.heartUserCase.makeHeart(request.getUserId(), request.getFeedId());
-        if(heartResult.isSuccess()){
-            return ResponseEntity.noContent().build();
-        }else if(heartResult.isHeartNotExisting()){
+
+        if(heartResult.isHeartNotExisting()){
             return ResponseEntity
                     .notFound()
                     .build();
@@ -41,5 +40,6 @@ public class HeartController {
                     .internalServerError()
                     .body(new HeartResponse(request, "inactive state"));
         }
+        return ResponseEntity.noContent().build();
     }
 }
