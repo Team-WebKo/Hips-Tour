@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local  # 기본은 local로 실행
+    active: dev  # 기본은 local로 실행
 
   datasource:
     url: jdbc:h2:mem:testdb
