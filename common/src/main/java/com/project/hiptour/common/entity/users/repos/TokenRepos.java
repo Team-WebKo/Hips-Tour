@@ -4,7 +4,10 @@ import com.project.hiptour.common.entity.users.TokenInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface TokenRepos extends JpaRepository<TokenInfo, Long> {
-    TokenInfo findByUserId(long userId);
+    Optional<TokenInfo> findFirstByUserIdOrderByCreatedAtDesc(Long userId);
+
 }

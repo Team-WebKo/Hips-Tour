@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -21,16 +23,16 @@ public class UserLogoutUseCase {
         try {
             TokenTemplate tokenTemplate = tokenService.decodeToken(userAccessToken);
             long userId = tokenTemplate.getUserId();
-            TokenInfo tokenInfo = this.tokenRepos.findByUserId(userId);
+            Optional<TokenInfo> tokenInfo = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
 
-            if(tokenInfo == null){
+            if(tokenInfo.isEmpty()){
                 return LogoutResponse.builder()
                         .isSuccess(false)
                         .message("user token is not present")
                         .build();
             }
 
-            tokenInfo.deactivate();
+            tokenInfo.get().deactivate();
             log.debug("successfully deactivate user token");
 
             return LogoutResponse.builder()

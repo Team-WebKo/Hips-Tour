@@ -40,9 +40,9 @@ public class TokenUseCase {
         }
 
         long userId = tokenTemplate.getUserId();
-        TokenInfo tokenInfo = this.tokenRepos.findByUserId(userId);
+        Optional<TokenInfo> token = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
 
-        if(tokenInfo != null && tokenInfo.isStillAvailable(LocalDateTime.now())){
+        if(token.isPresent()&& token.get().isStillAvailable(LocalDateTime.now())){
             log.debug("this refresh tokenString is still available");
             Optional<UserInfo> userInfo = this.userRepos.findById(userId);
             if(userInfo.isEmpty()){
@@ -55,9 +55,9 @@ public class TokenUseCase {
                     .stream()
                     .map(UserRole::getUserRoleId).toList();
 
-            TokenPair token = this.tokenService.createToken(userInfoObject, userRoleIds);
+            TokenPair newToken = this.tokenService.createToken(userInfoObject, userRoleIds);
 
-            return new TokenRequestResult(true, "success",token.getAccessToken().getToken());
+            return new TokenRequestResult(true, "success",newToken.getAccessToken().getToken());
 
         }else{
             return new TokenRequestResult(false, "failed",null);
