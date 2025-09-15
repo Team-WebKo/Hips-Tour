@@ -1,31 +1,39 @@
 package com.project.hiptour.common.reviews.dto;
 
-import com.project.hiptour.common.entity.review.HashTag;
+import com.project.hiptour.common.entity.BaseTimeEntity;
 import com.project.hiptour.common.entity.review.Review;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@Builder
 @NoArgsConstructor
-public class MyReviewResponseDto {
+@AllArgsConstructor
+public class MyReviewResponseDto extends BaseTimeEntity {
     private Long reviewId;
     private Integer placeId;
     private String placeName;
     private String headText;
     private String bodyText;
-    private List<HashTag> hashTags;
-    private LocalDateTime createdAt;
+    private List<String> imageUrls;
 
-    public MyReviewResponseDto(Review review) {
-        this.reviewId = review.getReviewId();
-        this.placeId = review.getPlace().getPlaceId();;
-        this.placeName = review.getPlace().getPlaceName();
-        this.headText = review.getHeadText();
-        this.bodyText = review.getBodyText();
-        this.hashTags = review.getHashTags();
-        this.createdAt = review.getCreatedAt();
+    public static MyReviewResponseDto from(Review review) {
+        MyReviewResponseDto dto = MyReviewResponseDto.builder()
+                .reviewId(review.getReviewId())
+                .placeId(review.getPlace().getPlaceId())
+                .placeName(review.getPlace().getPlaceName())
+                .headText(review.getHeadText())
+                .bodyText(review.getBodyText())
+                .imageUrls(review.getImageUrls())
+                .build();
+        dto.setCreatedAt(review.getCreatedAt());
+        dto.setUpdatedAt(review.getUpdatedAt());
+
+        return dto;
     }
 }
+//TODO: 날짜 관련으로 정렬하기위한 방법 필요.

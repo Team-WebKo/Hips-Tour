@@ -9,8 +9,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class UpdateReviewRequestDto {
+    private Long userId;
     private String headText;
     private String bodyText;
-    private List<HashTag> hashTags;
     private List<String> imageUrls;
+    private List<HashTag> hashTags;
 }

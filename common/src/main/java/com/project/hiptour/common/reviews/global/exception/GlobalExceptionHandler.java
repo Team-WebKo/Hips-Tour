@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     /**
@@ -23,6 +22,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ReviewNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleReviewNotFoundException(ReviewNotFoundException ex) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ReviewAccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleReviewAccessDeniedException(ReviewAccessDeniedException ex) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 ex.getMessage()
