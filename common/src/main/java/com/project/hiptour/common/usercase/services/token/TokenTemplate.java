@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -23,24 +24,35 @@ public class TokenTemplate {
     }
 
     public Token toAccessToken(TokenContext context){
-        Date expiresAt = new Date(System.currentTimeMillis() + context.getACCESSKEY_EXPIRE());
+
         String token = JWT.create()
                 .withSubject(String.valueOf(this.userId))
                 .withClaim("role", this.roleIds)
-                .withIssuedAt(new Date())
-                .withExpiresAt(expiresAt)
+                .withIssuedAt(getCurrentDate())
+                .withExpiresAt(getExpiryDate(context))
                 .sign(context.getAlgorithm());
         return getToken(token);
     }
 
     public Token toRefreshToken(TokenContext context){
-        Date expiresAt = new Date(System.currentTimeMillis() + context.getREFRESH_EXPIRE());
         String refreshToken = JWT.create()
                 .withSubject(String.valueOf(this.userId))
-                .withIssuedAt(new Date())
-                .withExpiresAt(expiresAt)
+                .withIssuedAt(getCurrentDate())
+                .withExpiresAt(getExpiryDate(context))
                 .sign(context.getAlgorithm());
         return getToken(refreshToken);
+    }
+
+
+    private Date getCurrentDate() {
+        // 현재로부터 1시간 뒤
+        return Date.from(Instant.now());
+    }
+
+
+    private Date getExpiryDate(TokenContext context) {
+        // 현재로부터 1시간 뒤
+        return Date.from(Instant.now().plusSeconds(context.getACCESSKEY_EXPIRE()));
     }
 
     private Token getToken(String refreshToken) {
