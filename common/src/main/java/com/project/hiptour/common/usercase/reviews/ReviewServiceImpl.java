@@ -1,18 +1,17 @@
-package com.project.hiptour.common.reviews.serviceImpl;
+package com.project.hiptour.common.usercase.reviews;
 
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.common.entity.review.Review;
 import com.project.hiptour.common.entity.review.repos.ReviewRepository;
 import com.project.hiptour.common.entity.users.UserInfo;
-import com.project.hiptour.common.reviews.dto.CreateReviewRequestDto;
-import com.project.hiptour.common.reviews.dto.MyReviewResponseDto;
-import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
-import com.project.hiptour.common.reviews.dto.UpdateReviewRequestDto;
-import com.project.hiptour.common.reviews.global.exception.PlaceNotFoundException;
-import com.project.hiptour.common.reviews.global.exception.ReviewAccessDeniedException;
-import com.project.hiptour.common.reviews.global.exception.ReviewNotFoundException;
-import com.project.hiptour.common.reviews.service.ReviewService;
+import com.project.hiptour.common.exception.place.PlaceNotFoundException;
+import com.project.hiptour.common.exception.review.ReviewAccessDeniedException;
+import com.project.hiptour.common.exception.review.ReviewNotFoundException;
+import com.project.hiptour.common.web.reviews.CreateReviewRequestDto;
+import com.project.hiptour.common.web.reviews.MyReviewResponseDto;
+import com.project.hiptour.common.web.reviews.ReviewListResponseDto;
+import com.project.hiptour.common.web.reviews.UpdateReviewRequestDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

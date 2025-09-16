@@ -1,4 +1,4 @@
-package com.project.hiptour.common.reviews.global.response;
+package com.project.hiptour.common.exception.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

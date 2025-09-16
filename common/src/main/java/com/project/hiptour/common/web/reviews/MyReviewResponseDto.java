@@ -1,4 +1,4 @@
-package com.project.hiptour.common.reviews.dto;
+package com.project.hiptour.common.web.reviews;
 
 import com.project.hiptour.common.entity.BaseTimeEntity;
 import com.project.hiptour.common.entity.review.Review;

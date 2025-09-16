@@ -1,4 +1,4 @@
-package com.project.hiptour.common.place.dto;
+package com.project.hiptour.common.web.place;
 
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.place.embedable.GeoPoint;

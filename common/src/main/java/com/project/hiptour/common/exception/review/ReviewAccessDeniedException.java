@@ -1,4 +1,4 @@
-package com.project.hiptour.common.reviews.global.exception;
+package com.project.hiptour.common.exception.review;
 
 public class ReviewAccessDeniedException extends RuntimeException {
     public ReviewAccessDeniedException(String message) {

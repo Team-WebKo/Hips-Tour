@@ -1,6 +1,9 @@
-package com.project.hiptour.common.reviews.global.exception;
+package com.project.hiptour.common.exception;
 
-import com.project.hiptour.common.reviews.global.response.ApiErrorResponse;
+import com.project.hiptour.common.exception.place.PlaceNotFoundException;
+import com.project.hiptour.common.exception.review.ReviewAccessDeniedException;
+import com.project.hiptour.common.exception.review.ReviewNotFoundException;
+import com.project.hiptour.common.exception.response.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

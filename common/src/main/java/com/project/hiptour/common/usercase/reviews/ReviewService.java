@@ -1,10 +1,10 @@
-package com.project.hiptour.common.reviews.service;
+package com.project.hiptour.common.usercase.reviews;
 
 import com.project.hiptour.common.entity.users.UserInfo;
-import com.project.hiptour.common.reviews.dto.CreateReviewRequestDto;
-import com.project.hiptour.common.reviews.dto.MyReviewResponseDto;
-import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
-import com.project.hiptour.common.reviews.dto.UpdateReviewRequestDto;
+import com.project.hiptour.common.web.reviews.CreateReviewRequestDto;
+import com.project.hiptour.common.web.reviews.MyReviewResponseDto;
+import com.project.hiptour.common.web.reviews.ReviewListResponseDto;
+import com.project.hiptour.common.web.reviews.UpdateReviewRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

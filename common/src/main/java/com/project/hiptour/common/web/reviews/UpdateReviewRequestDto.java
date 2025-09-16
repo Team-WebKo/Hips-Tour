@@ -1,4 +1,4 @@
-package com.project.hiptour.common.reviews.dto;
+package com.project.hiptour.common.web.reviews;
 
 import com.project.hiptour.common.entity.review.HashTag;
 import lombok.AllArgsConstructor;
@@ -10,9 +10,9 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
-public class CreateReviewRequestDto {
+@Builder
+public class UpdateReviewRequestDto {
     private Long userId;
     private String headText;
     private String bodyText;

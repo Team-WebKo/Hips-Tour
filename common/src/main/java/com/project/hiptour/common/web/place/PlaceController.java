@@ -1,7 +1,6 @@
-package com.project.hiptour.common.place.controller;
+package com.project.hiptour.common.web.place;
 
-import com.project.hiptour.common.place.dto.PlaceDto;
-import com.project.hiptour.common.place.service.PlaceService;
+import com.project.hiptour.common.usercase.place.PlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,8 +8,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")

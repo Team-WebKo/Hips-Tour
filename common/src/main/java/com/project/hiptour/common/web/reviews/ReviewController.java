@@ -1,12 +1,8 @@
-package com.project.hiptour.common.reviews.controller;
+package com.project.hiptour.common.web.reviews;
 
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.entity.users.repos.UserRepos;
-import com.project.hiptour.common.reviews.dto.CreateReviewRequestDto;
-import com.project.hiptour.common.reviews.dto.MyReviewResponseDto;
-import com.project.hiptour.common.reviews.dto.ReviewListResponseDto;
-import com.project.hiptour.common.reviews.dto.UpdateReviewRequestDto;
-import com.project.hiptour.common.reviews.service.ReviewService;
+import com.project.hiptour.common.usercase.reviews.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
