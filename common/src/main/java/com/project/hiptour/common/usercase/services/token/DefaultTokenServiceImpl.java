@@ -21,13 +21,11 @@ public class DefaultTokenServiceImpl implements TokenService {
 
     private final TokenContext tokenContext;
     private final TokenRepos tokenRepos;
-    private final UserRoleRepo userRoleRepo;
     private final ObjectMapper mapper = new ObjectMapper();
 
     public DefaultTokenServiceImpl(KeyProvider keyProvider, TokenContext tokenContext, TokenRepos tokenRepos, UserRoleRepo repos) {
         this.tokenContext = tokenContext;
         this.tokenRepos = tokenRepos;
-        this.userRoleRepo = repos;
     }
 
     @Override
