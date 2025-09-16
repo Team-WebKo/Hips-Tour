@@ -79,11 +79,4 @@ public class DefaultTokenServiceImpl implements TokenService {
             throw new RuntimeException(e);
         }
     }
-
-    @Override
-    @Transactional
-    public void logout(Long userId) {
-        Optional<TokenInfo> lastUserToken = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
-        lastUserToken.ifPresent(TokenInfo::deactivate);
-    }
 }
