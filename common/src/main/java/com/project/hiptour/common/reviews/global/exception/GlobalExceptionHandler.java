@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    /**
-     * 전역 예외 처리기
-     * **/
     @ExceptionHandler(PlaceNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handlePlaceNotFoundException(PlaceNotFoundException ex) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(
@@ -32,9 +29,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReviewAccessDeniedException.class)
     public ResponseEntity<ApiErrorResponse> handleReviewAccessDeniedException(ReviewAccessDeniedException ex) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.FORBIDDEN.value(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 }

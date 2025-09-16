@@ -17,7 +17,7 @@ public class ReviewListResponseDto extends BaseTimeEntity {
     private Long reviewId;
     private String headText;
     private String bodyText;
-    private List<String> imageUrils;
+    private List<String> imageUrls;
     private Long userId;
     private String nickname;
 
@@ -26,7 +26,7 @@ public class ReviewListResponseDto extends BaseTimeEntity {
                 .reviewId(review.getReviewId())
                 .headText(review.getHeadText())
                 .bodyText(review.getBodyText())
-                .imageUrils(review.getImageUrls())
+                .imageUrls(review.getImageUrls())
                 .userId(review.getUserInfo().getUserId())
                 .nickname(review.getUserInfo().getNickName())
                 .build();
