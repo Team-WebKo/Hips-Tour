@@ -5,6 +5,7 @@ import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.common.place.dto.PlaceDto;
 import com.project.hiptour.common.place.service.PlaceService;
 import com.project.hiptour.common.reviews.global.exception.PlaceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public PlaceDto findPlace(Integer placeId) {
         Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new PlaceNotFoundException("장소를 찾지 못했습니다: " + placeId));
+                .orElseThrow(() -> new EntityNotFoundException("장소를 찾지 못했습니다: " + placeId));
 
         return PlaceDto.from(place);
     }
