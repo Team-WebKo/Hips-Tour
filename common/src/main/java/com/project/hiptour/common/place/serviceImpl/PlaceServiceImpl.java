@@ -35,28 +35,32 @@ public class PlaceServiceImpl implements PlaceService {
     public Page<PlaceDto> findRecommendedPlaces(Pageable pageable) {
         Page<Place> heartedPlacesPage = placeRepository.findPlacesOrderByHeartCount(pageable);
 
-        if (heartedPlacesPage.getContent().size() < pageable.getPageSize() || heartedPlacesPage.isEmpty()) {
-            List<Place> heartedPlacesOrSortedPlaces = new ArrayList<>(heartedPlacesPage.getContent());
-            int remainingLimit = pageable.getPageSize() - heartedPlacesOrSortedPlaces.size();
+        if (!heartedPlacesPage.isEmpty()) {
+            if (heartedPlacesPage.getContent().size() < pageable.getPageSize()) {
+                List<Place> heartedPlacesOrSortedPlaces = new ArrayList<>(heartedPlacesPage.getContent());
+                int remainingLimit = pageable.getPageSize() - heartedPlacesOrSortedPlaces.size();
 
-            if (remainingLimit > 0) {
-                List<Integer> excludedIds = heartedPlacesOrSortedPlaces.stream()
-                        .map(Place::getPlaceId)
-                        .collect(Collectors.toList());
+                if (remainingLimit > 0) {
+                    List<Integer> excludedIds = heartedPlacesOrSortedPlaces.stream()
+                            .map(Place::getPlaceId)
+                            .collect(Collectors.toList());
 
-                Pageable remainingPageable = PageRequest.of(0, remainingLimit);
-                Page<Place> recentPlacesPage = placeRepository.findByPlaceIdNotInOrderByCreatedAtDesc(excludedIds, remainingPageable);
+                    Pageable remainingPageable = PageRequest.of(0, remainingLimit);
+                    Page<Place> recentPlacesPage = placeRepository.findByPlaceIdNotInOrderByCreatedAtDesc(excludedIds, remainingPageable);
 
-                heartedPlacesOrSortedPlaces.addAll(recentPlacesPage.getContent());
+                    heartedPlacesOrSortedPlaces.addAll(recentPlacesPage.getContent());
+                }
+
+                return new PageImpl<>(
+                        heartedPlacesOrSortedPlaces.stream().map(PlaceDto::from).collect(Collectors.toList()),
+                        pageable,
+                        heartedPlacesPage.getTotalElements()
+                );
             }
 
-            return new PageImpl<>(
-                    heartedPlacesOrSortedPlaces.stream().map(PlaceDto::from).collect(Collectors.toList()),
-                    pageable,
-                    heartedPlacesPage.getTotalElements()
-            );
+            return heartedPlacesPage.map(PlaceDto::from);
         }
 
-        return heartedPlacesPage.map(PlaceDto::from);
+        return placeRepository.findAllByOrderByCreatedAtDesc(pageable).map(PlaceDto::from);
     }
 }
