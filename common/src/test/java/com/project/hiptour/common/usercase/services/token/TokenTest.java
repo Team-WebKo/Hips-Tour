@@ -14,12 +14,14 @@ class TokenTest {
     void tokenTest(){
 
         String sample = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkNoYXRHUFQgVXNlciIsImFkbWluIjp0cnVlLCJleHAiOjE3NTcxNjgzMzF9.aHEdp-67afk99urqnoj9fuL6VU5h1hL3gAhBBv_ya_o";
-        Token token = new Token(sample, LocalDateTime.now(), LocalDateTime.now());
+        Token token = new Token(sample);
 
         assertEquals("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", token.getHeader());
         assertEquals("eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkNoYXRHUFQgVXNlciIsImFkbWluIjp0cnVlLCJleHAiOjE3NTcxNjgzMzF9", token.getPayLoad());
         assertEquals("aHEdp-67afk99urqnoj9fuL6VU5h1hL3gAhBBv_ya_o", token.getSignature());
 
+        LocalDateTime expireDate = token.getExpireDate();
+        assertNotNull(expireDate);
 
     }
 
