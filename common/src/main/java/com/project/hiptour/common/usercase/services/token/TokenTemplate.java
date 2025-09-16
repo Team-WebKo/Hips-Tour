@@ -56,6 +56,6 @@ public class TokenTemplate {
     }
 
     private Token getToken(String refreshToken) {
-        return new Token(refreshToken, LocalDateTime.now(), LocalDateTime.now());
+        return new Token(refreshToken);
     }
 }
