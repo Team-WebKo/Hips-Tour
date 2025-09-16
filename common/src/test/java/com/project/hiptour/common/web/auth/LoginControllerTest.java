@@ -102,6 +102,7 @@ class LoginControllerTest {
 
     }
 
+
     private static UserIdentity getUserIdentity(String id) {
         return new UserIdentity() {
             @Override
