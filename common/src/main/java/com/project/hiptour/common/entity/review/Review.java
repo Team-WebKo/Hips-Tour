@@ -3,11 +3,9 @@ package com.project.hiptour.common.entity.review;
 import com.project.hiptour.common.entity.BaseTimeEntity;
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.users.UserInfo;
-import com.project.hiptour.common.reviews.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

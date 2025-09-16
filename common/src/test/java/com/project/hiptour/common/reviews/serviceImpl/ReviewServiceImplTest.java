@@ -5,15 +5,14 @@ import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.common.entity.review.Review;
 import com.project.hiptour.common.entity.review.repos.ReviewRepository;
 import com.project.hiptour.common.entity.users.UserInfo;
-import com.project.hiptour.common.web.reviews.CreateReviewRequestDto;
-import com.project.hiptour.common.web.reviews.MyReviewResponseDto;
-import com.project.hiptour.common.web.reviews.ReviewListResponseDto;
-import com.project.hiptour.common.web.reviews.UpdateReviewRequestDto;
 import com.project.hiptour.common.exception.place.PlaceNotFoundException;
 import com.project.hiptour.common.exception.review.ReviewAccessDeniedException;
 import com.project.hiptour.common.exception.review.ReviewNotFoundException;
 import com.project.hiptour.common.usercase.reviews.ReviewServiceImpl;
-import jakarta.persistence.EntityNotFoundException;
+import com.project.hiptour.common.web.reviews.CreateReviewRequestDto;
+import com.project.hiptour.common.web.reviews.MyReviewResponseDto;
+import com.project.hiptour.common.web.reviews.ReviewListResponseDto;
+import com.project.hiptour.common.web.reviews.UpdateReviewRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -146,8 +145,7 @@ public class ReviewServiceImplTest {
 
             given(placeRepository.findById(notExistPlaceId)).willReturn(Optional.empty());
 
-            // EntityNotFountException은 JPA 기본 예외 -> 커스텀 예외로 변경
-            assertThrows(EntityNotFoundException.class, () -> {
+            assertThrows(PlaceNotFoundException.class, () -> {
                 reviewService.getReviewsByPlace(notExistPlaceId, pageable);
             });
         }

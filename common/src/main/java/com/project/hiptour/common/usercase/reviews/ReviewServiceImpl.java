@@ -12,7 +12,6 @@ import com.project.hiptour.common.web.reviews.CreateReviewRequestDto;
 import com.project.hiptour.common.web.reviews.MyReviewResponseDto;
 import com.project.hiptour.common.web.reviews.ReviewListResponseDto;
 import com.project.hiptour.common.web.reviews.UpdateReviewRequestDto;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -74,7 +73,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Page<ReviewListResponseDto> getReviewsByPlace(Integer placeId, Pageable pageable) {
         Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new EntityNotFoundException("장소를 찾을 수 없습니다: " + placeId));
+                .orElseThrow(() -> new PlaceNotFoundException("장소를 찾을 수 없습니다: " + placeId));
 
         Page<Review> reviewPage = reviewRepository.findByPlace(place, pageable);
         return reviewPage.map(ReviewListResponseDto::from);

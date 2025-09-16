@@ -2,9 +2,10 @@ package com.project.hiptour.common.web.reviews;
 
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.entity.users.repos.UserRepos;
+import com.project.hiptour.common.exception.UserNotFoundException;
+import com.project.hiptour.common.exception.place.PlaceNotFoundException;
 import com.project.hiptour.common.usercase.reviews.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,7 @@ public class ReviewController {
     @PostMapping("/places/{placeId}/reviews")
     public ResponseEntity<?> createReview(@PathVariable("placeId") Integer placeId, @RequestBody CreateReviewRequestDto requestDto) {
         UserInfo userInfo = userRepos.findById(requestDto.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다: " + requestDto.getUserId()));
+                .orElseThrow(() -> new PlaceNotFoundException("사용자를 찾을 수 없습니다: " + requestDto.getUserId()));
 
         Long reviewId = reviewService.create(requestDto, placeId, userInfo);
         return ResponseEntity.ok(Map.of("reviewId", reviewId));
@@ -48,7 +49,7 @@ public class ReviewController {
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         UserInfo userInfo = userRepos.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + userId));
 
         return reviewService.getMyReviews(userInfo, pageable);
     }
@@ -60,7 +61,7 @@ public class ReviewController {
             @RequestBody UpdateReviewRequestDto requestDto
             ) {
         UserInfo userInfo = userRepos.findById(requestDto.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다: " + requestDto.getUserId()));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + requestDto.getUserId()));
 
         reviewService.update(reviewId, requestDto, userInfo);
         return ResponseEntity.ok().build();
@@ -72,7 +73,7 @@ public class ReviewController {
             @PathVariable("reviewId") Long reviewId,
             @RequestParam("userId") Long userId
     ) {
-        UserInfo userInfo = userRepos.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다: " + userId));
+        UserInfo userInfo = userRepos.findById(userId).orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + userId));
 
         reviewService.delete(reviewId, userInfo);
         return ResponseEntity.noContent().build();
