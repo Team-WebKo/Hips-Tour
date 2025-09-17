@@ -25,6 +25,15 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final PlaceRepository placeRepository;
 
+    /**
+     * 새로운 리뷰를 생성합니다.
+     *
+     * @param requestDto 생성할 리뷰의 내용을 담은 DTO
+     * @param placeId    리뷰를 작성할 장소의 ID
+     * @param userInfo   리뷰를 작성하는 사용자 정보
+     * @return 생성된 리뷰의 ID
+     * @throws PlaceNotFoundException 요청한 ID에 해당하는 장소를 찾을 수 없을 경우
+     */
     @Override
     @Transactional
     public Long create(CreateReviewRequestDto requestDto, Integer placeId, UserInfo userInfo) {
@@ -44,6 +53,15 @@ public class ReviewServiceImpl implements ReviewService {
         return savedReview.getReviewId();
     }
 
+    /**
+     * 기존 리뷰를 수정합니다.
+     *
+     * @param reviewId   수정할 리뷰의 ID
+     * @param requestDto 수정할 리뷰의 내용을 담은 DTO
+     * @param userInfo   리뷰 수정을 요청하는 사용자 정보
+     * @throws ReviewNotFoundException     요청한 ID에 해당하는 리뷰를 찾을 수 없을 경우
+     * @throws ReviewAccessDeniedException 리뷰를 수정할 권한이 없을 경우
+     */
     @Override
     @Transactional
     public void update(Long reviewId, UpdateReviewRequestDto requestDto, UserInfo userInfo) {
@@ -57,6 +75,14 @@ public class ReviewServiceImpl implements ReviewService {
         review.update(requestDto.getHeadText(), requestDto.getBodyText(), requestDto.getImageUrls(), requestDto.getHashTags());
     }
 
+    /**
+     * 리뷰를 삭제합니다.
+     *
+     * @param reviewId 삭제할 리뷰의 ID
+     * @param userInfo 리뷰 삭제를 요청하는 사용자 정보
+     * @throws ReviewNotFoundException     요청한 ID에 해당하는 리뷰를 찾을 수 없을 경우
+     * @throws ReviewAccessDeniedException 리뷰를 삭제할 권한이 없을 경우
+     */
     @Override
     @Transactional
     public void delete(Long reviewId, UserInfo userInfo) {
@@ -70,6 +96,14 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.delete(review);
     }
 
+    /**
+     * 특정 장소에 작성된 리뷰 목록을 페이징하여 조회합니다.
+     *
+     * @param placeId  리뷰를 조회할 장소의 ID
+     * @param pageable 페이징 정보
+     * @return 페이징된 리뷰 목록
+     * @throws PlaceNotFoundException 요청한 ID에 해당하는 장소를 찾을 수 없을 경우
+     */
     @Override
     public Page<ReviewListResponseDto> getReviewsByPlace(Integer placeId, Pageable pageable) {
         Place place = placeRepository.findById(placeId)
@@ -79,6 +113,13 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewPage.map(ReviewListResponseDto::from);
     }
 
+    /**
+     * 특정 사용자가 작성한 모든 리뷰 목록을 페이징하여 조회합니다.
+     *
+     * @param userInfo 리뷰를 조회할 사용자 정보
+     * @param pageable 페이징 정보
+     * @return 페이징된 "내가 쓴 리뷰" 목록
+     */
     @Override
     public Page<MyReviewResponseDto> getMyReviews(UserInfo userInfo, Pageable pageable) {
         Page<Review> reviewPage = reviewRepository.findByUserInfo(userInfo, pageable);
