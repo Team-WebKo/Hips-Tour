@@ -54,14 +54,15 @@ public class ReviewServiceImplTest {
     @BeforeEach
     void init() {
         userInfo = UserInfo.builder()
-                .nickName("testUser")
                 .email("test@example.com")
+                .nickName("testUser")
                 .build();
         userInfo.setUserId(1L);
 
         place = Place.builder()
                 .placeName("테스트 장소")
                 .build();
+        place.setPlaceId(1);
     }
 
     @Nested
@@ -79,12 +80,12 @@ public class ReviewServiceImplTest {
             place.setPlaceId(placeId);
 
             Review savedReview = Review.builder()
-                    .reviewId(1L)
                     .place(place)
                     .userInfo(userInfo)
                     .headText(requestDto.getHeadText())
                     .bodyText(requestDto.getBodyText())
                     .build();
+            savedReview.setReviewId(1L);
 
             given(placeRepository.findById(placeId)).willReturn(Optional.of(place));
             given(reviewRepository.save(any(Review.class))).willReturn(savedReview);
@@ -118,9 +119,11 @@ public class ReviewServiceImplTest {
             Integer placeId = 1;
             Pageable pageable = PageRequest.of(0, 10);
 
-            List<Review> reviewList = List.of(
-                    Review.builder().reviewId(1L).headText("리뷰제목1").bodyText("내용1").userInfo(userInfo).place(place).build(),
-                    Review.builder().reviewId(2L).headText("리뷰제목2").bodyText("내용2").userInfo(userInfo).place(place).build());
+            Review review1 = Review.builder().headText("리뷰제목1").bodyText("내용1").userInfo(userInfo).place(place).build();
+            review1.setReviewId(1L);
+            Review review2 = Review.builder().headText("리뷰제목2").bodyText("내용2").userInfo(userInfo).place(place).build();
+            review2.setReviewId(2L);
+            List<Review> reviewList = List.of(review1, review2);
 
             Page<Review> reviewPage = new PageImpl<>(reviewList, pageable, reviewList.size());
 
@@ -270,16 +273,18 @@ public class ReviewServiceImplTest {
         @DisplayName("성공")
         void success() {
             Pageable pageable = PageRequest.of(0, 5);
-            List<Review> myReviewList = List.of(
-                    Review.builder().reviewId(1L).userInfo(userInfo).place(place).headText("내 리뷰 1").build(),
-                    Review.builder().reviewId(2L).userInfo(userInfo).place(place).headText("내 리뷰 2").build()
-            );
+
+            Review review1 = Review.builder().userInfo(userInfo).place(place).headText("내 리뷰 1").build();
+            review1.setReviewId(1L);
+            Review review2 = Review.builder().userInfo(userInfo).place(place).headText("내 리뷰 2").build();
+            review2.setReviewId(2L);
+            List<Review> myReviewList = List.of(review1, review2);
 
             Page<Review> reviewPage = new PageImpl<>(myReviewList, pageable, myReviewList.size());
 
             given(reviewRepository.findByUserInfo(userInfo, pageable)).willReturn(reviewPage);
 
-            Page< MyReviewResponseDto> result = reviewService.getMyReviews(userInfo, pageable);
+            Page<MyReviewResponseDto> result = reviewService.getMyReviews(userInfo, pageable);
 
             assertThat(result).isNotNull();
             assertThat(result.getTotalElements()).isEqualTo(2);
