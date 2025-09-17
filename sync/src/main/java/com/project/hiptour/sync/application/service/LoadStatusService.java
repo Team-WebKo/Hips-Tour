@@ -23,15 +23,15 @@ public class LoadStatusService {
         return loadStatusRepository.findById(JOB_NAME);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW);
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveProgress(String areaCode, int lastSucceededPageNo) {
         if (lastSucceededPageNo < 0) {
             lastSucceededPageNo = 0;
         }
 
-        LoadStatus currendStatus = new LoadStatus(JOB_NAME, areaCode, lastSucceededPageNo);
-        loadStatusRepository.save(currendStatus);
-        log.info("데이터 적재 작업 진행 상황을 기록했습니다. (AreaCode: {}, LastSucceededPage: {}", areaCode, lastSucceededPageNo);
+        LoadStatus currentStatus = new LoadStatus(JOB_NAME, areaCode, lastSucceededPageNo);
+        loadStatusRepository.save(currentStatus);
+        log.info("데이터 적재 작업 진행 상황을 기록했습니다. (AreaCode: {}, LastSucceededPage: {})", areaCode, lastSucceededPageNo);
     }
 
     @Transactional

@@ -13,10 +13,10 @@ public class PlaceMapperService {
     private final PlaceRepository placeRepository;
 
     public Place mapToEntity(SyncPlaceDto dto) {
-        //TODO: placeRepository에 findByContentId 필요
         return placeRepository.findByContentId(dto.getContentid())
                 .map(existingPlace -> {
                     placeEntityMapper.updateEntityFromDto(existingPlace, dto);
+                    return existingPlace;
                 }).orElseGet(() -> placeEntityMapper.mapDtoToNewEntity(dto));
     }
 }
