@@ -1,23 +1,22 @@
 package com.project.hiptour.sync.application.service;
 
-import com.project.hiptour.sync.domain.TourPlace;
+import com.project.hiptour.common.entity.place.Place;
+import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.sync.global.dto.SyncPlaceDto;
-import com.project.hiptour.sync.infrastructure.persistence.TourPlaceRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class PlaceMapperService {
-    private final TourPlaceRepository tourPlaceRepository;
     private final PlaceEntityMapper placeEntityMapper;
+    private final PlaceRepository placeRepository;
 
-    public TourPlace mapToEntity(SyncPlaceDto dto) {
-        return tourPlaceRepository.findByContentId(dto.getContentid())
+    public Place mapToEntity(SyncPlaceDto dto) {
+        //TODO: placeRepository에 findByContentId 필요
+        return placeRepository.findByContentId(dto.getContentid())
                 .map(existingPlace -> {
                     placeEntityMapper.updateEntityFromDto(existingPlace, dto);
-                    return existingPlace;
-                })
-                .orElseGet(() -> placeEntityMapper.mapDtoToNewEntity(dto));
+                }).orElseGet(() -> placeEntityMapper.mapDtoToNewEntity(dto));
     }
 }
