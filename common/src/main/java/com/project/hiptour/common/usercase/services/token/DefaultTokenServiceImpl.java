@@ -71,7 +71,7 @@ public class DefaultTokenServiceImpl implements TokenService {
             return new TokenTemplate(userId, roles);
 
         } catch (JWTDecodeException e) {
-            log.warn("invalid token {}", e.getMessage());
+            log.warn("invalid token!!! {}", e.getMessage());
             return null;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
