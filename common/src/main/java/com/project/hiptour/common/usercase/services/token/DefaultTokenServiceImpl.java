@@ -43,6 +43,10 @@ public class DefaultTokenServiceImpl implements TokenService {
     @Transactional(Transactional.TxType.SUPPORTS)
     @Override
     public void updateToken(Long userId, Token refreshToken) {
+
+        Optional<TokenInfo> lastUserToken = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
+        lastUserToken.ifPresent(TokenInfo::deactivate);
+
         TokenInfo tokenInfo = TokenInfo.builder()
                 .refreshToken(refreshToken.getToken())
                 .userId(userId)
@@ -79,9 +83,7 @@ public class DefaultTokenServiceImpl implements TokenService {
     @Override
     @Transactional
     public void logout(Long userId) {
-        TokenInfo tokenInfo = this.tokenRepos.findByUserId(userId);
-        if (tokenInfo != null) {
-            tokenInfo.deactivate();
-        }
+        Optional<TokenInfo> lastUserToken = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
+        lastUserToken.ifPresent(TokenInfo::deactivate);
     }
 }
