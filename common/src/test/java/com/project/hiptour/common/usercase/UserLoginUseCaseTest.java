@@ -56,7 +56,7 @@ class UserLoginUseCaseTest {
 
         when(mockService.getUserIdentity(identity.getUserIdentifier())).thenReturn(identity);
 
-        LoginResult loginResult = this.userLoginUseCase.createTokenPair(identity.getUserIdentifier());
+        LoginResult loginResult = this.userLoginUseCase.requestLoginByOAuth(identity.getUserIdentifier());
 
         assertNotNull(loginResult);
         assertTrue(loginResult.isNewSingUp());
@@ -92,7 +92,7 @@ class UserLoginUseCaseTest {
         UserIdentity identity = new KakaoUserIdentity(userId);
 
         when(mockService.getUserIdentity(anyString())).thenReturn(identity);
-        this.userLoginUseCase.createTokenPair(identity.getUserIdentifier());
+        this.userLoginUseCase.requestLoginByOAuth(identity.getUserIdentifier());
 
         List<TokenInfo> allTokenInfo = this.tokenRepos.findAll();
         assertEquals(1, allTokenInfo.size());

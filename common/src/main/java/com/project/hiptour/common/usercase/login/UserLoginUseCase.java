@@ -38,7 +38,7 @@ public class UserLoginUseCase {
      * </p>
      * **/
     @Transactional
-    public LoginResult createTokenPair(String userCode){
+    public LoginResult requestLoginByOAuth(String userCode){
 
         UserIdentity userIdentity = this.providerService.getUserIdentity(userCode);
 

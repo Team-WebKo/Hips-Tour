@@ -34,7 +34,7 @@ public class LoginController {
     @GetMapping("/oauth2/code/kakao")
     public ResponseEntity<LoginReqResponse> handleAuthentication(@RequestParam String code){
 
-        LoginResult res = this.loginUseCase.createTokenPair(code);;
+        LoginResult res = this.loginUseCase.requestLoginByOAuth(code);;
         LoginReqResponse response = LoginReqResponse.builder()
                 .isSignUpNeeded(res.isNewSingUp())
                 .accessToken(res.getPair().getAccessToken().getToken())
