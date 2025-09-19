@@ -37,6 +37,7 @@ public class TokenUseCase {
             return new TokenRequestResult(false, "this tokenString request is invalid",null);
         }
 
+
         long userId = tokenTemplate.getUserId();
         Optional<TokenInfo> token = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
 
