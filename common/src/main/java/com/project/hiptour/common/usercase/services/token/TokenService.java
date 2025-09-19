@@ -1,6 +1,9 @@
-package com.project.hiptour.common.usercase.common.token;
+package com.project.hiptour.common.usercase.services.token;
 
 import com.project.hiptour.common.entity.users.UserInfo;
+import com.project.hiptour.common.usercase.common.token.Token;
+import com.project.hiptour.common.usercase.common.token.TokenPair;
+import com.project.hiptour.common.usercase.common.token.TokenTemplate;
 
 import java.util.List;
 

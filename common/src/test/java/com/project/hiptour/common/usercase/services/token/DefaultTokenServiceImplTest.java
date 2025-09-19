@@ -5,7 +5,6 @@ import com.project.hiptour.common.entity.users.repos.UserRepos;
 import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.usercase.common.token.Token;
 import com.project.hiptour.common.usercase.common.token.TokenPair;
-import com.project.hiptour.common.usercase.common.token.TokenService;
 import com.project.hiptour.common.usercase.common.token.TokenTemplate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -2,7 +2,7 @@ package com.project.hiptour.common.web.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.hiptour.common.security.OauthProviderService;
-import com.project.hiptour.common.usercase.common.token.TokenService;
+import com.project.hiptour.common.usercase.services.token.TokenService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

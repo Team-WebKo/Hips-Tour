@@ -8,7 +8,7 @@ import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.security.UserIdentity;
 import com.project.hiptour.common.usercase.services.login.UserService;
 import com.project.hiptour.common.usercase.common.token.TokenPair;
-import com.project.hiptour.common.usercase.common.token.TokenService;
+import com.project.hiptour.common.usercase.services.token.TokenService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
