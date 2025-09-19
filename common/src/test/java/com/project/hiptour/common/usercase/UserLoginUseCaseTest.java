@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -96,6 +97,26 @@ class UserLoginUseCaseTest {
 
         List<TokenInfo> allTokenInfo = this.tokenRepos.findAll();
         assertEquals(1, allTokenInfo.size());
+
+    }
+
+    @Test
+    @DisplayName("유저가 로그인 후, 중복으로 또 로그인을 시도하면, 기존에 등록된 리프레시 토큰을 disable 처리한다.")
+    void t34(){
+
+        int userId = new Random().nextInt();
+        UserIdentity identity = new KakaoUserIdentity(userId);
+
+        when(mockService.getUserIdentity(anyString())).thenReturn(identity);
+        when(mockService.getUserIdentity(anyString())).thenReturn(identity);
+
+        this.userLoginUseCase.requestLoginByOAuth(identity.getUserIdentifier());
+        this.userLoginUseCase.requestLoginByOAuth(identity.getUserIdentifier());
+
+        List<TokenInfo> allTokenInfo = this.tokenRepos.findAll(Sort.by(Sort.Order.by("createdAt")));
+        assertEquals(2, allTokenInfo.size());
+        assertFalse(allTokenInfo.get(0).isActive());
+        assertTrue(allTokenInfo.get(1).isActive());
 
     }
 
