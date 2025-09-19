@@ -55,7 +55,7 @@ public class TokenTemplate {
         return Date.from(Instant.now().plusSeconds(time));
     }
 
-    private Token getToken(String refreshToken) {
-        return new Token(refreshToken);
+    private Token getToken(String tokenString) {
+        return new Token(tokenString);
     }
 }
