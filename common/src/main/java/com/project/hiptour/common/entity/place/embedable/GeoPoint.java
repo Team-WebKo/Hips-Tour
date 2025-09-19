@@ -10,9 +10,11 @@ import lombok.NoArgsConstructor;
 public class GeoPoint {
     private double latitude;
     private double longitude;
+    private int mlevel;
 
-    public GeoPoint(double latitude, double longitude) {
+    public GeoPoint(double latitude, double longitude, int mlevel) {
         this.latitude = latitude;
         this.longitude = longitude;
+        this.mlevel = mlevel;
     }
 }

@@ -29,8 +29,7 @@ public class PlaceEntityMapper {
         place.setAddress1(dto.getAddr1());
         place.setAddress2(dto.getAddr2());
         place.setTelNumber(new TelNumber(dto.getTel()));
-        //TODO: Place 엔티티에 imageUrl 필드 추가 필요 - 수정 후 주석 제거
-        //TODO: areaCode를 사용하여 RegionInfo 엔티티를 조회하고 설정하는 로직 필요
+        place.setImageUrl(dto.getFirstimage());
         return place;
     }
 
@@ -44,8 +43,7 @@ public class PlaceEntityMapper {
         place.setAddress1(dto.getAddr1());
         place.setAddress2(dto.getAddr2());
         place.setTelNumber(new TelNumber(dto.getTel()));
-        //TODO: Place 에티티에 imageUrl 필드 추가 필요 - 수정 후 주석 제거
-        //TODO: areaCode가 변경되었을 경우 RegionIngo를 업데이트 하는 로직 필요?
+        place.setImageUrl(dto.getFirstimage());
     }
 
     /**

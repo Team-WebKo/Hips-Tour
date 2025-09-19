@@ -44,7 +44,7 @@ public class PlaceServiceImplTest {
 
     @BeforeEach
     void init() {
-        GeoPoint geoPoint1 = new GeoPoint(37.5665, 126.9780);
+        GeoPoint geoPoint1 = new GeoPoint(37.5665, 126.9780, 6);
         TelNumber telNumber1 = new TelNumber("02-1234-5678");
         testPlace1 = Place.builder()
                 .placeName("테스트 장소 1")
@@ -56,7 +56,7 @@ public class PlaceServiceImplTest {
         testPlace1.setPlaceId(1);
         testPlace1.setCreatedAt(LocalDateTime.now().minusDays(1));
 
-        GeoPoint geoPoint2 = new GeoPoint(33.4507, 126.5706);
+        GeoPoint geoPoint2 = new GeoPoint(33.4507, 126.5706, 6);
         TelNumber telNumber2 = new TelNumber("064-9876-5432");
         testPlace2 = Place.builder()
                 .placeName("테스트 장소 2")
@@ -68,7 +68,7 @@ public class PlaceServiceImplTest {
         testPlace2.setPlaceId(2);
         testPlace2.setCreatedAt(LocalDateTime.now());
 
-        GeoPoint geoPoint3 = new GeoPoint(34.0522, 118.2437);
+        GeoPoint geoPoint3 = new GeoPoint(34.0522, 118.2437, 6);
         TelNumber telNumber3 = new TelNumber("070-1111-2222");
         testPlace3 = Place.builder()
                 .placeName("테스트 장소 3")

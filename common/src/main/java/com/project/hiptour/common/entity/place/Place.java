@@ -21,6 +21,8 @@ public class Place extends BaseUpdateEntity {
 
     private String placeName;
 
+    private String imageUrl;
+
     @Embedded
     private GeoPoint geoPoint;
 
@@ -36,8 +38,9 @@ public class Place extends BaseUpdateEntity {
     private String address2;
 
     @Builder
-    public Place(String placeName, GeoPoint geoPoint, TelNumber telNumber, RegionInfo regionInfo, String address1, String address2) {
+    public Place(String placeName, String imageUrl, GeoPoint geoPoint, TelNumber telNumber, RegionInfo regionInfo, String address1, String address2) {
         this.placeName = placeName;
+        this.imageUrl = imageUrl;
         this.geoPoint = geoPoint;
         this.telNumber = telNumber;
         this.regionInfo = regionInfo;
@@ -45,10 +48,11 @@ public class Place extends BaseUpdateEntity {
         this.address2 = address2;
     }
 
-    public Place(String placeName, String address1, String address2, GeoPoint geoPoint, TelNumber telNumber) {
+    public Place(String placeName, String address1, String address2, String imageUrl, GeoPoint geoPoint, TelNumber telNumber) {
         this.placeName = placeName;
         this.address1 = address1;
         this.address2 = address2;
+        this.imageUrl = imageUrl;
         this.geoPoint = geoPoint;
         this.telNumber = telNumber;
     }
