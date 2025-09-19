@@ -74,6 +74,23 @@ public class TourApiAdapter implements TourApiPort {
         }
     }
 
+    @Override
+    public String fetchDetail(String contentId) {
+        String url = createBaseUriBuilder("/detailCommon2")
+                .queryParam("contentId", contentId)
+                .build(true)
+                .toUriString();
+
+        log.info("TourAPI에 detail 데이터 요청중... {}", url);
+
+        try {
+            return restTemplate.getForObject(url, String.class);
+        } catch (RestClientException e) {
+            log.error("TourAPI로부터 상세 데이터를 불러오는데 실패했습니다. contentId={}, URL: {}", contentId, url, e);
+            throw new TourApiCommunicationException("TourAPI 상세 데이터 조회 실패", e);
+        }
+    }
+
     private UriComponentsBuilder createBaseUriBuilder(String path) {
         return UriComponentsBuilder.fromHttpUrl(tourApiProperties.getBaseUrl() + path)
                 .queryParam("serviceKey", tourApiProperties.getServiceKey())

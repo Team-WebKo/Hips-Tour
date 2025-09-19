@@ -26,4 +26,6 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
     Page<Place> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     Optional<Place> findByContentId(String contentId);
+
+    Page<Place> findByOverviewIsNumm(Pageable pageable);
 }
