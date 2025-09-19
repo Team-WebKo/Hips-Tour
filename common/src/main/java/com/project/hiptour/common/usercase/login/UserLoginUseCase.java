@@ -1,9 +1,7 @@
 package com.project.hiptour.common.usercase.login;
 
-import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.entity.users.UserRole;
-import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.entity.users.repos.UserRepos;
 import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
 import com.project.hiptour.common.security.OauthProviderService;
@@ -69,7 +67,7 @@ public class UserLoginUseCase {
 
         TokenPair pair = this.tokenService.createToken(userInfo, userRoleIds);
 
-        this.tokenService.updateToken(userInfo.getUserId(), pair.getRefreshToken());
+        this.tokenService.updateRefreshTokenAfterLogin(userInfo.getUserId(), pair.getRefreshToken());
         log.debug("token successfully updated!");
 
         return LoginResult.builder()
