@@ -27,16 +27,18 @@ public class SyncService {
     private static final DateTimeFormatter API_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void syncUpdatedPlaces(LocalDateTime lastSyncTime) {
+    public int syncUpdatedPlaces(LocalDateTime lastSyncTime) {
         log.info("TourAPI 변경분 동기화를 시작합니다.");
 
         int pageNo = 1;
         final int numOfRows = 100;
         boolean stopFlag = false;
+        int apiCallCount = 0;
 
         while (!stopFlag) {
             try {
                 String jsonResponse = tourApiPort.fetchChangedPlaces(lastSyncTime, pageNo, numOfRows);
+                apiCallCount++;
 
                 List<SyncPlaceDto> dtoList = null;
                 if (jsonResponse != null) {
@@ -71,5 +73,8 @@ public class SyncService {
                 throw new RuntimeException("변경분 동기화 중 오류가 발생했습니다.", e);
             }
         }
+
+        log.info("증분 동기화 작업 완료. 사용된 API 호출 횟수: {}", apiCallCount);
+        return apiCallCount;
     }
 }
