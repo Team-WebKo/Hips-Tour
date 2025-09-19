@@ -1,4 +1,4 @@
-package com.project.hiptour.common.usercase.services.token;
+package com.project.hiptour.common.usercase.common.token;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;

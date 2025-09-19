@@ -1,10 +1,7 @@
-package com.project.hiptour.common.usercase.services.token;
+package com.project.hiptour.common.usercase.common.token;
 
-import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-
-import java.security.Key;
 
 /**
  * @apiNote 본 클래스는, 로컬 환경에서만 사용해야 함.

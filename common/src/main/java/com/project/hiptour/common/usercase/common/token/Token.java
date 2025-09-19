@@ -1,4 +1,4 @@
-package com.project.hiptour.common.usercase.services.token;
+package com.project.hiptour.common.usercase.common.token;
 
 import com.auth0.jwt.JWT;
 import lombok.AllArgsConstructor;
@@ -33,9 +33,4 @@ public class Token {
         Instant instant = expiresAt.toInstant();
         return instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
-
-    public String getPayLoad(){
-        return this.payload;
-    }
-
 }

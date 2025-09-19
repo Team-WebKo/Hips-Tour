@@ -1,10 +1,8 @@
 package com.project.hiptour.common.web.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.security.OauthProviderService;
-import com.project.hiptour.common.usercase.services.token.TokenPair;
-import com.project.hiptour.common.usercase.services.token.TokenService;
+import com.project.hiptour.common.usercase.common.token.TokenService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,12 +13,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
