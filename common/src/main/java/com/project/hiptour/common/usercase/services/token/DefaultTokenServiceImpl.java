@@ -46,7 +46,7 @@ public class DefaultTokenServiceImpl implements TokenService {
     @Override
     public void updateToken(Long userId, Token refreshToken) {
 
-        Optional<TokenInfo> lastUserToken = this.tokenRepos.findLastByUserIdOrderByCreatedAtDesc(userId);
+        Optional<TokenInfo> lastUserToken = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
         lastUserToken.ifPresent(TokenInfo::deactivate);
 
         TokenInfo tokenInfo = TokenInfo.builder()

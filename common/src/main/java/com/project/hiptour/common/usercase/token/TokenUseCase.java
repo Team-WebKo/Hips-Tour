@@ -39,7 +39,7 @@ public class TokenUseCase {
 
 
         long userId = tokenTemplate.getUserId();
-        Optional<TokenInfo> token = this.tokenRepos.findLastByUserIdOrderByCreatedAtDesc(userId);
+        Optional<TokenInfo> token = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
 
         if(token.isPresent()&& token.get().isStillAvailable(LocalDateTime.now())){
             log.debug("this refresh tokenString is still available");

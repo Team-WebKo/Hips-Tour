@@ -1,7 +1,9 @@
 package com.project.hiptour.common.usercase.login;
 
+import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.entity.users.UserRole;
+import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.entity.users.repos.UserRepos;
 import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
 import com.project.hiptour.common.security.OauthProviderService;
@@ -23,6 +25,7 @@ import java.util.Optional;
 public class UserLoginUseCase {
 
     private final TokenService tokenService;
+    private final TokenRepos tokenRepos;
     private final UserRepos userRepos;
     private final UserService userService;
     private final OauthProviderService providerService;
@@ -54,7 +57,13 @@ public class UserLoginUseCase {
             userInfo = this.userService.insertNewUserAndGet(userIdentity);
             isThisUserAlreadyExisting = true;
         }else{
+
             userInfo = userInfoByIdentifier.get();
+
+            Optional<TokenInfo> lastCreatedUserToken = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userIdentity.getUserId());;
+
+            lastCreatedUserToken.ifPresent(TokenInfo::deactivate);
+
         }
 
         List<Long> userRoleIds = this.userRoleRepo
