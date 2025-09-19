@@ -25,7 +25,6 @@ import java.util.Optional;
 public class UserLoginUseCase {
 
     private final TokenService tokenService;
-    private final TokenRepos tokenRepos;
     private final UserRepos userRepos;
     private final UserService userService;
     private final OauthProviderService providerService;
@@ -59,10 +58,6 @@ public class UserLoginUseCase {
         }else{
 
             userInfo = userInfoByIdentifier.get();
-
-            Optional<TokenInfo> lastCreatedUserToken = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userIdentity.getUserId());;
-
-            lastCreatedUserToken.ifPresent(TokenInfo::deactivate);
 
         }
 
