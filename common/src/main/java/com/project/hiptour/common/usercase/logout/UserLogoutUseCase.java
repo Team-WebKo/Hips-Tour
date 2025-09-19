@@ -23,7 +23,7 @@ public class UserLogoutUseCase {
         try {
             TokenTemplate tokenTemplate = tokenService.decodeToken(userAccessToken);
             long userId = tokenTemplate.getUserId();
-            Optional<TokenInfo> tokenInfo = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
+            Optional<TokenInfo> tokenInfo = this.tokenRepos.findLastByUserIdOrderByCreatedAtDesc(userId);
 
             if(tokenInfo.isEmpty()){
                 return LogoutResponse.builder()

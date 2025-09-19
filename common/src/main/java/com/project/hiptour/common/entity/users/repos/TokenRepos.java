@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface TokenRepos extends JpaRepository<TokenInfo, Long> {
-    Optional<TokenInfo> findFirstByUserIdOrderByCreatedAtDesc(Long userId);
+    Optional<TokenInfo> findLastByUserIdOrderByCreatedAtDesc(Long userId);
 
 }
