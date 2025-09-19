@@ -2,6 +2,7 @@ package com.project.hiptour.sync.application.service;
 
 import com.project.hiptour.sync.application.job.LoadJob;
 import com.project.hiptour.sync.domain.LoadStatus;
+import com.project.hiptour.sync.domain.SyncJobType;
 import com.project.hiptour.sync.domain.SyncStatus;
 import com.project.hiptour.sync.infrastructure.persistence.SyncStatusRepository;
 import lombok.RequiredArgsConstructor;
@@ -73,7 +74,7 @@ public class LoadService {
     }
 
     private void updateSyncServiceStartTime(LocalDateTime time) {
-        SyncStatus status = new SyncStatus("placeSync", time);
+        SyncStatus status = new SyncStatus(SyncJobType.PLACE_SYNC, time);
         syncStatusRepository.save(status);
         log.info("전체 적재 작업 완료 시간을 DB에 기록했습니다. (동기화에 사용 될) 기준 시간: {}", time);
     }

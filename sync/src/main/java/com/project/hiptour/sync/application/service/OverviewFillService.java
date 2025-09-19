@@ -36,7 +36,7 @@ public class OverviewFillService {
 
         log.info("여행지 개요 추가 작업을 시작합니다. API CALL REMAIN: {}", apiCallBudget);
 
-        Page< Place> placesToUpdatePage = placeRepository.findByOverviewIsNull(PageRequest.of(0, apiCallCount));
+        Page< Place> placesToUpdatePage = placeRepository.findByOverviewIsNull(PageRequest.of(0, apiCallBudget));
         List<Place> placesToUpdate = placesToUpdatePage.getContent();
 
         if (placesToUpdate.isEmpty()) {
