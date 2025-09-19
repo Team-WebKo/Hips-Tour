@@ -21,8 +21,16 @@ public class UserLogoutUseCase {
     @Transactional
     public LogoutResponse logout(String userAccessToken) {
         try {
-            TokenTemplate tokenTemplate = tokenService.decodeToken(userAccessToken);
-            long userId = tokenTemplate.getUserId();
+            TokenTemplate nullableTokenTemplate = tokenService.decodeToken(userAccessToken);
+
+            if(nullableTokenTemplate == null){
+                return LogoutResponse.builder()
+                        .isSuccess(false)
+                        .message("this token is invalid")
+                        .build();
+            }
+
+            long userId = nullableTokenTemplate.getUserId();
             Optional<TokenInfo> tokenInfo = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
 
             if(tokenInfo.isEmpty()){

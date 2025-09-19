@@ -78,7 +78,7 @@ public class DefaultTokenServiceImpl implements TokenService {
             log.warn("invalid token!!! {}", e.getMessage());
             return null;
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 }
