@@ -27,5 +27,5 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
 
     Optional<Place> findByContentId(String contentId);
 
-    Page<Place> findByOverviewIsNumm(Pageable pageable);
+    Page<Place> findByOverviewIsNull(Pageable pageable);
 }
