@@ -2,7 +2,7 @@ package com.project.hiptour.common.usercase.logout;
 
 import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.repos.TokenRepos;
-import com.project.hiptour.common.usercase.common.token.TokenService;
+import com.project.hiptour.common.usercase.services.token.TokenService;
 import com.project.hiptour.common.usercase.common.token.TokenTemplate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

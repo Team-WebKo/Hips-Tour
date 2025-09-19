@@ -1,4 +1,4 @@
-package com.project.hiptour.common.usercase.common.token;
+package com.project.hiptour.common.usercase.services.token;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
@@ -9,6 +9,10 @@ import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
+import com.project.hiptour.common.usercase.common.token.Token;
+import com.project.hiptour.common.usercase.common.token.TokenContext;
+import com.project.hiptour.common.usercase.common.token.TokenPair;
+import com.project.hiptour.common.usercase.common.token.TokenTemplate;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
