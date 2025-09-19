@@ -1,8 +1,7 @@
 package com.project.hiptour.sync.domain;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +19,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SyncStatus {
     @Id
-    private String syncId;
+    @Enumerated(EnumType.STRING)
+    private SyncJobType syncId;
 
     private LocalDateTime lastSuccessTime;
 }

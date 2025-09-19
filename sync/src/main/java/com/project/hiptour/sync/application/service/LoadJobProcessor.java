@@ -4,6 +4,7 @@ import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.sync.application.job.LoadJob;
 import com.project.hiptour.sync.application.port.TourApiPort;
+import com.project.hiptour.sync.global.config.TourApiProperties;
 import com.project.hiptour.sync.global.dto.SyncPlaceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +24,18 @@ public class LoadJobProcessor {
     private final PlaceRepository placeRepository;
     private final PlaceMapperService placeMapperService;
     private final PlaceEntityMapper placeEntityMapper;
+    private final TourApiProperties tourApiProperties;
 
     @Transactional
     public void processArea(LoadJob job) throws IOException {
         log.info("지역코드 [{}] 데이터 처리를 시작합니다. 시작 페이지: {}", job.getCurrentAreaCode(), job.getCurrentPageNo());
 
         while (!job.isApiLimitReached()) {
-            String jsonResponse = tourApiPort.fetchPlaceData(job.getCurrentPageNo(), 100, job.getCurrentAreaCode());
+            String jsonResponse = tourApiPort.fetchPlaceData(
+                    job.getCurrentPageNo(),
+                    tourApiProperties.getNumOfRows(),
+                    job.getCurrentAreaCode()
+            );
             job.incrementApiCallCount();
 
             if (jsonResponse == null) {
@@ -49,7 +55,6 @@ public class LoadJobProcessor {
             List<Place> placesToSave = dtoList.stream()
                     .map(placeMapperService::mapToEntity)
                     .collect(Collectors.toList());
-            // TODO: 저장 방식 변경 및 COMMON의 Entity에 저장 - 수정 필요
             placeRepository.saveAll(placesToSave);
 
             job.advanceToNextPage();

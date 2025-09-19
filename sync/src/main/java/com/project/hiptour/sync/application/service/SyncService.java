@@ -3,6 +3,7 @@ package com.project.hiptour.sync.application.service;
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.sync.application.port.TourApiPort;
+import com.project.hiptour.sync.global.config.TourApiProperties;
 import com.project.hiptour.sync.global.dto.SyncPlaceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class SyncService {
     private final PlaceRepository placeRepository;
     private final PlaceEntityMapper placeEntityMapper;
     private final PlaceMapperService placeMapperService;
+    private final TourApiProperties tourApiProperties;
     private static final DateTimeFormatter API_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -31,13 +33,16 @@ public class SyncService {
         log.info("TourAPI 변경분 동기화를 시작합니다.");
 
         int pageNo = 1;
-        final int numOfRows = 100;
         boolean stopFlag = false;
         int apiCallCount = 0;
 
         while (!stopFlag) {
             try {
-                String jsonResponse = tourApiPort.fetchChangedPlaces(lastSyncTime, pageNo, numOfRows);
+                String jsonResponse = tourApiPort.fetchChangedPlaces(
+                        lastSyncTime,
+                        pageNo,
+                        tourApiProperties.getNumOfRows()
+                );
                 apiCallCount++;
 
                 List<SyncPlaceDto> dtoList = null;
