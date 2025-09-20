@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 public class UserInfo extends BaseUpdateEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter
     private Long userId;
     @Column(unique = true)
