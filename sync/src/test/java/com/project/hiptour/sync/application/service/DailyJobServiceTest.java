@@ -17,7 +17,9 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,5 +62,31 @@ public class DailyJobServiceTest {
         verify(syncService).syncUpdatedPlaces(lastSyncTime);
         verify(overviewFillService).fillMissingOverviews(remainingBudget);
         verify(syncStatusRepository).save(any(SyncStatus.class));
+    }
+
+    @Test
+    @DisplayName("성공 - 동기화 기준 시간이 없으면 아무 작업도 실행하지 않는다.")
+    void runDailyTasks_Skips_When_No_LastSyncTime() {
+        given(syncStatusRepository.findById(SyncJobType.PLACE_SYNC)).willReturn(Optional.empty());
+
+        dailyJobService.runDailyTasks();
+
+        verify(syncService, never()).syncUpdatedPlaces(any());
+        verify(overviewFillService, never()).fillMissingOverviews(anyInt());
+    }
+
+    @Test
+    @DisplayName("실패 - 동기화 작업 중 예외가 발생하면 시간 업데이트를 실행하지 않는다.")
+    void runDailyTasks_Stop_On_Fail() {
+        LocalDateTime lastSyncTime = LocalDateTime.of(2025, 1, 1, 0, 0);
+
+        given(syncStatusRepository.findById(SyncJobType.PLACE_SYNC)).willReturn(Optional.of(new SyncStatus(SyncJobType.PLACE_SYNC, lastSyncTime)));
+        given(syncService.syncUpdatedPlaces(lastSyncTime)).willThrow(new RuntimeException("Sync failed"));
+
+        dailyJobService.runDailyTasks();
+
+        verify(syncService).syncUpdatedPlaces(lastSyncTime);
+        verify(overviewFillService, never()).fillMissingOverviews(anyInt());
+        verify(syncStatusRepository, never()).save(any(SyncStatus.class));
     }
 }
