@@ -3,7 +3,7 @@ package com.project.hiptour.common.usercase.logout;
 import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.usercase.services.token.TokenService;
-import com.project.hiptour.common.usercase.services.token.TokenTemplate;
+import com.project.hiptour.common.usercase.common.token.TokenTemplate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +21,16 @@ public class UserLogoutUseCase {
     @Transactional
     public LogoutResponse logout(String userAccessToken) {
         try {
-            TokenTemplate tokenTemplate = tokenService.decodeToken(userAccessToken);
-            long userId = tokenTemplate.getUserId();
+            TokenTemplate nullableTokenTemplate = tokenService.decodeToken(userAccessToken);
+
+            if(nullableTokenTemplate == null){
+                return LogoutResponse.builder()
+                        .isSuccess(false)
+                        .message("this token is invalid")
+                        .build();
+            }
+
+            long userId = nullableTokenTemplate.getUserId();
             Optional<TokenInfo> tokenInfo = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
 
             if(tokenInfo.isEmpty()){

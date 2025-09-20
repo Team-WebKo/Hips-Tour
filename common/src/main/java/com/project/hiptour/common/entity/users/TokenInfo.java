@@ -3,12 +3,15 @@ package com.project.hiptour.common.entity.users;
 import com.project.hiptour.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class TokenInfo extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

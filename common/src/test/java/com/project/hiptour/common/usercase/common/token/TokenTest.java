@@ -1,5 +1,6 @@
-package com.project.hiptour.common.usercase.services.token;
+package com.project.hiptour.common.usercase.common.token;
 
+import com.project.hiptour.common.usercase.common.token.Token;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,12 +15,14 @@ class TokenTest {
     void tokenTest(){
 
         String sample = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkNoYXRHUFQgVXNlciIsImFkbWluIjp0cnVlLCJleHAiOjE3NTcxNjgzMzF9.aHEdp-67afk99urqnoj9fuL6VU5h1hL3gAhBBv_ya_o";
-        Token token = new Token(sample, LocalDateTime.now(), LocalDateTime.now());
+        Token token = new Token(sample);
 
         assertEquals("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", token.getHeader());
-        assertEquals("eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkNoYXRHUFQgVXNlciIsImFkbWluIjp0cnVlLCJleHAiOjE3NTcxNjgzMzF9", token.getPayLoad());
+        assertEquals("eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkNoYXRHUFQgVXNlciIsImFkbWluIjp0cnVlLCJleHAiOjE3NTcxNjgzMzF9", token.getPayload());
         assertEquals("aHEdp-67afk99urqnoj9fuL6VU5h1hL3gAhBBv_ya_o", token.getSignature());
 
+        LocalDateTime expireDate = token.getExpireDate();
+        assertNotNull(expireDate);
 
     }
 

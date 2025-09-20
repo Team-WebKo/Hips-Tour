@@ -1,13 +1,5 @@
 package com.project.hiptour.common.web.auth.token;
 
-import com.project.hiptour.common.entity.users.TokenInfo;
-import com.project.hiptour.common.entity.users.UserInfo;
-import com.project.hiptour.common.entity.users.UserRole;
-import com.project.hiptour.common.entity.users.repos.UserRepos;
-import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
-import com.project.hiptour.common.usercase.services.token.TokenPair;
-import com.project.hiptour.common.usercase.services.token.TokenService;
-import com.project.hiptour.common.usercase.services.token.TokenTemplate;
 import com.project.hiptour.common.usercase.token.TokenRequestResult;
 import com.project.hiptour.common.usercase.token.TokenUseCase;
 import lombok.AllArgsConstructor;
@@ -18,10 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/token")
