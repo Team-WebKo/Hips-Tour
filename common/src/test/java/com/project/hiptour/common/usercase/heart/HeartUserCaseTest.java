@@ -18,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -75,7 +76,7 @@ class HeartUserCaseTest {
     }
 
     @Test
-    @DisplayName("찜하기가 존재하는 경우, 상태를 변경한다")
+    @DisplayName("찜하기가 존재하는 경우, 찜하기를 취소한 경우, 찜 목록을 삭제한다.")
     void t2(){
 
         Heart heart = Heart.builder()
@@ -89,8 +90,8 @@ class HeartUserCaseTest {
         HeartResult heartResult = this.userCase.unHeart(this.userInfo.getUserId(), this.place.getPlaceId());
         assertTrue(heartResult.isSuccess());
 
-        Heart unHearted= this.heartRepos.findById(savedHeart.getId()).get();
-        assertFalse(unHearted.isActive());
+        Optional<Heart> byId = this.heartRepos.findById(savedHeart.getId());
+        assertFalse(byId.isPresent());
 
     }
 

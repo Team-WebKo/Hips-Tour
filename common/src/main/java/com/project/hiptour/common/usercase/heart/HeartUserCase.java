@@ -54,11 +54,9 @@ public class HeartUserCase {
         Place place = placeId.get();
 
         List<Heart> heartLists = this.heartRepos.findByUserUserIdAndFeedPlaceId(ui.getUserId(), place.getPlaceId());
-
         if(!heartLists.isEmpty()){
             return new HeartResult(false, "already marked", DUPLICATE_HEART);
         }
-
 
         Heart heart = Heart.builder()
                 .feed(place)
@@ -90,8 +88,9 @@ public class HeartUserCase {
                 log.debug("the state is already inactive!! {}", heart);
                 return new HeartResult(false, "invalid state!! the id is already inactive", HeartCase.ALREADY_INACTIVE);
             }
+            //TODO :: 로직 수정하기.
 
-            heart.setActive(false);
+            this.heartRepos.delete(heart);
             return new HeartResult(true, "successfully unmarked", HeartCase.SUCCESS);
 
         }
