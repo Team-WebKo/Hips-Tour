@@ -75,17 +75,17 @@ public class HeartUserCase {
     }
 
     @Transactional
-    public HeartResult unHeart(long heartId){
+    public HeartResult unHeart(long userId, int feedId){
 
-        log.debug("unHeart request came with id {}", heartId);
+        log.debug("unHeart request came with id");
 
-        Optional<Heart> optionalHeart = this.heartRepos.findById(heartId);;
+        List<Heart> heartList = this.heartRepos.findByUserUserIdAndFeedPlaceId(userId, feedId);
 
-        if(optionalHeart.isEmpty()){
-            log.warn("this un-heart request contains invalid id key! {}", heartId);
+        if(heartList.size() != 1){
+            log.warn("this un-heart request contains invalid id key!");
             return new HeartResult(false, "invalid state!! the id is not existing", HeartCase.NOT_EXISTING);
         }else{
-            Heart heart = optionalHeart.get();
+            Heart heart = heartList.get(0);
             if(!heart.isActive()){
                 log.debug("the state is already inactive!! {}", heart);
                 return new HeartResult(false, "invalid state!! the id is already inactive", HeartCase.ALREADY_INACTIVE);

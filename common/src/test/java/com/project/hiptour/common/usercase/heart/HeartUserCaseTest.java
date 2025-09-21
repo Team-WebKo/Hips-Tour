@@ -86,7 +86,7 @@ class HeartUserCaseTest {
 
         Heart savedHeart = this.heartRepos.save(heart);
 
-        HeartResult heartResult = this.userCase.unHeart(savedHeart.getId());
+        HeartResult heartResult = this.userCase.unHeart(this.userInfo.getUserId(), this.place.getPlaceId());
         assertTrue(heartResult.isSuccess());
 
         Heart unHearted= this.heartRepos.findById(savedHeart.getId()).get();
