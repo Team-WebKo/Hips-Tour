@@ -39,6 +39,9 @@ public class HeartController {
             return ResponseEntity
                     .internalServerError()
                     .body(new HeartResponse(request, "inactive state"));
+        }else if(heartResult.isDuplicateHeart()){
+            return ResponseEntity.badRequest()
+                    .body(new HeartResponse(request, heartResult));
         }
         return ResponseEntity.noContent().build();
     }

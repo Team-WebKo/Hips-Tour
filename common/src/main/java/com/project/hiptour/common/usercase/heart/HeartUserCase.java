@@ -11,8 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
+import static com.project.hiptour.common.usercase.heart.HeartCase.DUPLICATE_HEART;
 import static com.project.hiptour.common.usercase.heart.HeartCase.USER_NOT_EXISTING;
 
 @Slf4j
@@ -50,6 +52,13 @@ public class HeartUserCase {
 
         UserInfo ui = userInfo.get();
         Place place = placeId.get();
+
+        List<Heart> heartLists = this.heartRepos.findByUserUserIdAndFeedPlaceId(ui.getUserId(), place.getPlaceId());
+
+        if(!heartLists.isEmpty()){
+            return new HeartResult(false, "already marked", DUPLICATE_HEART);
+        }
+
 
         Heart heart = Heart.builder()
                 .feed(place)
