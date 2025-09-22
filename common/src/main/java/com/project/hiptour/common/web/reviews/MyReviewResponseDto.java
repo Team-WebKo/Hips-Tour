@@ -42,4 +42,3 @@ public class MyReviewResponseDto extends BaseTimeEntity {
         return dto;
     }
 }
-//TODO: 날짜 관련으로 정렬하기위한 방법 필요.
