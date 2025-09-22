@@ -58,19 +58,14 @@ public class ReviewServiceImpl implements ReviewService {
      *
      * @param reviewId   수정할 리뷰의 ID
      * @param requestDto 수정할 리뷰의 내용을 담은 DTO
-     * @param userInfo   리뷰 수정을 요청하는 사용자 정보
      * @throws ReviewNotFoundException     요청한 ID에 해당하는 리뷰를 찾을 수 없을 경우
      * @throws ReviewAccessDeniedException 리뷰를 수정할 권한이 없을 경우
      */
     @Override
     @Transactional
-    public void update(Long reviewId, UpdateReviewRequestDto requestDto, UserInfo userInfo) {
+    public void update(Long reviewId, UpdateReviewRequestDto requestDto) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException("리뷰를 찾을 수 없습니다: " + reviewId));
-
-        if (!review.getUserInfo().getUserId().equals(userInfo.getUserId())) {
-            throw new ReviewAccessDeniedException("리뷰 수정 권한이 없습니다.");
-        }
 
         review.update(requestDto.getHeadText(), requestDto.getBodyText(), requestDto.getImageUrls(), requestDto.getHashTags());
     }
@@ -79,19 +74,14 @@ public class ReviewServiceImpl implements ReviewService {
      * 리뷰를 삭제합니다.
      *
      * @param reviewId 삭제할 리뷰의 ID
-     * @param userInfo 리뷰 삭제를 요청하는 사용자 정보
      * @throws ReviewNotFoundException     요청한 ID에 해당하는 리뷰를 찾을 수 없을 경우
      * @throws ReviewAccessDeniedException 리뷰를 삭제할 권한이 없을 경우
      */
     @Override
     @Transactional
-    public void delete(Long reviewId, UserInfo userInfo) {
+    public void delete(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException("리뷰를 찾을 수 없습니다: " + reviewId));
-
-        if (!review.getUserInfo().getUserId().equals(userInfo.getUserId())) {
-            throw new ReviewAccessDeniedException("리뷰 삭제 권한이 없습니다.");
-        }
 
         reviewRepository.delete(review);
     }

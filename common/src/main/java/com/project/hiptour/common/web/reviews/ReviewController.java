@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.project.hiptour.common.security.CheckReviewOwner;
 
 import java.util.Map;
 
@@ -56,26 +57,22 @@ public class ReviewController {
 
     @Operation(summary = "리뷰 수정", description = "리뷰 수정을 위해서는 우선 내가 작성한 리뷰 목록을 조회해야 합니다.")
     @PatchMapping("/reviews/{reviewId}")
+    @CheckReviewOwner
     public ResponseEntity<Void> updateReview(
             @PathVariable("reviewId") Long reviewId,
             @RequestBody UpdateReviewRequestDto requestDto
             ) {
-        UserInfo userInfo = userRepos.findById(requestDto.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + requestDto.getUserId()));
-
-        reviewService.update(reviewId, requestDto, userInfo);
+        reviewService.update(reviewId, requestDto);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "리뷰 삭제", description = "리뷰 삭제를 위해선 내가 작성한 리뷰 목록을 조회해야 합니다.")
     @DeleteMapping("/reviews/{reviewId}")
+    @CheckReviewOwner
     public ResponseEntity<Void> deleteReview(
-            @PathVariable("reviewId") Long reviewId,
-            @RequestParam("userId") Long userId
+            @PathVariable("reviewId") Long reviewId
     ) {
-        UserInfo userInfo = userRepos.findById(userId).orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + userId));
-
-        reviewService.delete(reviewId, userInfo);
+        reviewService.delete(reviewId);
         return ResponseEntity.noContent().build();
     }
 

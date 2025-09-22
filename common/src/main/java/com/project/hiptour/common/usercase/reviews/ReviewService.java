@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface ReviewService {
     Long create(CreateReviewRequestDto requestDto, Integer placeId, UserInfo userInfo);
-    void update(Long reviewId, UpdateReviewRequestDto requestDto, UserInfo userInfo);
-    void delete(Long reviewId, UserInfo userInfo);
+    void update(Long reviewId, UpdateReviewRequestDto requestDto);
+    void delete(Long reviewId);
     Page<ReviewListResponseDto> getReviewsByPlace(Integer placeId, Pageable pageable);
     Page<MyReviewResponseDto> getMyReviews(UserInfo userInfo, Pageable pageable);
 //    Page<ReviewListResponseDto> getReviewsByPlaceId(int placeId, Pageable pageable);
