@@ -6,4 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface SearchService {
     Page<SearchResponseDto> searchPlaces(String keyword, Pageable pageable);
+    Page<SearchResponseDto> searchHeartedPlaces(String keyword, Pageable pageable, String token);
 }
