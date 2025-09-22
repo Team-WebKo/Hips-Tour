@@ -1,6 +1,6 @@
-package com.project.hiptour.common.search.Service;
+package com.project.hiptour.common.usercase.services.search;
 
-import com.project.hiptour.common.search.dto.SearchResponseDto;
+import com.project.hiptour.common.web.search.SearchResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -6,9 +6,9 @@
 //import com.project.hiptour.common.entity.place.RegionInfo;
 //import com.project.hiptour.common.entity.place.embedable.GeoPoint;
 //import com.project.hiptour.common.entity.place.embedable.TelNumber;
-//import com.project.hiptour.common.search.dto.SearchResponseDto;
-//import com.project.hiptour.common.search.repository.SearchRepository;
-//import com.project.hiptour.common.search.serviceImpl.SearchServiceImpl;
+//import com.project.hiptour.common.web.search.SearchResponseDto;
+//import com.project.hiptour.common.entity.place.repos.SearchRepository;
+//import com.project.hiptour.common.usercase.search.SearchServiceImpl;
 //import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.extension.ExtendWith;
 //import org.mockito.InjectMocks;

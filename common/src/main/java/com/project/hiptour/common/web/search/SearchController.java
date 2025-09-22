@@ -1,7 +1,6 @@
-package com.project.hiptour.common.search.controller;
+package com.project.hiptour.common.web.search;
 
-import com.project.hiptour.common.search.Service.SearchService;
-import com.project.hiptour.common.search.dto.SearchResponseDto;
+import com.project.hiptour.common.usercase.services.search.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

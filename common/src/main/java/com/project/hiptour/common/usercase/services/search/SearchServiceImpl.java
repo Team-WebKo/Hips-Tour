@@ -1,9 +1,7 @@
-package com.project.hiptour.common.search.serviceImpl;
+package com.project.hiptour.common.usercase.services.search;
 
-import com.project.hiptour.common.entity.place.Place;
-import com.project.hiptour.common.search.Service.SearchService;
-import com.project.hiptour.common.search.dto.SearchResponseDto;
-import com.project.hiptour.common.search.repository.SearchRepository;
+import com.project.hiptour.common.web.search.SearchResponseDto;
+import com.project.hiptour.common.entity.place.repos.SearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

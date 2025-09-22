@@ -1,4 +1,4 @@
-package com.project.hiptour.common.search.dto;
+package com.project.hiptour.common.web.search;
 
 import com.project.hiptour.common.entity.place.Place;
 import lombok.AllArgsConstructor;
