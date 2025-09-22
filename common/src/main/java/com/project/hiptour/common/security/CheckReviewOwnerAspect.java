@@ -36,7 +36,7 @@ public class CheckReviewOwnerAspect {
 
         String header = request.getHeader(HEADER_AUTHORIZATION);
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
-            throw new InvalidAccessException("인증 토큰이 필요합니다.");
+            throw new ReviewAccessDeniedException("인증 토큰이 필요합니다.");
         }
 
         String accessToken = header.substring(TOKEN_PREFIX.length());

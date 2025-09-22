@@ -177,10 +177,9 @@ public class ReviewServiceImplTest {
             Long reviewId = 1L;
             Review mockReview = mock(Review.class);
 
-            given(mockReview.getUserInfo()).willReturn(userInfo);
             given(reviewRepository.findById(reviewId)).willReturn(Optional.of(mockReview));
 
-            reviewService.update(reviewId, updateDto, userInfo);
+            reviewService.update(reviewId, updateDto);
 
             verify(reviewRepository).findById(reviewId);
             verify(mockReview).update(updateDto.getHeadText(), updateDto.getBodyText(), updateDto.getImageUrls(), updateDto.getHashTags());
@@ -194,23 +193,23 @@ public class ReviewServiceImplTest {
             given(reviewRepository.findById(notExistReviewId)).willReturn(Optional.empty());
 
             assertThrows(ReviewNotFoundException.class, () -> {
-                reviewService.update(notExistReviewId, updateDto, userInfo);
+                reviewService.update(notExistReviewId, updateDto);
             });
         }
 
-        @Test
-        @DisplayName("실패 - 수정 권한 없음")
-        void fail_access_denied() {
-            Long reviewId = 1L;
-
-            Review review = Review.builder().userInfo(userInfo).build();
-
-            given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
-
-            assertThrows(ReviewAccessDeniedException.class, () -> {
-                reviewService.update(reviewId, updateDto, anotherUser);
-            });
-        }
+//        @Test
+//        @DisplayName("실패 - 수정 권한 없음")
+//        void fail_access_denied() {
+//            Long reviewId = 1L;
+//
+//            Review review = Review.builder().userInfo(userInfo).build();
+//
+//            given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+//
+//            assertThrows(ReviewAccessDeniedException.class, () -> {
+//                reviewService.update(reviewId, updateDto, anotherUser);
+//            });
+//        }
     }
 
     @Nested
@@ -230,10 +229,9 @@ public class ReviewServiceImplTest {
             Long reviewId = 1L;
             Review mockReview = mock(Review.class);
 
-            given(mockReview.getUserInfo()).willReturn(userInfo);
             given(reviewRepository.findById(reviewId)).willReturn(Optional.of(mockReview));
 
-            reviewService.delete(reviewId, userInfo);
+            reviewService.delete(reviewId);
 
             verify(reviewRepository).findById(reviewId);
             verify(reviewRepository).delete(mockReview);
@@ -247,23 +245,23 @@ public class ReviewServiceImplTest {
             given(reviewRepository.findById(notExistReviewId)).willReturn(Optional.empty());
 
             assertThrows(ReviewNotFoundException.class, () -> {
-                reviewService.delete(notExistReviewId, userInfo);
+                reviewService.delete(notExistReviewId);
             });
         }
 
-        @Test
-        @DisplayName("실패 - 삭제 권한 없음")
-        void fail_access_denied() {
-            Long reviewId = 1L;
-            Review mockReview = mock(Review.class);
-
-            given(mockReview.getUserInfo()).willReturn(userInfo);
-            given(reviewRepository.findById(reviewId)).willReturn(Optional.of(mockReview));
-
-            assertThrows(ReviewAccessDeniedException.class, () -> {
-                reviewService.delete(reviewId, anotherUser);
-            });
-        }
+//        @Test
+//        @DisplayName("실패 - 삭제 권한 없음")
+//        void fail_access_denied() {
+//            Long reviewId = 1L;
+//            Review mockReview = mock(Review.class);
+//
+//            given(mockReview.getUserInfo()).willReturn(userInfo);
+//            given(reviewRepository.findById(reviewId)).willReturn(Optional.of(mockReview));
+//
+//            assertThrows(ReviewAccessDeniedException.class, () -> {
+//                reviewService.delete(reviewId, anotherUser);
+//            });
+//        }
     }
 
     @Nested
