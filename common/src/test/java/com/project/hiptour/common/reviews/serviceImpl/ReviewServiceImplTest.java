@@ -255,7 +255,7 @@ public class ReviewServiceImplTest {
 //            Long reviewId = 1L;
 //            Review mockReview = mock(Review.class);
 //
-//            given(mockReview.getUserInfo()).willReturn(userInfo);
+//
 //            given(reviewRepository.findById(reviewId)).willReturn(Optional.of(mockReview));
 //
 //            assertThrows(ReviewAccessDeniedException.class, () -> {
