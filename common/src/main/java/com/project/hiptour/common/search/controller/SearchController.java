@@ -1,11 +1,9 @@
 package com.project.hiptour.common.search.controller;
 
-import com.project.hiptour.common.entity.users.TokenInfo;
-import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.search.Service.SearchService;
 import com.project.hiptour.common.search.dto.SearchResponseDto;
+import com.project.hiptour.common.util.PageResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,8 +15,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class SearchController {
     private final SearchService searchService;
+
     @GetMapping("/search")
-    public ResponseEntity<Page<SearchResponseDto>> searchPlaces(
+    public ResponseEntity<PageResponseDto<SearchResponseDto>> searchPlaces(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -35,7 +34,7 @@ public class SearchController {
 
     // 찜 필터링 검색 API
     @GetMapping("/search/hearted")
-    public ResponseEntity<Page<SearchResponseDto>> searchHeartedPlaces(
+    public ResponseEntity<PageResponseDto<SearchResponseDto>> searchHeartedPlaces(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

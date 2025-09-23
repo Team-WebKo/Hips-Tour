@@ -2,6 +2,7 @@ package com.project.hiptour.common.search.controller;
 
 import com.project.hiptour.common.search.Service.SearchService;
 import com.project.hiptour.common.search.dto.SearchResponseDto;
+import com.project.hiptour.common.util.PageResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -42,11 +43,11 @@ class SearchControllerTest {
                 .categoryName("관광지")
                 .build();
 
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("placeName").ascending());
-        Page<SearchResponseDto> page = new PageImpl<>(List.of(dto), pageable, 1);
+        Page<SearchResponseDto> page = new PageImpl<>(List.of(dto), PageRequest.of(0, 10), 1);
+        PageResponseDto<SearchResponseDto> responseDto = PageResponseDto.fromPage(page, d -> d);
 
         Mockito.when(searchService.searchPlaces(eq("부산"), any(Pageable.class)))
-                .thenReturn(page);
+                .thenReturn(responseDto);
 
         // when & then
         mockMvc.perform(get("/api/search")
@@ -75,11 +76,11 @@ class SearchControllerTest {
                 .categoryName("관광지")
                 .build();
 
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("placeName").ascending());
-        Page<SearchResponseDto> page = new PageImpl<>(List.of(dto), pageable, 1);
+        Page<SearchResponseDto> page = new PageImpl<>(List.of(dto), PageRequest.of(0, 10), 1);
+        PageResponseDto<SearchResponseDto> responseDto = PageResponseDto.fromPage(page, d -> d);
 
         Mockito.when(searchService.searchHeartedPlaces(eq("서울"), any(Pageable.class), any(String.class)))
-                .thenReturn(page);
+                .thenReturn(responseDto);
 
         // when & then
         mockMvc.perform(get("/api/search/hearted")

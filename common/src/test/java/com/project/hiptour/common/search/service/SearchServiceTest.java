@@ -7,6 +7,7 @@ import com.project.hiptour.common.entity.heart.repos.HeartRepos;
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.search.dto.SearchResponseDto;
 import com.project.hiptour.common.search.repository.SearchRepository;
+import com.project.hiptour.common.util.PageResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,7 @@ class SearchServiceImplTest {
                 .thenReturn(placePage);
 
         // when
-        Page<SearchResponseDto> result = searchService.searchPlaces(keyword, pageable);
+        PageResponseDto<SearchResponseDto> result = searchService.searchPlaces(keyword, pageable);
 
         // then
         assertThat(result).isNotNull();
@@ -97,7 +98,7 @@ class SearchServiceImplTest {
         when(heartRepos.findByUserUserIdAndFeedPlaceId(1L, 2)).thenReturn(List.of());
 
         // when
-        Page<SearchResponseDto> result = searchService.searchHeartedPlaces(keyword, pageable, token);
+        PageResponseDto<SearchResponseDto> result = searchService.searchHeartedPlaces(keyword, pageable, token);
 
         // then
         assertThat(result.getContent()).hasSize(1);
@@ -127,7 +128,7 @@ class SearchServiceImplTest {
         when(heartRepos.findByUserUserIdAndFeedPlaceId(1L, 10)).thenReturn(List.of());
 
         // when
-        Page<SearchResponseDto> result = searchService.searchHeartedPlaces(keyword, pageable, token);
+        PageResponseDto<SearchResponseDto> result = searchService.searchHeartedPlaces(keyword, pageable, token);
 
         // then
         assertThat(result.getContent()).isEmpty();

@@ -7,6 +7,7 @@ import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.search.Service.SearchService;
 import com.project.hiptour.common.search.dto.SearchResponseDto;
 import com.project.hiptour.common.search.repository.SearchRepository;
+import com.project.hiptour.common.util.PageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,14 +22,14 @@ public class SearchServiceImpl implements SearchService {
     private final SearchRepository searchRepository;
     private final HeartRepos heartRepos;
 
-    @Override
-    public Page<SearchResponseDto> searchPlaces(String keyword, Pageable pageable) {
-        return searchRepository.findByPlaceNameContaining(keyword, pageable)
-                .map(SearchResponseDto::new);
+    public PageResponseDto<SearchResponseDto> searchPlaces(String keyword, Pageable pageable) {
+        Page<Place> searchResults = searchRepository.findByPlaceNameContaining(keyword, pageable);
+        return PageResponseDto.fromPage(searchResults, SearchResponseDto::new);
     }
 
+
     @Override
-    public Page<SearchResponseDto> searchHeartedPlaces(String keyword, Pageable pageable, String token) {
+    public PageResponseDto<SearchResponseDto> searchHeartedPlaces(String keyword, Pageable pageable, String token) {
         // JWT에서 userId 추출
         Long userId = Long.parseLong(JWT.decode(token).getSubject());
 
@@ -36,11 +37,13 @@ public class SearchServiceImpl implements SearchService {
         Page<Place> searchResults = searchRepository.findByPlaceNameContaining(keyword, pageable);
 
         // 그중에서 user가 찜한 것만 필터링
-        List<SearchResponseDto> heartedResults = searchResults.stream()
+        List<Place> filtered = searchResults.stream()
                 .filter(place -> !heartRepos.findByUserUserIdAndFeedPlaceId(userId, place.getPlaceId()).isEmpty())
-                .map(SearchResponseDto::new)
                 .toList();
 
-        return new PageImpl<>(heartedResults, pageable, heartedResults.size());
+        Page<SearchResponseDto> heartedPage =
+                new PageImpl<>(filtered.stream().map(SearchResponseDto::new).toList(), pageable, filtered.size());
+
+        return PageResponseDto.fromPage(heartedPage, dto -> dto);
     }
 }
