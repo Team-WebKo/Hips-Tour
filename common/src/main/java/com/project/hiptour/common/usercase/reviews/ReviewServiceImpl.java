@@ -8,6 +8,7 @@ import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.exception.place.PlaceNotFoundException;
 import com.project.hiptour.common.exception.review.ReviewAccessDeniedException;
 import com.project.hiptour.common.exception.review.ReviewNotFoundException;
+import com.project.hiptour.common.util.PageResponseDto;
 import com.project.hiptour.common.web.reviews.CreateReviewRequestDto;
 import com.project.hiptour.common.web.reviews.MyReviewResponseDto;
 import com.project.hiptour.common.web.reviews.ReviewListResponseDto;
@@ -95,12 +96,12 @@ public class ReviewServiceImpl implements ReviewService {
      * @throws PlaceNotFoundException 요청한 ID에 해당하는 장소를 찾을 수 없을 경우
      */
     @Override
-    public Page<ReviewListResponseDto> getReviewsByPlace(Integer placeId, Pageable pageable) {
+    public PageResponseDto<ReviewListResponseDto> getReviewsByPlace(Integer placeId, Pageable pageable) {
         Place place = placeRepository.findById(placeId)
                 .orElseThrow(() -> new PlaceNotFoundException("장소를 찾을 수 없습니다: " + placeId));
 
         Page<Review> reviewPage = reviewRepository.findByPlace(place, pageable);
-        return reviewPage.map(ReviewListResponseDto::from);
+        return PageResponseDto.fromPage(reviewPage, ReviewListResponseDto::from);
     }
 
     /**
@@ -111,9 +112,9 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 페이징된 "내가 쓴 리뷰" 목록
      */
     @Override
-    public Page<MyReviewResponseDto> getMyReviews(UserInfo userInfo, Pageable pageable) {
+    public PageResponseDto<MyReviewResponseDto> getMyReviews(UserInfo userInfo, Pageable pageable) {
         Page<Review> reviewPage = reviewRepository.findByUserInfo(userInfo, pageable);
-        return reviewPage.map(MyReviewResponseDto::from);
+        return PageResponseDto.fromPage(reviewPage, MyReviewResponseDto::from);
     }
 
     //    @Override

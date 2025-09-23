@@ -5,6 +5,7 @@ import com.project.hiptour.common.entity.users.repos.UserRepos;
 import com.project.hiptour.common.exception.UserNotFoundException;
 import com.project.hiptour.common.exception.place.PlaceNotFoundException;
 import com.project.hiptour.common.usercase.reviews.ReviewService;
+import com.project.hiptour.common.util.PageResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,23 +37,23 @@ public class ReviewController {
 
     @Operation(summary = "리뷰 목록 조회", description = "장소에 대한 모든 리뷰를 조회합니다.")
     @GetMapping("/places/{placeId}/reviews")
-    public Page<ReviewListResponseDto> getReviewByPlace(
+    public ResponseEntity<PageResponseDto<ReviewListResponseDto>> getReviewByPlace(
             @PathVariable("placeId") Integer placeId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        return reviewService.getReviewsByPlace(placeId, pageable);
+        return ResponseEntity.ok(reviewService.getReviewsByPlace(placeId, pageable));
     }
 
     @Operation(summary = "내가 작성한 리뷰 목록 조회", description = "내가 작성한 리뷰 목록만 조회합니다. 수정 및 삭제에 활용")
     @GetMapping("reviews/my")
-    public Page<MyReviewResponseDto> getMyReviews(
+    public ResponseEntity<PageResponseDto<MyReviewResponseDto>> getMyReviews(
             @RequestParam("userId") Long userId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         UserInfo userInfo = userRepos.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + userId));
 
-        return reviewService.getMyReviews(userInfo, pageable);
+        return ResponseEntity.ok(reviewService.getMyReviews(userInfo, pageable));
     }
 
     @Operation(summary = "리뷰 수정", description = "리뷰 수정을 위해서는 우선 내가 작성한 리뷰 목록을 조회해야 합니다.")
