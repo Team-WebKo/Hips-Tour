@@ -2,6 +2,7 @@ package com.project.hiptour.common.reviews.serviceImpl;
 
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.place.repos.PlaceRepository;
+import com.project.hiptour.common.entity.review.HashTag;
 import com.project.hiptour.common.entity.review.Review;
 import com.project.hiptour.common.entity.review.repos.ReviewRepository;
 import com.project.hiptour.common.entity.users.UserInfo;
@@ -9,6 +10,7 @@ import com.project.hiptour.common.exception.place.PlaceNotFoundException;
 import com.project.hiptour.common.exception.review.ReviewAccessDeniedException;
 import com.project.hiptour.common.exception.review.ReviewNotFoundException;
 import com.project.hiptour.common.usercase.reviews.ReviewServiceImpl;
+import com.project.hiptour.common.util.PageResponseDto;
 import com.project.hiptour.common.web.reviews.CreateReviewRequestDto;
 import com.project.hiptour.common.web.reviews.MyReviewResponseDto;
 import com.project.hiptour.common.web.reviews.ReviewListResponseDto;
@@ -74,6 +76,7 @@ public class ReviewServiceImplTest {
             CreateReviewRequestDto requestDto = CreateReviewRequestDto.builder()
                     .headText("제목")
                     .bodyText("내용")
+                    .hashTags(List.of(new HashTag("#테스트"), new HashTag("#성공")))
                     .build();
 
             Integer placeId = 1;
@@ -84,6 +87,7 @@ public class ReviewServiceImplTest {
                     .userInfo(userInfo)
                     .headText(requestDto.getHeadText())
                     .bodyText(requestDto.getBodyText())
+                    .hashTags(List.of(new HashTag("#테스트"), new HashTag("#성공")))
                     .build();
             savedReview.setReviewId(1L);
 
@@ -130,7 +134,7 @@ public class ReviewServiceImplTest {
             given(placeRepository.findById(placeId)).willReturn(Optional.of(place));
             given(reviewRepository.findByPlace(place, pageable)).willReturn(reviewPage);
 
-            Page<ReviewListResponseDto> result = reviewService.getReviewsByPlace(placeId, pageable);
+            PageResponseDto<ReviewListResponseDto> result = reviewService.getReviewsByPlace(placeId, pageable);
 
             assertThat(result).isNotNull();
             assertThat(result.getTotalElements()).isEqualTo(2);
@@ -282,7 +286,7 @@ public class ReviewServiceImplTest {
 
             given(reviewRepository.findByUserInfo(userInfo, pageable)).willReturn(reviewPage);
 
-            Page<MyReviewResponseDto> result = reviewService.getMyReviews(userInfo, pageable);
+            PageResponseDto<MyReviewResponseDto> result = reviewService.getMyReviews(userInfo, pageable);
 
             assertThat(result).isNotNull();
             assertThat(result.getTotalElements()).isEqualTo(2);
@@ -298,10 +302,10 @@ public class ReviewServiceImplTest {
 
             given(reviewRepository.findByUserInfo(userInfo, pageable)).willReturn(Page.empty(pageable));
 
-            Page<MyReviewResponseDto> result = reviewService.getMyReviews(userInfo, pageable);
+            PageResponseDto<MyReviewResponseDto> result = reviewService.getMyReviews(userInfo, pageable);
 
             assertThat(result).isNotNull();
-            assertThat(result.isEmpty()).isTrue();
+            assertThat(result.getContent().isEmpty()).isTrue();
 
             verify(reviewRepository).findByUserInfo(userInfo, pageable);
         }
