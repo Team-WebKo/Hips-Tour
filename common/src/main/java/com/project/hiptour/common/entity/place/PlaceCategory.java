@@ -5,12 +5,14 @@ import com.project.hiptour.common.entity.BaseUpdateEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 @Entity
 @Getter
 public class PlaceCategory extends BaseUpdateEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "category_id")

@@ -2,7 +2,6 @@ package com.project.hiptour.common.web.place;
 
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.place.embedable.GeoPoint;
-import com.project.hiptour.common.entity.place.embedable.TelNumber;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,7 +13,7 @@ public class PlaceDto {
     private final String address1;
     private final String address2;
     private final GeoPoint geoPoint;
-    private TelNumber telNumber;
+    private String telNumber;
 
     public static PlaceDto from(Place entity) {
         return PlaceDto.builder()

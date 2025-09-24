@@ -2,10 +2,10 @@ package com.project.hiptour.common.place;
 
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.place.embedable.GeoPoint;
-import com.project.hiptour.common.entity.place.embedable.TelNumber;
 import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.common.exception.place.PlaceNotFoundException;
 import com.project.hiptour.common.usercase.place.PlaceServiceImpl;
+import com.project.hiptour.common.util.PageResponseDto;
 import com.project.hiptour.common.web.place.PlaceDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,38 +44,35 @@ public class PlaceServiceImplTest {
 
     @BeforeEach
     void init() {
-        GeoPoint geoPoint1 = new GeoPoint(37.5665, 126.9780, 6);
-        TelNumber telNumber1 = new TelNumber("02-1234-5678");
+        GeoPoint geoPoint1 = new GeoPoint(37.5665, 126.9780);
         testPlace1 = Place.builder()
                 .placeName("테스트 장소 1")
                 .address1("주소1")
                 .address2("상세주소1")
                 .geoPoint(geoPoint1)
-                .telNumber(telNumber1)
+                .telNumber("02-1234-5678")
                 .build();
         testPlace1.setPlaceId(1);
         testPlace1.setCreatedAt(LocalDateTime.now().minusDays(1));
 
-        GeoPoint geoPoint2 = new GeoPoint(33.4507, 126.5706, 6);
-        TelNumber telNumber2 = new TelNumber("064-9876-5432");
+        GeoPoint geoPoint2 = new GeoPoint(33.4507, 126.5706);
         testPlace2 = Place.builder()
                 .placeName("테스트 장소 2")
                 .address1("주소2")
                 .address2("상세주소2")
                 .geoPoint(geoPoint2)
-                .telNumber(telNumber2)
+                .telNumber("064-9876-5432")
                 .build();
         testPlace2.setPlaceId(2);
         testPlace2.setCreatedAt(LocalDateTime.now());
 
-        GeoPoint geoPoint3 = new GeoPoint(34.0522, 118.2437, 6);
-        TelNumber telNumber3 = new TelNumber("070-1111-2222");
+        GeoPoint geoPoint3 = new GeoPoint(34.0522, 118.2437);
         testPlace3 = Place.builder()
                 .placeName("테스트 장소 3")
                 .address1("주소3")
                 .address2("상세주소3")
                 .geoPoint(geoPoint3)
-                .telNumber(telNumber3)
+                .telNumber("070-1111-2222")
                 .build();
         testPlace3.setPlaceId(3);
         testPlace3.setCreatedAt(LocalDateTime.now().minusDays(2));
@@ -117,7 +114,7 @@ public class PlaceServiceImplTest {
 
             when(placeRepository.findAllByOrderByCreatedAtDesc(pageable)).thenReturn(recentPage);
 
-            Page<PlaceDto> result = placeService.findRecommendedPlaces(pageable);
+            PageResponseDto<PlaceDto> result = placeService.findRecommendedPlaces(pageable);
 
             assertThat(result).isNotNull();
             assertThat(result.getContent()).hasSize(3);
@@ -130,10 +127,10 @@ public class PlaceServiceImplTest {
             Pageable pageable = PageRequest.of(0, 10);
             when(placeRepository.findAllByOrderByCreatedAtDesc(pageable)).thenReturn(Page.empty(pageable));
 
-            Page<PlaceDto> result = placeService.findRecommendedPlaces(pageable);
+            PageResponseDto<PlaceDto> result = placeService.findRecommendedPlaces(pageable);
 
             assertThat(result).isNotNull();
-            assertThat(result.isEmpty()).isTrue();
+            assertThat(result.getContent().isEmpty()).isTrue();
         }
     }
 }

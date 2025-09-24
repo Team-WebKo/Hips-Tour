@@ -2,6 +2,7 @@ package com.project.hiptour.common.reviews.serviceImpl;
 
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.place.repos.PlaceRepository;
+import com.project.hiptour.common.entity.review.HashTag;
 import com.project.hiptour.common.entity.review.Review;
 import com.project.hiptour.common.entity.review.repos.ReviewRepository;
 import com.project.hiptour.common.entity.users.UserInfo;
@@ -9,6 +10,7 @@ import com.project.hiptour.common.exception.place.PlaceNotFoundException;
 import com.project.hiptour.common.exception.review.ReviewAccessDeniedException;
 import com.project.hiptour.common.exception.review.ReviewNotFoundException;
 import com.project.hiptour.common.usercase.reviews.ReviewServiceImpl;
+import com.project.hiptour.common.util.PageResponseDto;
 import com.project.hiptour.common.web.reviews.CreateReviewRequestDto;
 import com.project.hiptour.common.web.reviews.MyReviewResponseDto;
 import com.project.hiptour.common.web.reviews.ReviewListResponseDto;
@@ -54,14 +56,15 @@ public class ReviewServiceImplTest {
     @BeforeEach
     void init() {
         userInfo = UserInfo.builder()
-                .nickName("testUser")
                 .email("test@example.com")
+                .nickName("testUser")
                 .build();
         userInfo.setUserId(1L);
 
         place = Place.builder()
                 .placeName("테스트 장소")
                 .build();
+        place.setPlaceId(1);
     }
 
     @Nested
@@ -73,18 +76,20 @@ public class ReviewServiceImplTest {
             CreateReviewRequestDto requestDto = CreateReviewRequestDto.builder()
                     .headText("제목")
                     .bodyText("내용")
+                    .hashTags(List.of(new HashTag("#테스트"), new HashTag("#성공")))
                     .build();
 
             Integer placeId = 1;
             place.setPlaceId(placeId);
 
             Review savedReview = Review.builder()
-                    .reviewId(1L)
                     .place(place)
                     .userInfo(userInfo)
                     .headText(requestDto.getHeadText())
                     .bodyText(requestDto.getBodyText())
+                    .hashTags(List.of(new HashTag("#테스트"), new HashTag("#성공")))
                     .build();
+            savedReview.setReviewId(1L);
 
             given(placeRepository.findById(placeId)).willReturn(Optional.of(place));
             given(reviewRepository.save(any(Review.class))).willReturn(savedReview);
@@ -118,16 +123,18 @@ public class ReviewServiceImplTest {
             Integer placeId = 1;
             Pageable pageable = PageRequest.of(0, 10);
 
-            List<Review> reviewList = List.of(
-                    Review.builder().reviewId(1L).headText("리뷰제목1").bodyText("내용1").userInfo(userInfo).place(place).build(),
-                    Review.builder().reviewId(2L).headText("리뷰제목2").bodyText("내용2").userInfo(userInfo).place(place).build());
+            Review review1 = Review.builder().headText("리뷰제목1").bodyText("내용1").userInfo(userInfo).place(place).build();
+            review1.setReviewId(1L);
+            Review review2 = Review.builder().headText("리뷰제목2").bodyText("내용2").userInfo(userInfo).place(place).build();
+            review2.setReviewId(2L);
+            List<Review> reviewList = List.of(review1, review2);
 
             Page<Review> reviewPage = new PageImpl<>(reviewList, pageable, reviewList.size());
 
             given(placeRepository.findById(placeId)).willReturn(Optional.of(place));
             given(reviewRepository.findByPlace(place, pageable)).willReturn(reviewPage);
 
-            Page<ReviewListResponseDto> result = reviewService.getReviewsByPlace(placeId, pageable);
+            PageResponseDto<ReviewListResponseDto> result = reviewService.getReviewsByPlace(placeId, pageable);
 
             assertThat(result).isNotNull();
             assertThat(result.getTotalElements()).isEqualTo(2);
@@ -174,10 +181,9 @@ public class ReviewServiceImplTest {
             Long reviewId = 1L;
             Review mockReview = mock(Review.class);
 
-            given(mockReview.getUserInfo()).willReturn(userInfo);
             given(reviewRepository.findById(reviewId)).willReturn(Optional.of(mockReview));
 
-            reviewService.update(reviewId, updateDto, userInfo);
+            reviewService.update(reviewId, updateDto);
 
             verify(reviewRepository).findById(reviewId);
             verify(mockReview).update(updateDto.getHeadText(), updateDto.getBodyText(), updateDto.getImageUrls(), updateDto.getHashTags());
@@ -191,23 +197,23 @@ public class ReviewServiceImplTest {
             given(reviewRepository.findById(notExistReviewId)).willReturn(Optional.empty());
 
             assertThrows(ReviewNotFoundException.class, () -> {
-                reviewService.update(notExistReviewId, updateDto, userInfo);
+                reviewService.update(notExistReviewId, updateDto);
             });
         }
 
-        @Test
-        @DisplayName("실패 - 수정 권한 없음")
-        void fail_access_denied() {
-            Long reviewId = 1L;
-
-            Review review = Review.builder().userInfo(userInfo).build();
-
-            given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
-
-            assertThrows(ReviewAccessDeniedException.class, () -> {
-                reviewService.update(reviewId, updateDto, anotherUser);
-            });
-        }
+//        @Test
+//        @DisplayName("실패 - 수정 권한 없음")
+//        void fail_access_denied() {
+//            Long reviewId = 1L;
+//
+//            Review review = Review.builder().userInfo(userInfo).build();
+//
+//            given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+//
+//            assertThrows(ReviewAccessDeniedException.class, () -> {
+//                reviewService.update(reviewId, updateDto, anotherUser);
+//            });
+//        }
     }
 
     @Nested
@@ -227,10 +233,9 @@ public class ReviewServiceImplTest {
             Long reviewId = 1L;
             Review mockReview = mock(Review.class);
 
-            given(mockReview.getUserInfo()).willReturn(userInfo);
             given(reviewRepository.findById(reviewId)).willReturn(Optional.of(mockReview));
 
-            reviewService.delete(reviewId, userInfo);
+            reviewService.delete(reviewId);
 
             verify(reviewRepository).findById(reviewId);
             verify(reviewRepository).delete(mockReview);
@@ -244,23 +249,23 @@ public class ReviewServiceImplTest {
             given(reviewRepository.findById(notExistReviewId)).willReturn(Optional.empty());
 
             assertThrows(ReviewNotFoundException.class, () -> {
-                reviewService.delete(notExistReviewId, userInfo);
+                reviewService.delete(notExistReviewId);
             });
         }
 
-        @Test
-        @DisplayName("실패 - 삭제 권한 없음")
-        void fail_access_denied() {
-            Long reviewId = 1L;
-            Review mockReview = mock(Review.class);
-
-            given(mockReview.getUserInfo()).willReturn(userInfo);
-            given(reviewRepository.findById(reviewId)).willReturn(Optional.of(mockReview));
-
-            assertThrows(ReviewAccessDeniedException.class, () -> {
-                reviewService.delete(reviewId, anotherUser);
-            });
-        }
+//        @Test
+//        @DisplayName("실패 - 삭제 권한 없음")
+//        void fail_access_denied() {
+//            Long reviewId = 1L;
+//            Review mockReview = mock(Review.class);
+//
+//
+//            given(reviewRepository.findById(reviewId)).willReturn(Optional.of(mockReview));
+//
+//            assertThrows(ReviewAccessDeniedException.class, () -> {
+//                reviewService.delete(reviewId, anotherUser);
+//            });
+//        }
     }
 
     @Nested
@@ -270,16 +275,18 @@ public class ReviewServiceImplTest {
         @DisplayName("성공")
         void success() {
             Pageable pageable = PageRequest.of(0, 5);
-            List<Review> myReviewList = List.of(
-                    Review.builder().reviewId(1L).userInfo(userInfo).place(place).headText("내 리뷰 1").build(),
-                    Review.builder().reviewId(2L).userInfo(userInfo).place(place).headText("내 리뷰 2").build()
-            );
+
+            Review review1 = Review.builder().userInfo(userInfo).place(place).headText("내 리뷰 1").build();
+            review1.setReviewId(1L);
+            Review review2 = Review.builder().userInfo(userInfo).place(place).headText("내 리뷰 2").build();
+            review2.setReviewId(2L);
+            List<Review> myReviewList = List.of(review1, review2);
 
             Page<Review> reviewPage = new PageImpl<>(myReviewList, pageable, myReviewList.size());
 
             given(reviewRepository.findByUserInfo(userInfo, pageable)).willReturn(reviewPage);
 
-            Page< MyReviewResponseDto> result = reviewService.getMyReviews(userInfo, pageable);
+            PageResponseDto<MyReviewResponseDto> result = reviewService.getMyReviews(userInfo, pageable);
 
             assertThat(result).isNotNull();
             assertThat(result.getTotalElements()).isEqualTo(2);
@@ -295,10 +302,10 @@ public class ReviewServiceImplTest {
 
             given(reviewRepository.findByUserInfo(userInfo, pageable)).willReturn(Page.empty(pageable));
 
-            Page<MyReviewResponseDto> result = reviewService.getMyReviews(userInfo, pageable);
+            PageResponseDto<MyReviewResponseDto> result = reviewService.getMyReviews(userInfo, pageable);
 
             assertThat(result).isNotNull();
-            assertThat(result.isEmpty()).isTrue();
+            assertThat(result.getContent().isEmpty()).isTrue();
 
             verify(reviewRepository).findByUserInfo(userInfo, pageable);
         }

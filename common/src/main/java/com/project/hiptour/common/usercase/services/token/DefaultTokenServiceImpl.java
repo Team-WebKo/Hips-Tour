@@ -9,6 +9,10 @@ import com.project.hiptour.common.entity.users.TokenInfo;
 import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
+import com.project.hiptour.common.usercase.common.token.Token;
+import com.project.hiptour.common.usercase.common.token.TokenContext;
+import com.project.hiptour.common.usercase.common.token.TokenPair;
+import com.project.hiptour.common.usercase.common.token.TokenTemplate;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,13 +25,11 @@ public class DefaultTokenServiceImpl implements TokenService {
 
     private final TokenContext tokenContext;
     private final TokenRepos tokenRepos;
-    private final UserRoleRepo userRoleRepo;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public DefaultTokenServiceImpl(KeyProvider keyProvider, TokenContext tokenContext, TokenRepos tokenRepos, UserRoleRepo repos) {
+    public DefaultTokenServiceImpl(TokenContext tokenContext, TokenRepos tokenRepos, UserRoleRepo repos) {
         this.tokenContext = tokenContext;
         this.tokenRepos = tokenRepos;
-        this.userRoleRepo = repos;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class DefaultTokenServiceImpl implements TokenService {
 
     @Transactional(Transactional.TxType.SUPPORTS)
     @Override
-    public void updateToken(Long userId, Token refreshToken) {
+    public void updateRefreshTokenAfterLogin(Long userId, Token refreshToken) {
 
         Optional<TokenInfo> lastUserToken = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
         lastUserToken.ifPresent(TokenInfo::deactivate);
@@ -73,17 +75,10 @@ public class DefaultTokenServiceImpl implements TokenService {
             return new TokenTemplate(userId, roles);
 
         } catch (JWTDecodeException e) {
-            log.warn("invalid token {}", e.getMessage());
+            log.warn("invalid token!!! {}", e.getMessage());
             return null;
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            return null;
         }
-    }
-
-    @Override
-    @Transactional
-    public void logout(Long userId) {
-        Optional<TokenInfo> lastUserToken = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);
-        lastUserToken.ifPresent(TokenInfo::deactivate);
     }
 }

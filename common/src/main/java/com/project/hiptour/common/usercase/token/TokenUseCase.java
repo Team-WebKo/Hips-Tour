@@ -6,14 +6,12 @@ import com.project.hiptour.common.entity.users.UserRole;
 import com.project.hiptour.common.entity.users.repos.TokenRepos;
 import com.project.hiptour.common.entity.users.repos.UserRepos;
 import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
-import com.project.hiptour.common.usercase.services.token.TokenPair;
+import com.project.hiptour.common.usercase.common.token.TokenPair;
+import com.project.hiptour.common.usercase.common.token.TokenTemplate;
 import com.project.hiptour.common.usercase.services.token.TokenService;
-import com.project.hiptour.common.usercase.services.token.TokenTemplate;
-import com.project.hiptour.common.web.auth.token.TokenResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,6 +36,7 @@ public class TokenUseCase {
             log.warn("this tokenString request is invalid");
             return new TokenRequestResult(false, "this tokenString request is invalid",null);
         }
+
 
         long userId = tokenTemplate.getUserId();
         Optional<TokenInfo> token = this.tokenRepos.findFirstByUserIdOrderByCreatedAtDesc(userId);

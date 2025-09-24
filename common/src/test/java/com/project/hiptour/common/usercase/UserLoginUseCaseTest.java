@@ -7,16 +7,19 @@ import com.project.hiptour.common.entity.users.repos.UserRepos;
 import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.security.UserIdentity;
 import com.project.hiptour.common.security.kakao.KakaoUserIdentity;
+import com.project.hiptour.common.usercase.common.token.Token;
+import com.project.hiptour.common.usercase.common.token.TokenPair;
 import com.project.hiptour.common.usercase.login.LoginResult;
 import com.project.hiptour.common.usercase.login.UserLoginUseCase;
 import com.project.hiptour.common.usercase.services.login.UserService;
-import com.project.hiptour.common.usercase.services.token.*;
+import com.project.hiptour.common.usercase.services.token.TokenService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -54,7 +57,7 @@ class UserLoginUseCaseTest {
 
         when(mockService.getUserIdentity(identity.getUserIdentifier())).thenReturn(identity);
 
-        LoginResult loginResult = this.userLoginUseCase.createTokenPair(identity.getUserIdentifier());
+        LoginResult loginResult = this.userLoginUseCase.requestLoginByOAuth(identity.getUserIdentifier());
 
         assertNotNull(loginResult);
         assertTrue(loginResult.isNewSingUp());
@@ -90,10 +93,30 @@ class UserLoginUseCaseTest {
         UserIdentity identity = new KakaoUserIdentity(userId);
 
         when(mockService.getUserIdentity(anyString())).thenReturn(identity);
-        this.userLoginUseCase.createTokenPair(identity.getUserIdentifier());
+        this.userLoginUseCase.requestLoginByOAuth(identity.getUserIdentifier());
 
         List<TokenInfo> allTokenInfo = this.tokenRepos.findAll();
         assertEquals(1, allTokenInfo.size());
+
+    }
+
+    @Test
+    @DisplayName("유저가 로그인 후, 중복으로 또 로그인을 시도하면, 기존에 등록된 리프레시 토큰을 disable 처리한다.")
+    void t34(){
+
+        int userId = new Random().nextInt();
+        UserIdentity identity = new KakaoUserIdentity(userId);
+
+        when(mockService.getUserIdentity(anyString())).thenReturn(identity);
+        when(mockService.getUserIdentity(anyString())).thenReturn(identity);
+
+        this.userLoginUseCase.requestLoginByOAuth(identity.getUserIdentifier());
+        this.userLoginUseCase.requestLoginByOAuth(identity.getUserIdentifier());
+
+        List<TokenInfo> allTokenInfo = this.tokenRepos.findAll(Sort.by(Sort.Order.by("createdAt")));
+        assertEquals(2, allTokenInfo.size());
+        assertFalse(allTokenInfo.get(0).isActive());
+        assertTrue(allTokenInfo.get(1).isActive());
 
     }
 

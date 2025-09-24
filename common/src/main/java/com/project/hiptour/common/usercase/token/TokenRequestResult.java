@@ -1,7 +1,5 @@
 package com.project.hiptour.common.usercase.token;
 
-import com.project.hiptour.common.usercase.services.token.Token;
-import com.project.hiptour.common.usercase.services.token.TokenTemplate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

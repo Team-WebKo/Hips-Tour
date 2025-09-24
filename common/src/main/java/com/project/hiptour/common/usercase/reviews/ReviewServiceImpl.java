@@ -8,6 +8,7 @@ import com.project.hiptour.common.entity.users.UserInfo;
 import com.project.hiptour.common.exception.place.PlaceNotFoundException;
 import com.project.hiptour.common.exception.review.ReviewAccessDeniedException;
 import com.project.hiptour.common.exception.review.ReviewNotFoundException;
+import com.project.hiptour.common.util.PageResponseDto;
 import com.project.hiptour.common.web.reviews.CreateReviewRequestDto;
 import com.project.hiptour.common.web.reviews.MyReviewResponseDto;
 import com.project.hiptour.common.web.reviews.ReviewListResponseDto;
@@ -25,6 +26,15 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final PlaceRepository placeRepository;
 
+    /**
+     * 새로운 리뷰를 생성합니다.
+     *
+     * @param requestDto 생성할 리뷰의 내용을 담은 DTO
+     * @param placeId    리뷰를 작성할 장소의 ID
+     * @param userInfo   리뷰를 작성하는 사용자 정보
+     * @return 생성된 리뷰의 ID
+     * @throws PlaceNotFoundException 요청한 ID에 해당하는 장소를 찾을 수 없을 경우
+     */
     @Override
     @Transactional
     public Long create(CreateReviewRequestDto requestDto, Integer placeId, UserInfo userInfo) {
@@ -44,45 +54,67 @@ public class ReviewServiceImpl implements ReviewService {
         return savedReview.getReviewId();
     }
 
+    /**
+     * 기존 리뷰를 수정합니다.
+     *
+     * @param reviewId   수정할 리뷰의 ID
+     * @param requestDto 수정할 리뷰의 내용을 담은 DTO
+     * @throws ReviewNotFoundException     요청한 ID에 해당하는 리뷰를 찾을 수 없을 경우
+     * @throws ReviewAccessDeniedException 리뷰를 수정할 권한이 없을 경우
+     */
     @Override
     @Transactional
-    public void update(Long reviewId, UpdateReviewRequestDto requestDto, UserInfo userInfo) {
+    public void update(Long reviewId, UpdateReviewRequestDto requestDto) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException("리뷰를 찾을 수 없습니다: " + reviewId));
-
-        if (!review.getUserInfo().getUserId().equals(userInfo.getUserId())) {
-            throw new ReviewAccessDeniedException("리뷰 수정 권한이 없습니다.");
-        }
 
         review.update(requestDto.getHeadText(), requestDto.getBodyText(), requestDto.getImageUrls(), requestDto.getHashTags());
     }
 
+    /**
+     * 리뷰를 삭제합니다.
+     *
+     * @param reviewId 삭제할 리뷰의 ID
+     * @throws ReviewNotFoundException     요청한 ID에 해당하는 리뷰를 찾을 수 없을 경우
+     * @throws ReviewAccessDeniedException 리뷰를 삭제할 권한이 없을 경우
+     */
     @Override
     @Transactional
-    public void delete(Long reviewId, UserInfo userInfo) {
+    public void delete(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException("리뷰를 찾을 수 없습니다: " + reviewId));
-
-        if (!review.getUserInfo().getUserId().equals(userInfo.getUserId())) {
-            throw new ReviewAccessDeniedException("리뷰 삭제 권한이 없습니다.");
-        }
 
         reviewRepository.delete(review);
     }
 
+    /**
+     * 특정 장소에 작성된 리뷰 목록을 페이징하여 조회합니다.
+     *
+     * @param placeId  리뷰를 조회할 장소의 ID
+     * @param pageable 페이징 정보
+     * @return 페이징된 리뷰 목록
+     * @throws PlaceNotFoundException 요청한 ID에 해당하는 장소를 찾을 수 없을 경우
+     */
     @Override
-    public Page<ReviewListResponseDto> getReviewsByPlace(Integer placeId, Pageable pageable) {
+    public PageResponseDto<ReviewListResponseDto> getReviewsByPlace(Integer placeId, Pageable pageable) {
         Place place = placeRepository.findById(placeId)
                 .orElseThrow(() -> new PlaceNotFoundException("장소를 찾을 수 없습니다: " + placeId));
 
         Page<Review> reviewPage = reviewRepository.findByPlace(place, pageable);
-        return reviewPage.map(ReviewListResponseDto::from);
+        return PageResponseDto.fromPage(reviewPage, ReviewListResponseDto::from);
     }
 
+    /**
+     * 특정 사용자가 작성한 모든 리뷰 목록을 페이징하여 조회합니다.
+     *
+     * @param userInfo 리뷰를 조회할 사용자 정보
+     * @param pageable 페이징 정보
+     * @return 페이징된 "내가 쓴 리뷰" 목록
+     */
     @Override
-    public Page<MyReviewResponseDto> getMyReviews(UserInfo userInfo, Pageable pageable) {
+    public PageResponseDto<MyReviewResponseDto> getMyReviews(UserInfo userInfo, Pageable pageable) {
         Page<Review> reviewPage = reviewRepository.findByUserInfo(userInfo, pageable);
-        return reviewPage.map(MyReviewResponseDto::from);
+        return PageResponseDto.fromPage(reviewPage, MyReviewResponseDto::from);
     }
 
     //    @Override

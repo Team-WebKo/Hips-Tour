@@ -7,7 +7,7 @@ import com.project.hiptour.common.entity.users.repos.UserRoleRepo;
 import com.project.hiptour.common.security.OauthProviderService;
 import com.project.hiptour.common.security.UserIdentity;
 import com.project.hiptour.common.usercase.services.login.UserService;
-import com.project.hiptour.common.usercase.services.token.TokenPair;
+import com.project.hiptour.common.usercase.common.token.TokenPair;
 import com.project.hiptour.common.usercase.services.token.TokenService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -38,7 +38,7 @@ public class UserLoginUseCase {
      * </p>
      * **/
     @Transactional
-    public LoginResult createTokenPair(String userCode){
+    public LoginResult requestLoginByOAuth(String userCode){
 
         UserIdentity userIdentity = this.providerService.getUserIdentity(userCode);
 
@@ -54,7 +54,9 @@ public class UserLoginUseCase {
             userInfo = this.userService.insertNewUserAndGet(userIdentity);
             isThisUserAlreadyExisting = true;
         }else{
+
             userInfo = userInfoByIdentifier.get();
+
         }
 
         List<Long> userRoleIds = this.userRoleRepo
@@ -65,7 +67,7 @@ public class UserLoginUseCase {
 
         TokenPair pair = this.tokenService.createToken(userInfo, userRoleIds);
 
-        this.tokenService.updateToken(userInfo.getUserId(), pair.getRefreshToken());
+        this.tokenService.updateRefreshTokenAfterLogin(userInfo.getUserId(), pair.getRefreshToken());
         log.debug("token successfully updated!");
 
         return LoginResult.builder()

@@ -2,11 +2,11 @@ package com.project.hiptour.common.entity.place;
 
 import com.project.hiptour.common.entity.BaseUpdateEntity;
 import com.project.hiptour.common.entity.place.embedable.GeoPoint;
-import com.project.hiptour.common.entity.place.embedable.TelNumber;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.*;
 
 @Entity
 @Getter
@@ -29,8 +29,8 @@ public class Place extends BaseUpdateEntity {
     @Embedded
     private GeoPoint geoPoint;
 
-    @Embedded
-    private TelNumber telNumber;
+    private String telNumber;
+    private String areaCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
@@ -40,7 +40,7 @@ public class Place extends BaseUpdateEntity {
     private String address2;
 
     @Builder
-    public Place(String placeName, String imageUrl, String overview, GeoPoint geoPoint, TelNumber telNumber, RegionInfo regionInfo, String address1, String address2) {
+    public Place(String placeName, GeoPoint geoPoint, String telNumber, RegionInfo regionInfo, String address1, String address2) {
         this.placeName = placeName;
         this.imageUrl = imageUrl;
         this.overview = overview;
@@ -51,7 +51,7 @@ public class Place extends BaseUpdateEntity {
         this.address2 = address2;
     }
 
-    public Place(String placeName, String address1, String address2, String imageUrl, String overview, GeoPoint geoPoint, TelNumber telNumber) {
+    public Place(String placeName, String address1, String address2, GeoPoint geoPoint, String telNumber) {
         this.placeName = placeName;
         this.address1 = address1;
         this.address2 = address2;

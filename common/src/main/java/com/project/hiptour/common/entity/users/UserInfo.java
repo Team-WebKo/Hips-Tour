@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 public class UserInfo extends BaseUpdateEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter
     private Long userId;
     @Column(unique = true)
@@ -19,7 +19,8 @@ public class UserInfo extends BaseUpdateEntity {
     private String userIdentifier;
 
     @Builder
-    public UserInfo(String email, String nickName, String userIdentifier) {
+    public UserInfo(Long userId, String email, String nickName, String userIdentifier) {
+        this.userId = userId;
         this.email = email;
         this.nickName = nickName;
         this.userIdentifier = userIdentifier;

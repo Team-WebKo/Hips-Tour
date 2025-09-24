@@ -13,7 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UpdateReviewRequestDto {
-    private Long userId;
     private String headText;
     private String bodyText;
     private List<String> imageUrls;
