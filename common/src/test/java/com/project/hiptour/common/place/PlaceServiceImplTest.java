@@ -5,6 +5,7 @@ import com.project.hiptour.common.entity.place.embedable.GeoPoint;
 import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.common.exception.place.PlaceNotFoundException;
 import com.project.hiptour.common.usercase.place.PlaceServiceImpl;
+import com.project.hiptour.common.util.PageResponseDto;
 import com.project.hiptour.common.web.place.PlaceDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -113,7 +114,7 @@ public class PlaceServiceImplTest {
 
             when(placeRepository.findAllByOrderByCreatedAtDesc(pageable)).thenReturn(recentPage);
 
-            Page<PlaceDto> result = placeService.findRecommendedPlaces(pageable);
+            PageResponseDto<PlaceDto> result = placeService.findRecommendedPlaces(pageable);
 
             assertThat(result).isNotNull();
             assertThat(result.getContent()).hasSize(3);
@@ -126,10 +127,10 @@ public class PlaceServiceImplTest {
             Pageable pageable = PageRequest.of(0, 10);
             when(placeRepository.findAllByOrderByCreatedAtDesc(pageable)).thenReturn(Page.empty(pageable));
 
-            Page<PlaceDto> result = placeService.findRecommendedPlaces(pageable);
+            PageResponseDto<PlaceDto> result = placeService.findRecommendedPlaces(pageable);
 
             assertThat(result).isNotNull();
-            assertThat(result.isEmpty()).isTrue();
+            assertThat(result.getContent().isEmpty()).isTrue();
         }
     }
 }
