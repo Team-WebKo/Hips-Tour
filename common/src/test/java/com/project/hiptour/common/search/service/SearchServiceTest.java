@@ -1,13 +1,14 @@
 package com.project.hiptour.common.search.service;
 import com.project.hiptour.common.entity.heart.Heart;
-import com.project.hiptour.common.search.serviceImpl.SearchServiceImpl;
+import com.project.hiptour.common.entity.place.repos.SearchRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.project.hiptour.common.entity.heart.repos.HeartRepos;
 import com.project.hiptour.common.entity.place.Place;
-import com.project.hiptour.common.search.dto.SearchResponseDto;
-import com.project.hiptour.common.search.repository.SearchRepository;
+import com.project.hiptour.common.usercase.services.search.SearchService;
+import com.project.hiptour.common.usercase.services.search.SearchServiceImpl;
 import com.project.hiptour.common.util.PageResponseDto;
+import com.project.hiptour.common.web.search.SearchResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

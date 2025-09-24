@@ -1,7 +1,5 @@
 package com.project.hiptour.common.web.search;
 
-import com.project.hiptour.common.search.Service.SearchService;
-import com.project.hiptour.common.search.dto.SearchResponseDto;
 import com.project.hiptour.common.util.PageResponseDto;
 import com.project.hiptour.common.usercase.services.search.SearchService;
 import lombok.RequiredArgsConstructor;

@@ -1,9 +1,7 @@
 package com.project.hiptour.common.usercase.services.search;
 
 import com.project.hiptour.common.web.search.SearchResponseDto;
-import com.project.hiptour.common.search.dto.SearchResponseDto;
 import com.project.hiptour.common.util.PageResponseDto;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface SearchService {
