@@ -3,6 +3,7 @@ package com.project.hiptour.common.usercase.place;
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.common.exception.place.PlaceNotFoundException;
+import com.project.hiptour.common.util.PageResponseDto;
 import com.project.hiptour.common.web.place.PlaceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,8 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public Page<PlaceDto> findRecommendedPlaces(Pageable pageable) {
-        return placeRepository.findAllByOrderByCreatedAtDesc(pageable).map(PlaceDto::from);
+    public PageResponseDto<PlaceDto> findRecommendedPlaces(Pageable pageable) {
+        Page<Place> placePage = placeRepository.findAllByOrderByCreatedAtDesc(pageable);
+        return PageResponseDto.fromPage(placePage, PlaceDto::from);
     }
 }
