@@ -90,4 +90,25 @@ public class PlaceEntityMapperTest {
             assertThat(result.getSourceModifiedTime()).isNull();
         }
     }
+
+    @Nested
+    @DisplayName("updateEntityFromDto 메서드는")
+    class Describe_updateEntityFromDto {
+        @Test
+        @DisplayName("기존 엔티티의 정보를 새로운 DTO의 정보로 업데이트합니다.")
+        void updates_existing_entity_with_new_dto() {
+            Place existingPlace = new Place();
+            SyncPlaceDto dto = createValidSyncPlaceDto();
+            dto.setTitle("업데이트된 테스트 장소");
+
+            placeEntityMapper.updateEntityFromDto(existingPlace, dto);
+
+            assertThat(existingPlace.getPlaceName()).isEqualTo("업데이트된 테스트 장소");
+            assertThat(existingPlace.getAreaCode()).isEqualTo("1");
+            assertThat(existingPlace.getContentTypeId()).isEqualTo("12");
+            assertThat(existingPlace.getGeoPoint()).isNotNull();
+            assertThat(existingPlace.getGeoPoint().getLatitude()).isEqualTo(37.002);
+            assertThat(existingPlace.getGeoPoint().getLongitude()).isEqualTo(127.001);
+        }
+    }
 }
