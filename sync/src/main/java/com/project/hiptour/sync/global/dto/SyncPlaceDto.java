@@ -41,8 +41,8 @@ public class SyncPlaceDto {
     @JsonProperty("title")
     private String title;
 
-//    @JsonProperty("overview")
-//    private String overview;
+    @JsonProperty("overview")
+    private String overview;
 
     @JsonProperty("mapx")
     private String mapx;

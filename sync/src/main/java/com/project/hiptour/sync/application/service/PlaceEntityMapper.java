@@ -3,12 +3,14 @@ package com.project.hiptour.sync.application.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.hiptour.common.entity.place.Place;
-import com.project.hiptour.common.entity.place.embedable.TelNumber;
+import com.project.hiptour.common.entity.place.embedable.GeoPoint;
 import com.project.hiptour.sync.global.dto.SyncPlaceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +30,29 @@ public class PlaceEntityMapper {
         place.setPlaceName(dto.getTitle());
         place.setAddress1(dto.getAddr1());
         place.setAddress2(dto.getAddr2());
-        place.setTelNumber(new TelNumber(dto.getTel()));
+        place.setTelNumber(dto.getTel());
         place.setImageUrl(dto.getFirstimage());
+        place.setAreaCode(dto.getAreacode());
+        place.setContentTypeId(dto.getContenttypeid());
+
+        try {
+            if (dto.getModifiedtime() != null && !dto.getModifiedtime().isEmpty()) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+                place.setSourceModifiedTime(LocalDateTime.parse(dto.getModifiedtime(), formatter));
+            }
+        } catch (Exception e) {
+            place.setSourceModifiedTime(null);
+        }
+
+        try {
+            double longitude = Double.parseDouble(dto.getMapx());
+            double latitude = Double.parseDouble(dto.getMapy());
+            int mLevel = Integer.parseInt(dto.getMlevel());
+            place.setGeoPoint(new GeoPoint(latitude, longitude, mLevel));
+        } catch (NumberFormatException e) {
+            place.setGeoPoint(null);
+        }
+
         return place;
     }
 
@@ -42,8 +65,28 @@ public class PlaceEntityMapper {
         place.setPlaceName(dto.getTitle());
         place.setAddress1(dto.getAddr1());
         place.setAddress2(dto.getAddr2());
-        place.setTelNumber(new TelNumber(dto.getTel()));
+        place.setTelNumber(dto.getTel());
         place.setImageUrl(dto.getFirstimage());
+        place.setAreaCode(dto.getAreacode());
+        place.setContentTypeId(dto.getContenttypeid());
+
+        try {
+            if (dto.getModifiedtime() != null && !dto.getModifiedtime().isEmpty()) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+                place.setSourceModifiedTime(LocalDateTime.parse(dto.getModifiedtime(), formatter));
+            }
+        } catch (Exception e) {
+            place.setSourceModifiedTime(null);
+        }
+
+        try {
+            double longitude = Double.parseDouble(dto.getMapx());
+            double latitude = Double.parseDouble(dto.getMapy());
+            int mLevel = Integer.parseInt(dto.getMlevel());
+            place.setGeoPoint(new GeoPoint(latitude, longitude, mLevel));
+        } catch (NumberFormatException e) {
+            place.setGeoPoint(null);
+        }
     }
 
     /**

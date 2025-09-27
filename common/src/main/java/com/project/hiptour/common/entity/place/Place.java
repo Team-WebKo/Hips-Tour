@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -18,6 +20,9 @@ public class Place extends BaseUpdateEntity {
 
     @Column(unique = true)
     private String contentId;
+
+    private String contentTypeId;
+    private LocalDateTime sourceModifiedTime;
 
     private String placeName;
 
