@@ -11,8 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
+import static com.project.hiptour.common.usercase.heart.HeartCase.DUPLICATE_HEART;
 import static com.project.hiptour.common.usercase.heart.HeartCase.USER_NOT_EXISTING;
 
 @Slf4j
@@ -51,6 +53,11 @@ public class HeartUserCase {
         UserInfo ui = userInfo.get();
         Place place = placeId.get();
 
+        List<Heart> heartLists = this.heartRepos.findByUserUserIdAndFeedPlaceId(ui.getUserId(), place.getPlaceId());
+        if(!heartLists.isEmpty()){
+            return new HeartResult(false, "already marked", DUPLICATE_HEART);
+        }
+
         Heart heart = Heart.builder()
                 .feed(place)
                 .user(ui)
@@ -66,23 +73,24 @@ public class HeartUserCase {
     }
 
     @Transactional
-    public HeartResult unHeart(long heartId){
+    public HeartResult unHeart(long userId, int feedId){
 
-        log.debug("unHeart request came with id {}", heartId);
+        log.debug("unHeart request came with id");
 
-        Optional<Heart> optionalHeart = this.heartRepos.findById(heartId);;
+        List<Heart> heartList = this.heartRepos.findByUserUserIdAndFeedPlaceId(userId, feedId);
 
-        if(optionalHeart.isEmpty()){
-            log.warn("this un-heart request contains invalid id key! {}", heartId);
+        if(heartList.size() != 1){
+            log.warn("this un-heart request contains invalid id key!");
             return new HeartResult(false, "invalid state!! the id is not existing", HeartCase.NOT_EXISTING);
         }else{
-            Heart heart = optionalHeart.get();
+            Heart heart = heartList.get(0);
             if(!heart.isActive()){
                 log.debug("the state is already inactive!! {}", heart);
                 return new HeartResult(false, "invalid state!! the id is already inactive", HeartCase.ALREADY_INACTIVE);
             }
+            //TODO :: 로직 수정하기.
 
-            heart.setActive(false);
+            this.heartRepos.delete(heart);
             return new HeartResult(true, "successfully unmarked", HeartCase.SUCCESS);
 
         }

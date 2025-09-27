@@ -1,4 +1,4 @@
-package com.project.hiptour.common.search.dto;
+package com.project.hiptour.common.web.search;
 
 import com.project.hiptour.common.entity.place.Place;
 import lombok.AllArgsConstructor;
@@ -16,6 +16,7 @@ public class SearchResponseDto {
     private String tel;
     private String regionName;
     private String categoryName;
+//    private boolean hearted;
     public SearchResponseDto(Place place) {
         this.placeId = place.getPlaceId();
         this.placeName = place.getPlaceName();
@@ -24,5 +25,6 @@ public class SearchResponseDto {
         this.tel = place.getTelNumber() != null ? place.getTelNumber().toString() : null;
         this.regionName = place.getRegionInfo() != null ? place.getRegionInfo().getRegionName() : null;
 //        this.categoryName = place.getCategory() != null ? place.getCategory().getCategoryName() : null;
+//        this.hearted = hearted;
     }
 }

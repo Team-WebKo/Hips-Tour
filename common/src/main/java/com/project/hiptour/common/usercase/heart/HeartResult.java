@@ -23,4 +23,5 @@ public class HeartResult {
     public boolean isHeartNotExisting(){
         return this.heartCase.equals(HeartCase.NOT_EXISTING);
     }
+    public boolean isDuplicateHeart(){return this.heartCase.equals(HeartCase.DUPLICATE_HEART);}
 }

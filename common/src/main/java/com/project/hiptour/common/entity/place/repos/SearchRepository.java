@@ -1,4 +1,4 @@
-package com.project.hiptour.common.search.repository;
+package com.project.hiptour.common.entity.place.repos;
 
 import com.project.hiptour.common.entity.place.Place;
 import org.springframework.data.domain.Page;
