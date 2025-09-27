@@ -67,5 +67,16 @@ public class PlaceEntityMapperTest {
             assertThat(result.getGeoPoint().getLongitude()).isEqualTo(127.001);
             assertThat(result.getGeoPoint().getMLevel()).isEqualTo(6);
         }
+
+        @Test
+        @DisplayName("좌표값이 숫자가 아니면 geoPoint 필드를 null로 설정합니다.")
+        void sets_geoPoint_to_null_when_coordinates_are_invalid() {
+            SyncPlaceDto dto = createValidSyncPlaceDto();
+            dto.setMapx("좌표없음");
+
+            Place result = placeEntityMapper.mapDtoToNewEntity(dto);
+
+            assertThat(result.getGeoPoint()).isNull();
+        }
     }
 }
