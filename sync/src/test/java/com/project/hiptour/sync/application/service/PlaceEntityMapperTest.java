@@ -1,6 +1,8 @@
 package com.project.hiptour.sync.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.hiptour.common.entity.place.AreaCode;
+import com.project.hiptour.common.entity.place.ContentType;
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.sync.global.dto.SyncPlaceDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,10 +53,10 @@ public class PlaceEntityMapperTest {
 
             assertThat(result).isNotNull();
             assertThat(result.getContentId()).isEqualTo("12345");
-            assertThat(result.getContentTypeId()).isEqualTo("12");
+            assertThat(result.getContentTypeId()).isEqualTo(ContentType.TOURIST_ATTRACTION);
             assertThat(result.getPlaceName()).isEqualTo("테스트 장소");
             assertThat(result.getAddress1()).isEqualTo("테스트 주소 1");
-            assertThat(result.getAreaCode()).isEqualTo("1");
+            assertThat(result.getAreaCode()).isEqualTo(AreaCode.SEOUL);
             assertThat(result.getImageUrl()).isEqualTo("http://example.com/image.jpg");
             assertThat(result.getTelNumber()).isEqualTo("02-1234-5678");
 
@@ -104,8 +106,8 @@ public class PlaceEntityMapperTest {
             placeEntityMapper.updateEntityFromDto(existingPlace, dto);
 
             assertThat(existingPlace.getPlaceName()).isEqualTo("업데이트된 테스트 장소");
-            assertThat(existingPlace.getAreaCode()).isEqualTo("1");
-            assertThat(existingPlace.getContentTypeId()).isEqualTo("12");
+            assertThat(existingPlace.getAreaCode()).isEqualTo(AreaCode.SEOUL);
+            assertThat(existingPlace.getContentTypeId()).isEqualTo(ContentType.TOURIST_ATTRACTION);
             assertThat(existingPlace.getGeoPoint()).isNotNull();
             assertThat(existingPlace.getGeoPoint().getLatitude()).isEqualTo(37.002);
             assertThat(existingPlace.getGeoPoint().getLongitude()).isEqualTo(127.001);

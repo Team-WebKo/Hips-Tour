@@ -2,6 +2,8 @@ package com.project.hiptour.sync.application.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.hiptour.common.entity.place.AreaCode;
+import com.project.hiptour.common.entity.place.ContentType;
 import com.project.hiptour.common.entity.place.Place;
 import com.project.hiptour.common.entity.place.embedable.GeoPoint;
 import com.project.hiptour.sync.global.dto.SyncPlaceDto;
@@ -32,8 +34,8 @@ public class PlaceEntityMapper {
         place.setAddress2(dto.getAddr2());
         place.setTelNumber(dto.getTel());
         place.setImageUrl(dto.getFirstimage());
-        place.setAreaCode(dto.getAreacode());
-        place.setContentTypeId(dto.getContenttypeid());
+        place.setAreaCode(AreaCode.fromCode(dto.getAreacode()));
+        place.setContentTypeId(ContentType.fromCode(dto.getContenttypeid()));
 
         try {
             if (dto.getModifiedtime() != null && !dto.getModifiedtime().isEmpty()) {
@@ -67,8 +69,8 @@ public class PlaceEntityMapper {
         place.setAddress2(dto.getAddr2());
         place.setTelNumber(dto.getTel());
         place.setImageUrl(dto.getFirstimage());
-        place.setAreaCode(dto.getAreacode());
-        place.setContentTypeId(dto.getContenttypeid());
+        place.setAreaCode(AreaCode.fromCode(dto.getAreacode()));
+        place.setContentTypeId(ContentType.fromCode(dto.getContenttypeid()));
 
         try {
             if (dto.getModifiedtime() != null && !dto.getModifiedtime().isEmpty()) {

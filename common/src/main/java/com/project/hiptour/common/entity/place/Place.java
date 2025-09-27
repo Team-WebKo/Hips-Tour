@@ -21,7 +21,9 @@ public class Place extends BaseUpdateEntity {
     @Column(unique = true)
     private String contentId;
 
-    private String contentTypeId;
+    @Enumerated(EnumType.STRING)
+    private ContentType contentTypeId;
+
     private LocalDateTime sourceModifiedTime;
 
     private String placeName;
@@ -35,7 +37,9 @@ public class Place extends BaseUpdateEntity {
     private GeoPoint geoPoint;
 
     private String telNumber;
-    private String areaCode;
+
+    @Enumerated(EnumType.STRING)
+    private AreaCode areaCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
@@ -45,7 +49,7 @@ public class Place extends BaseUpdateEntity {
     private String address2;
 
     @Builder
-    public Place(String placeName, GeoPoint geoPoint, String telNumber, RegionInfo regionInfo, String address1, String address2) {
+    public Place(String placeName, String imageUrl, String overview, GeoPoint geoPoint, String telNumber, RegionInfo regionInfo, String address1, String address2) {
         this.placeName = placeName;
         this.imageUrl = imageUrl;
         this.overview = overview;
