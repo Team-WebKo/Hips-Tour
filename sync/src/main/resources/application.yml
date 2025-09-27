@@ -3,9 +3,8 @@ tourapi:
   service-key: "tYu2ASMUNpTRGpR6%2BM3QuT8REPkbiUJCUM4zFhFFCDDLMETQY5n8K0B%2F31XV%2FblCnhmRp5fSIntXLrRsR%2F6jfw%3D%3D"
   mobile-os: ETC
   mobile-app: hipstour
-#  default-rows: 100
-#  default-page: 1
   type: json
+  num-of-rows: 100
 
 sync:
   schedule:
