@@ -1,26 +1,30 @@
 package com.project.hiptour.sync.application.service;
 
 import com.project.hiptour.sync.application.util.TimeProvider;
+import com.project.hiptour.sync.domain.JobExecutionStatus;
 import com.project.hiptour.sync.domain.SyncJobType;
 import com.project.hiptour.sync.domain.SyncStatus;
 import com.project.hiptour.sync.infrastructure.persistence.SyncStatusRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("DailyJobService 테스트")
@@ -45,48 +49,78 @@ public class DailyJobServiceTest {
         ReflectionTestUtils.setField(dailyJobService, "dailyApiCallLimit", 1000);
     }
 
-    @Test
-    @DisplayName("성공 - 동기화 및 Overview 작업이 순서대로 올바르게 실행됩니다.")
-    void runDailyTasks_Success() {
-        int usedApiCallsInSync = 10;
-        int remainingBudget = 1000 - usedApiCallsInSync;
-        LocalDateTime lastSyncTime = LocalDateTime.of(2025, 1, 1, 0, 0);
-        LocalDateTime syncStartedTime = LocalDateTime.of(2025, 1, 2, 2, 0);
-
-        given(syncStatusRepository.findById(SyncJobType.PLACE_SYNC)).willReturn(Optional.of(new SyncStatus(SyncJobType.PLACE_SYNC, lastSyncTime)));
-        given(timeProvider.now()).willReturn(syncStartedTime);
-        given(syncService.syncUpdatedPlaces(lastSyncTime)).willReturn(usedApiCallsInSync);
-
-        dailyJobService.runDailyTasks();
-
-        verify(syncService).syncUpdatedPlaces(lastSyncTime);
-        verify(overviewFillService).fillMissingOverviews(remainingBudget);
-        verify(syncStatusRepository).save(any(SyncStatus.class));
+    private SyncStatus createDefaultSyncStatus() {
+        SyncStatus status = new SyncStatus(SyncJobType.PLACE_SYNC);
+        status.setStatus(JobExecutionStatus.FINISHED);
+        status.setLastSuccessTime(LocalDateTime.of(2025, 1, 1, 0, 0));
+        return status;
     }
 
-    @Test
-    @DisplayName("성공 - 동기화 기준 시간이 없으면 아무 작업도 실행하지 않는다.")
-    void runDailyTasks_Skips_When_No_LastSyncTime() {
-        given(syncStatusRepository.findById(SyncJobType.PLACE_SYNC)).willReturn(Optional.empty());
+    @Nested
+    @DisplayName("runDailyTasks 메서드는")
+    class Describe_runDailyTasks {
+        @Test
+        @DisplayName("정상 상태에서 실행 시, 작업을 모두 수행하고 상태를 RUNNING에서 FINISHED로 변경합니다.")
+        void success_path() {
+            SyncStatus initialStatus = createDefaultSyncStatus();
+            LocalDateTime syncStartedTime = LocalDateTime.of(2025, 1, 2, 2, 0);
+            int usedApiCalls = 10;
 
-        dailyJobService.runDailyTasks();
+            given(syncStatusRepository.findById(SyncJobType.PLACE_SYNC)).willReturn(Optional.of(initialStatus));
+            given(timeProvider.now()).willReturn(syncStartedTime);
+            given(syncService.syncUpdatedPlaces(any(LocalDateTime.class))).willReturn(usedApiCalls);
 
-        verify(syncService, never()).syncUpdatedPlaces(any());
-        verify(overviewFillService, never()).fillMissingOverviews(anyInt());
-    }
+            dailyJobService.runDailyTasks();
 
-    @Test
-    @DisplayName("실패 - 동기화 작업 중 예외가 발생하면 시간 업데이트를 실행하지 않는다.")
-    void runDailyTasks_Stop_On_Fail() {
-        LocalDateTime lastSyncTime = LocalDateTime.of(2025, 1, 1, 0, 0);
+            ArgumentCaptor<SyncStatus> statusCaptor = ArgumentCaptor.forClass(SyncStatus.class);
 
-        given(syncStatusRepository.findById(SyncJobType.PLACE_SYNC)).willReturn(Optional.of(new SyncStatus(SyncJobType.PLACE_SYNC, lastSyncTime)));
-        given(syncService.syncUpdatedPlaces(lastSyncTime)).willThrow(new RuntimeException("Sync failed"));
+            verify(syncStatusRepository, times(2)).save(statusCaptor.capture());
 
-        dailyJobService.runDailyTasks();
+            List<SyncStatus> savedStatuses = statusCaptor.getAllValues();
 
-        verify(syncService).syncUpdatedPlaces(lastSyncTime);
-        verify(overviewFillService, never()).fillMissingOverviews(anyInt());
-        verify(syncStatusRepository, never()).save(any(SyncStatus.class));
+            assertThat(savedStatuses.get(0).getStatus()).isEqualTo(JobExecutionStatus.RUNNING);
+            assertThat(savedStatuses.get(1).getStatus()).isEqualTo(JobExecutionStatus.FINISHED);
+            assertThat(savedStatuses.get(1).getLastSuccessTime()).isEqualTo(syncStartedTime);
+
+            verify(syncService).syncUpdatedPlaces(initialStatus.getLastSuccessTime());
+            verify(overviewFillService).fillMissingOverviews(1000 - usedApiCalls);
+        }
+
+        @Test
+        @DisplayName("이전 작업이 RUNNING 상태일 경우, 중복 실행을 방지하고 아무 작업도 하지 않습니다.")
+        void skips_when_already_running() {
+            SyncStatus runningStatus = createDefaultSyncStatus();
+            runningStatus.setStatus(JobExecutionStatus.RUNNING);
+
+            given(syncStatusRepository.findById(SyncJobType.PLACE_SYNC)).willReturn(Optional.of(runningStatus));
+
+            dailyJobService.runDailyTasks();
+
+            verify(syncStatusRepository, never()).save(any());
+            verify(syncService, never()).syncUpdatedPlaces(any());
+            verify(overviewFillService, never()).fillMissingOverviews(anyInt());
+        }
+
+        @Test
+        @DisplayName("DB에 상태 정보가 전혀 없으면(최초 실행), 기본값으로 작업을 수행합니다.")
+        void first_run_default() {
+            given(syncStatusRepository.findById(SyncJobType.PLACE_SYNC)).willReturn(Optional.empty());
+            given(timeProvider.now()).willReturn(LocalDateTime.of(2025, 1, 2, 2, 0));
+            given(syncService.syncUpdatedPlaces(any(LocalDateTime.class))).willReturn(5);
+
+            dailyJobService.runDailyTasks();
+
+            ArgumentCaptor<LocalDateTime> timeCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
+
+            verify(syncService).syncUpdatedPlaces(timeCaptor.capture());
+            assertThat(timeCaptor.getValue().getYear()).isEqualTo(2000);
+
+            ArgumentCaptor<SyncStatus> statusCaptor = ArgumentCaptor.forClass(SyncStatus.class);
+
+            verify(syncStatusRepository, times(2)).save(statusCaptor.capture());
+
+            assertThat(statusCaptor.getAllValues().get(0).getStatus()).isEqualTo(JobExecutionStatus.RUNNING);
+            assertThat(statusCaptor.getAllValues().get(1).getStatus()).isEqualTo(JobExecutionStatus.FINISHED);
+        }
     }
 }
