@@ -8,6 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PlaceEntityMapperTest {
@@ -54,7 +57,15 @@ public class PlaceEntityMapperTest {
             assertThat(result.getAreaCode()).isEqualTo("1");
             assertThat(result.getImageUrl()).isEqualTo("http://example.com/image.jpg");
             assertThat(result.getTelNumber()).isEqualTo("02-1234-5678");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            LocalDateTime expectedTime = LocalDateTime.parse("20250925100000", formatter);
+            assertThat(result.getSourceModifiedTime()).isEqualTo(expectedTime);
+
+            assertThat(result.getGeoPoint()).isNotNull();
+            assertThat(result.getGeoPoint().getLatitude()).isEqualTo(37.002);
+            assertThat(result.getGeoPoint().getLongitude()).isEqualTo(127.001);
+            assertThat(result.getGeoPoint().getMLevel()).isEqualTo(6);
         }
     }
-
 }
