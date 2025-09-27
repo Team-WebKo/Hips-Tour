@@ -1,6 +1,6 @@
 package com.project.hiptour.sync.application.job;
 
-import com.project.hiptour.sync.domain.LoadStatus;
+import com.project.hiptour.sync.domain.LoadJobStatus;
 import lombok.Getter;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public class LoadJob {
     private int currentPageNo;
     private boolean areaCompleted;
 
-    public LoadJob(int dailyApiCallLimit, Optional<LoadStatus> status, List<String> areaCode) {
+    public LoadJob(int dailyApiCallLimit, Optional<LoadJobStatus> status, List<String> areaCode) {
         this.dailyApiCallLimit = dailyApiCallLimit;
         this.apiCallCount = 0;
         this.areaCompleted = false;

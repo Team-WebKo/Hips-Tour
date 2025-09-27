@@ -1,7 +1,8 @@
 package com.project.hiptour.sync.application.service;
 
 import com.project.hiptour.sync.application.job.LoadJob;
-import com.project.hiptour.sync.domain.LoadStatus;
+import com.project.hiptour.sync.domain.JobExecutionStatus;
+import com.project.hiptour.sync.domain.LoadJobStatus;
 import com.project.hiptour.sync.domain.SyncJobType;
 import com.project.hiptour.sync.domain.SyncStatus;
 import com.project.hiptour.sync.infrastructure.persistence.SyncStatusRepository;
@@ -30,9 +31,9 @@ public class LoadService {
 
     public void loadAllPlaces() {
         log.info("TourAPI 전체 데이터 적재를 시작합니다.");
-        Optional<LoadStatus> jobStatus = loadStatusService.getJobStatus();
+        Optional<LoadJobStatus> jobStatus = loadStatusService.getJobStatus();
 
-        if (jobStatus.isPresent() && LoadStatusService.FINISHED_STATUS.equals(jobStatus.get().getLastSucceededAreaCode())) {
+        if (jobStatus.isPresent() && jobStatus.get().getStatus() == JobExecutionStatus.FINISHED) {
             log.info("모든 지역의 데이터 적재가 이미 완료되었습니다.");
             return;
         }
@@ -74,7 +75,11 @@ public class LoadService {
     }
 
     private void updateSyncServiceStartTime(LocalDateTime time) {
-        SyncStatus status = new SyncStatus(SyncJobType.PLACE_SYNC, time);
+        SyncStatus status = syncStatusRepository.findById(SyncJobType.PLACE_SYNC)
+                        .orElseGet(() -> new SyncStatus(SyncJobType.PLACE_SYNC));
+        status.setLastSuccessTime(time);
+        status.setStatus(JobExecutionStatus.FINISHED);
+
         syncStatusRepository.save(status);
         log.info("전체 적재 작업 완료 시간을 DB에 기록했습니다. (동기화에 사용 될) 기준 시간: {}", time);
     }
