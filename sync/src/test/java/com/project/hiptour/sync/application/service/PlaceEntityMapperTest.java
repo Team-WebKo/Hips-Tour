@@ -78,5 +78,16 @@ public class PlaceEntityMapperTest {
 
             assertThat(result.getGeoPoint()).isNull();
         }
+
+        @Test
+        @DisplayName("modifiedTime값이 잘못된 형식이면 sourceModifiedTime 필드를 null로 설정합니다.")
+        void sets_sourceModifiedTime_to_null_when_time_is_invalid() {
+            SyncPlaceDto dto = createValidSyncPlaceDto();
+            dto.setModifiedtime("2025-09-25 10:00:00");
+
+            Place result = placeEntityMapper.mapDtoToNewEntity(dto);
+
+            assertThat(result.getSourceModifiedTime()).isNull();
+        }
     }
 }
