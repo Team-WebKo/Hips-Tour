@@ -15,4 +15,5 @@ public class TourApiProperties {
     private String mobileOS;
     private String mobileApp;
     private String type;
+    private int numOfRows;
 }

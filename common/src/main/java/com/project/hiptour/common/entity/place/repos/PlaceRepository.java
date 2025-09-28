@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PlaceRepository extends JpaRepository<Place, Integer> {
@@ -23,4 +24,8 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
     Page<Place> findByPlaceIdNotInOrderByCreatedAtDesc(Collection<Integer> placeIds, Pageable pageable);
 
     Page<Place> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    Optional<Place> findByContentId(String contentId);
+
+    Page<Place> findByOverviewIsNull(Pageable pageable);
 }

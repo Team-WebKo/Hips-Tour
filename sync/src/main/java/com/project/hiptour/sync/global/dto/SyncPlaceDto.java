@@ -23,6 +23,9 @@ public class SyncPlaceDto {
     @JsonProperty("contentid")
     private String contentid;
 
+    @JsonProperty("contenttypeid")
+    private String contenttypeid;
+
     @JsonProperty("firstimage")
     private String firstimage;
 
@@ -38,7 +41,16 @@ public class SyncPlaceDto {
     @JsonProperty("title")
     private String title;
 
-    public String getAddr(){
-        return addr1 + addr2;
-    }
+    @JsonProperty("overview")
+    private String overview;
+
+    @JsonProperty("mapx")
+    private String mapx;
+
+    @JsonProperty("mapy")
+    private String mapy;
+
+    @JsonProperty("mlevel")
+    private String mlevel;
+
 }
