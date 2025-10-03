@@ -22,14 +22,13 @@ class CommonConventionPlugin : Plugin<Project> {
 
         // 공통 dependencies
         project.dependencies {
-            add("implementation", "org.springframework.boot:spring-boot-starter-web")
-            add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
-            add("implementation","org.springframework.boot:spring-boot-starter-data-jpa")
-            add("implementation", "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+            add("implementation", "org.springframework.boot:spring-boot-starter-web:3.5.6")
+            add("testImplementation", "org.springframework.boot:spring-boot-starter-test:3.5.6")
+            add("implementation","org.springframework.boot:spring-boot-starter-data-jpa:3.5.6")
+            add("implementation", "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
             add("compileOnly", "org.projectlombok:lombok")
             add("annotationProcessor", "org.projectlombok:lombok")
             add("runtimeOnly", "com.h2database:h2")
-            add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
         }
 
         // JUnit5  설정
