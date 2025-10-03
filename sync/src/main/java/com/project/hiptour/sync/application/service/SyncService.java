@@ -1,9 +1,10 @@
 package com.project.hiptour.sync.application.service;
 
+import com.project.hiptour.common.entity.place.Place;
+import com.project.hiptour.common.entity.place.repos.PlaceRepository;
 import com.project.hiptour.sync.application.port.TourApiPort;
-import com.project.hiptour.sync.domain.TourPlace;
+import com.project.hiptour.sync.global.config.TourApiProperties;
 import com.project.hiptour.sync.global.dto.SyncPlaceDto;
-import com.project.hiptour.sync.infrastructure.persistence.TourPlaceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,22 +22,28 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SyncService {
     private final TourApiPort tourApiPort;
-    private final TourPlaceRepository tourPlaceRepository;
+    private final PlaceRepository placeRepository;
     private final PlaceEntityMapper placeEntityMapper;
     private final PlaceMapperService placeMapperService;
+    private final TourApiProperties tourApiProperties;
     private static final DateTimeFormatter API_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void syncUpdatedPlaces(LocalDateTime lastSyncTime) {
+    public int syncUpdatedPlaces(LocalDateTime lastSyncTime) {
         log.info("TourAPI 변경분 동기화를 시작합니다.");
 
         int pageNo = 1;
-        final int numOfRows = 100;
         boolean stopFlag = false;
+        int apiCallCount = 0;
 
         while (!stopFlag) {
             try {
-                String jsonResponse = tourApiPort.fetchChangedPlaces(lastSyncTime, pageNo, numOfRows);
+                String jsonResponse = tourApiPort.fetchChangedPlaces(
+                        lastSyncTime,
+                        pageNo,
+                        tourApiProperties.getNumOfRows()
+                );
+                apiCallCount++;
 
                 List<SyncPlaceDto> dtoList = null;
                 if (jsonResponse != null) {
@@ -48,7 +55,7 @@ public class SyncService {
                     break;
                 }
 
-                List<TourPlace> placesToSave = new ArrayList<>();
+                List<Place> placesToSave = new ArrayList<>();
 
                 for (SyncPlaceDto dto : dtoList) {
                     LocalDateTime itemModifiedTime = LocalDateTime.parse(dto.getModifiedtime(), API_DATE_TIME_FORMATTER);
@@ -62,7 +69,7 @@ public class SyncService {
                 }
 
                 if (!placesToSave.isEmpty()) {
-                    tourPlaceRepository.saveAll(placesToSave);
+                    placeRepository.saveAll(placesToSave);
                 }
                 pageNo++;
 
@@ -71,5 +78,8 @@ public class SyncService {
                 throw new RuntimeException("변경분 동기화 중 오류가 발생했습니다.", e);
             }
         }
+
+        log.info("증분 동기화 작업 완료. 사용된 API 호출 횟수: {}", apiCallCount);
+        return apiCallCount;
     }
 }
