@@ -11,7 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class Review_OCEAN_SelectionsId implements Serializable {
+public class ReviewSelectionsId implements Serializable {
     private Long reviewId;
     private Integer keywordId;
 }

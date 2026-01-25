@@ -13,10 +13,10 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "Review_OCEAN_Evaluation")
+@Table(name = "ReviewEvaluation")
 @Builder
 @AllArgsConstructor
-public class Review_OCEAN_Evaluation extends BaseUpdateEntity {
+public class ReviewEvaluation extends BaseUpdateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

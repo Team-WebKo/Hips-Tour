@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "Review_OCEAN_Selections")
-public class Review_OCEAN_Selections {
+@Table(name = "ReviewSelections")
+public class ReviewSelections {
     @EmbeddedId
-    private Review_OCEAN_SelectionsId id;
+    private ReviewSelectionsId id;
 
     @MapsId("keywordId")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -22,12 +22,12 @@ public class Review_OCEAN_Selections {
     @MapsId("keywordId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "keywordId")
-    private OCEAN_Master oceanMaster;
+    private OceanMaster oceanMaster;
 
     @Builder
-    public Review_OCEAN_Selections(Review review, OCEAN_Master oceanMaster) {
+    public ReviewSelections(Review review, OceanMaster oceanMaster) {
         this.review = review;
         this.oceanMaster = oceanMaster;
-        this.id = new Review_OCEAN_SelectionsId(review.getReviewId(), oceanMaster.getKeywordId());
+        this.id = new ReviewSelectionsId(review.getReviewId(), oceanMaster.getKeywordId());
     }
 }

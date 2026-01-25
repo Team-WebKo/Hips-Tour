@@ -2,15 +2,20 @@ package com.project.hiptour.common.entity.perference;
 
 import com.project.hiptour.common.entity.BaseUpdateEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "OCEAN_Master")
-public class OCEAN_Master extends BaseUpdateEntity {
+@AllArgsConstructor
+@Builder
+@Table(name = "OceanMaster")
+public class OceanMaster extends BaseUpdateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "keywordId")
@@ -23,10 +28,7 @@ public class OCEAN_Master extends BaseUpdateEntity {
     @Column(name = "targetDimension", nullable = false)
     private DimensionType targetDimension;
 
-    @Builder
-    public OCEAN_Master(Integer keywordId, String label, DimensionType targetDimension) {
-        this.keywordId = keywordId;
-        this.label = label;
-        this.targetDimension = targetDimension;
-    }
+    @Column(name = "polarityWeight", precision = 3, scale = 2)
+    private BigDecimal polarityWeight;
+
 }

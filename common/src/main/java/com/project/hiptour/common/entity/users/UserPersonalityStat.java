@@ -1,8 +1,8 @@
 package com.project.hiptour.common.entity.users;
 
 import com.project.hiptour.common.entity.BaseUpdateEntity;
-import com.project.hiptour.common.entity.perference.DimensionType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,28 +12,42 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "UserPersonalityStat")
 public class UserPersonalityStat extends BaseUpdateEntity {
-    @EmbeddedId
-    private UserPersonalityStatId id;
+    @Id
+    @Column(name = "userId")
+    private Long userId;
 
     @MapsId("userId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "userId")
     private UserInfo userInfo;
 
     @Column(name = "score", precision = 5, scale = 3, columnDefinition = "DECIMAL(5,3) DEFAULT 5.000")
-    private BigDecimal score;
+    private BigDecimal scoreO;
 
-    @Version
-    @Column(name = "version")
-    private Integer version;    //낙관적 락
+    @Column(name = "score", precision = 5, scale = 3, columnDefinition = "DECIMAL(5,3) DEFAULT 5.000")
+    private BigDecimal scoreC;
+
+    @Column(name = "score", precision = 5, scale = 3, columnDefinition = "DECIMAL(5,3) DEFAULT 5.000")
+    private BigDecimal scoreE;
+
+    @Column(name = "score", precision = 5, scale = 3, columnDefinition = "DECIMAL(5,3) DEFAULT 5.000")
+    private BigDecimal scoreA;
+
+    @Column(name = "score", precision = 5, scale = 3, columnDefinition = "DECIMAL(5,3) DEFAULT 5.000")
+    private BigDecimal scoreN;
 
     @Builder
-    public UserPersonalityStat(UserInfo userInfo, DimensionType dimension, BigDecimal score, Integer version) {
+    public UserPersonalityStat(UserInfo userInfo, BigDecimal scoreO, BigDecimal scoreC, BigDecimal scoreE, BigDecimal scoreA, BigDecimal scoreN) {
+        this.userId = userInfo.getUserId();
         this.userInfo = userInfo;
-        this.score = score;
-        this.version = version;
-        this.id = new UserPersonalityStatId(userInfo.getUserId(), dimension);
+        this.scoreO = scoreO;
+        this.scoreC = scoreC;
+        this.scoreE = scoreE;
+        this.scoreA = scoreA;
+        this.scoreN = scoreN;
     }
 }
