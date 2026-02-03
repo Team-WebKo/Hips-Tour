@@ -13,9 +13,14 @@ public class UserInfo extends BaseUpdateEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter
     private Long userId;
+
     @Column(unique = true)
     private String email;
+
+    @Column(name = "nickName", nullable = false)
     private String nickName;
+
+    @Column(name = "userIdentifier", nullable = false)
     private String userIdentifier;
 
     @Builder
