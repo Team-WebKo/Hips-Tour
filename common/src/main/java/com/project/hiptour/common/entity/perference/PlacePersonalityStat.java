@@ -3,15 +3,13 @@ package com.project.hiptour.common.entity.perference;
 import com.project.hiptour.common.entity.BaseUpdateEntity;
 import com.project.hiptour.common.entity.place.Place;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
